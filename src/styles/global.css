@@ -16,69 +16,71 @@ html {
 }
 
 :root ::selection {
-  background-color: var(--lime-4);
+  background-color: var(--bronze-4);
 }
 
 :root{
-  --olive-1: #fcfdfc;
-  --olive-2: #f8faf8;
-  --olive-3: #eff1ef;
-  --olive-4: #e7e9e7;
-  --olive-5: #dfe2df;
-  --olive-6: #d7dad7;
-  --olive-7: #cccfcc;
-  --olive-8: #b9bcb8;
-  --olive-9: #898e87;
-  --olive-10: #7f847d;
-  --olive-11: #60655f;
-  --olive-12: #1d211c;
-  --lime-1: #fcfdfa;
-  --lime-2: #f8faf3;
-  --lime-3: #eef6d6;
-  --lime-4: #e2f0bd;
-  --lime-5: #d3e7a6;
-  --lime-6: #c2da91;
-  --lime-7: #abc978;
-  --lime-8: #8db654;
-  --lime-9: #bdee63;
-  --lime-10: #b0e64c;
-  --lime-11: #5c7c2f;
-  --lime-12: #37401c;
+  --gray-1: #fcfcfc;
+  --gray-2: #f9f9f9;
+  --gray-3: #f0f0f0;
+  --gray-4: #e8e8e8;
+  --gray-5: #e0e0e0;
+  --gray-6: #d9d9d9;
+  --gray-7: #cecece;
+  --gray-8: #bbbbbb;
+  --gray-9: #8d8d8d;
+  --gray-10: #838383;
+  --gray-11: #646464;
+  --gray-12: #111111;
+
+  --bronze-1: #fdfcfc;
+  --bronze-2: #fdf7f5;
+  --bronze-3: #f6edea;
+  --bronze-4: #efe4df;
+  --bronze-5: #e7d9d3;
+  --bronze-6: #dfcdc5;
+  --bronze-7: #d3bcb3;
+  --bronze-8: #c2a499;
+  --bronze-9: #a18072;
+  --bronze-10: #957468;
+  --bronze-11: #7d5e54;
+  --bronze-12: #43302b;
   --base: #FFF;
   --font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 
 html.dark{
-  --olive-1: #111210;
-  --olive-2: #181917;
-  --olive-3: #212220;
-  --olive-4: #282a27;
-  --olive-5: #2f312e;
-  --olive-6: #383a36;
-  --olive-7: #454843;
-  --olive-8: #5c625b;
-  --olive-9: #687066;
-  --olive-10: #767d74;
-  --olive-11: #afb5ad;
-  --olive-12: #eceeec;
-  --lime-1: #11130c;
-  --lime-2: #151a10;
-  --lime-3: #1f2917;
-  --lime-4: #29371d;
-  --lime-5: #334423;
-  --lime-6: #3d522a;
-  --lime-7: #496231;
-  --lime-8: #577538;
-  --lime-9: #bdee63;
-  --lime-10: #d4ff70;
-  --lime-11: #bde56c;
-  --lime-12: #e3f7ba;
+  --gray-1: #111111;
+  --gray-2: #191919;
+  --gray-3: #222222;
+  --gray-4: #2a2a2a;
+  --gray-5: #313131;
+  --gray-6: #3a3a3a;
+  --gray-7: #484848;
+  --gray-8: #606060;
+  --gray-9: #6e6e6e;
+  --gray-10: #7b7b7b;
+  --gray-11: #b4b4b4;
+  --gray-12: #eeeeee;
+
+  --bronze-1: #141110;
+  --bronze-2: #1c1917;
+  --bronze-3: #262220;
+  --bronze-4: #302a27;
+  --bronze-5: #3b3330;
+  --bronze-6: #493e3a;
+  --bronze-7: #5a4c47;
+  --bronze-8: #6f5f58;
+  --bronze-9: #a18072;
+  --bronze-10: #ae8c7e;
+  --bronze-11: #d4b3a5;
+  --bronze-12: #ede0d9;
   --base: #111210;
 }
 
 html {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 html, body{
@@ -88,14 +90,14 @@ html, body{
 
 body {
   font-family: var(--font-family-sans);
-  color: var(--olive-12);
+  color: var(--gray-12);
   background-color: var(--base);
   -webkit-font-smoothing: subpixel-antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 *:focus-visible{
-  outline: 2px solid var(--lime-7);
+  outline: 2px solid var(--bronze-7);
   outline-offset: 2px;
 }
 

@@ -13,15 +13,64 @@ const today = new Date();
   </ul>
   <div>
     <span>&copy; 2010-{today.getFullYear()} Ivo Mynttinen</span>
-    <span>ivomynttinen.com&nbsp;•&nbsp;v.{today.getFullYear()}.{(today.getMonth() + 1).toString().padStart(2, '0')}.{today.getDate().toString().padStart(2, '0')}.{today.getHours().toString().padStart(2, '0')}</span>
+    <span>ivomynttinen.com&nbsp;·&nbsp;v.{today.getFullYear()}.{(today.getMonth() + 1).toString().padStart(2, '0')}.{today.getDate().toString().padStart(2, '0')}.{today.getHours().toString().padStart(2, '0')}</span>
   </div>
 </footer>
 
 <style lang="scss">
   footer {
-    padding: 2em 1em 6em 1em;
-    background: linear-gradient(var(--gray-gradient)) no-repeat;
-    color: rgb(var(--gray));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    border-top: 1px solid var(--gray-3);
+    padding: 1.5rem 0 2rem;
     text-align: center;
+    font-size: .75rem;
+    font-family: var(--font-family-mono);
+    color: var(--gray-8);
+  }
+
+  div{
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+  }
+
+  ul{
+      display: flex;
+      margin: 0;
+      list-style: none;
+    }
+
+    li {
+        margin: 0 .75rem;
+      }
+
+    a{
+        padding: .125rem;
+        color: var(--gray-11);
+        text-decoration: none;
+
+        &:hover{
+          color: var(--gray-12);
+        }
+      }
+
+  @media (min-width: 768px) {
+    footer {
+      text-align: left;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    ul{
+        order: 2;
+      }
+
+      li{
+          margin: 0 0 0 1.5rem;
+        }
   }
 </style>
