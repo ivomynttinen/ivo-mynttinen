@@ -13,13 +13,47 @@ const isActive = href === pathname || href === '/' + subpath?.[0];
 <a href={href} class:list={[className, { active: isActive }]} {...props}>
   <slot />
 </a>
-<style>
+
+<style lang="scss">
   a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     text-decoration: none;
+    color: var(--gray-10);
+    font-size: .875rem;
+    gap: 4px;
+    padding: .375rem .75rem;
+    line-height: 1.25rem;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+
+    &:after{
+      font-size: 0.75em;
+      color: var(--gray-6);
+    }
+
+    &:hover{
+      color: var(--gray-11);
+      background: var(--gray-2);
+
+      &:after{
+        color: var(--gray-7);
+      }
+    }
+
+    &:active{
+      color: var(--gray-12);
+      background: var(--gray-3);
+    }
+
+    &.active{
+      color: var(--gray-12);
+      background: var(--gray-3);
+    }
   }
-  a.active {
-    font-weight: bolder;
-    text-decoration: underline;
+
+  a[href*="//"]:not([href*="ivomynttinen.com"])::after,
+  a[href*="//"]:not([href*="localhost"])::after{
+    content: ' ↗';
   }
 </style>
