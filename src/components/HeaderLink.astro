@@ -30,6 +30,7 @@ const isActive = href === pathname || href === '/' + subpath?.[0];
     &:after{
       font-size: 0.75em;
       color: var(--gray-6);
+      transition: color 0.2s, transform 0.2s;
     }
 
     &:hover{
@@ -37,13 +38,18 @@ const isActive = href === pathname || href === '/' + subpath?.[0];
       background: var(--gray-2);
 
       &:after{
-        color: var(--gray-7);
+        color: var(--gray-8);
+        transform: translate(2px, -2px);
       }
     }
 
     &:active{
       color: var(--gray-12);
       background: var(--gray-3);
+
+      &:after{
+        color: var(--gray-9);
+      }
     }
 
     &.active{
