@@ -4,50 +4,9 @@ import HeaderLink from './HeaderLink.astro';
 
 <header>
   <nav>
-    <a href="/">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path class="logo-light" d="M6.58824 13.1765L3.29412 20.5882L0 14L6.58824 0V13.1765Z" fill="url(#gr-1)"/>
-        <path class="logo-light" d="M14 28L6.58824 13.1765V0L14 14.8235V28Z" fill="url(#gr-2)"/>
-        <path class="logo-light" d="M21.4118 13.1765L24.7059 20.5882L28 14L21.4118 0V13.1765Z" fill="url(#gr-3)"/>
-        <path class="logo-light" d="M14 28L21.4118 13.1765V0L14 14.8235V28Z" fill="url(#gr-4)"/>
-        <path class="logo-dark" d="M6.58824 13.1765L3.29412 20.5882L0 14L6.58824 0V13.1765Z" fill="url(#gr-5)"/>
-        <path class="logo-dark" d="M14 28L6.58824 13.1765V0L14 14.8235V28Z" fill="url(#gr-6)"/>
-        <path class="logo-dark" d="M21.4118 13.1765L24.7059 20.5882L28 14L21.4118 0V13.1765Z" fill="url(#gr-7)"/>
-        <path class="logo-dark" d="M14 28L21.4118 13.1765V0L14 14.8235V28Z" fill="url(#gr-8)"/>
-        <defs>
-        <linearGradient id="gr-1" x1="6.58824" y1="7.32271e-07" x2="6.58824" y2="20.5882" gradientUnits="userSpaceOnUse">
-        <stop stop-color="white"/>
-        <stop offset="1" stop-color="#CECECE"/>
-        </linearGradient>
-        <linearGradient id="gr-2" x1="14" y1="2.47057" x2="6.58824" y2="2.47057" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#CECECE"/>
-        <stop offset="1" stop-color="white"/>
-        </linearGradient>
-        <linearGradient id="gr-3" x1="28" y1="0" x2="21.4118" y2="1.28778e-07" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#CECECE"/>
-        <stop offset="1" stop-color="white"/>
-        </linearGradient>
-        <linearGradient id="gr-4" x1="21.4118" y1="14" x2="14" y2="14" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#CECECE"/>
-        <stop offset="1" stop-color="white"/>
-        </linearGradient>
-        <linearGradient id="gr-5" x1="6.58824" y1="7.32271e-07" x2="6.58824" y2="20.5882" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#7B7B7B"/>
-        <stop offset="1"/>
-        </linearGradient>
-        <linearGradient id="gr-6" x1="14" y1="2.47057" x2="6.58824" y2="2.47057" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#434343"/>
-        <stop offset="1"/>
-        </linearGradient>
-        <linearGradient id="gr-7" x1="28" y1="0" x2="21.4118" y2="1.28778e-07" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#7B7B7B"/>
-        <stop offset="1"/>
-        </linearGradient>
-        <linearGradient id="gr-8" x1="21.4118" y1="14" x2="14" y2="14" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#434343"/>
-        <stop offset="1"/>
-        </linearGradient>
-        </defs>
+    <a href="/" class="logo" title="Home">
+      <svg width="22" height="22" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6.06318 0.940845L0.105451 13.7729C0.0390796 13.9158 0.0439969 14.0817 0.11872 14.2205L3.00854 19.5873C3.207 19.9559 3.74345 19.932 3.90835 19.5472L6.5 13.5L13.5528 27.6056C13.737 27.9741 14.263 27.9741 14.4472 27.6056L21.5 13.5L24.0917 19.5472C24.2566 19.932 24.793 19.9559 24.9915 19.5873L27.8813 14.2205C27.956 14.0817 27.9609 13.9158 27.8945 13.7729L21.9368 0.940845C21.7605 0.561056 21.2234 0.553273 21.0361 0.927794L14 15L6.9639 0.927794C6.77664 0.553273 6.23951 0.561056 6.06318 0.940845Z" fill="var(--gray-11)"/>
       </svg>
     </a>
     <div class="internal-links">
@@ -113,6 +72,35 @@ import HeaderLink from './HeaderLink.astro';
     justify-content: space-between;
     align-items: center;
     padding: .75rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 9;
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 96px;
+      z-index: -1;
+      pointer-events: none;
+      background: linear-gradient(180deg, #FFF 20%, rgba(255, 255, 255, 0.65) 60%, rgba(255, 255, 255, 0.00) 100%);
+      transition: .3s ease-in-out;
+    }
+  }
+
+  .logo{
+    display: flex;
+    transition: .2s transform ease-in-out, .2s opacity ease-in-out;
+    opacity: .8;
+    border-radius: 6px;
+    outline-offset: 4px;
+
+    &:hover{
+      transform: scale(1.1);
+      opacity: 1;
+    }
   }
 
   nav{
@@ -175,13 +163,10 @@ import HeaderLink from './HeaderLink.astro';
 
   .sun { opacity: 0; }
   .moon { opacity: 1; }
-  .logo-dark { opacity: 1; }
-  .logo-light { opacity: 0; }
 
   :global(.dark) .sun { opacity: 1; }
   :global(.dark) .moon { opacity: 0; }
-  :global(.dark) .logo-dark { opacity: 0; }
-  :global(.dark) .logo-light { opacity: 1; }
+  :global(.dark) header:after { background: linear-gradient(180deg, #111210 20%, rgba(17, 18, 16, 0.65) 60%, rgba(255, 255, 255, 0.00) 100%); }
 </style>
 
 

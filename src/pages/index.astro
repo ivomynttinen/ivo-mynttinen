@@ -183,9 +183,12 @@ const posts = (await getCollection('blog')).sort(
     padding: 0;
     margin: 0;
 
+    li{
+      transition: .2s ease;
+    }
+
     li:not(:first-child){
       box-shadow: 0 1px 0 var(--gray-3) inset;
-      transition: .2s ease;
 
       &:hover{
         box-shadow: none;
@@ -199,14 +202,15 @@ const posts = (await getCollection('blog')).sort(
     a{
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: baseline;
+      gap: 1rem;
       padding: .75rem;
       text-decoration: none;
       border-radius: 6px;
       transition: .2s ease;
 
       &:hover{
-        background: var(--gray-2);
+        background: var(--gray-3);
       }
     }
 

@@ -25,7 +25,7 @@ const isActive = href === pathname || href === '/' + subpath?.[0];
     padding: .375rem .75rem;
     line-height: 1.25rem;
     border-radius: 6px;
-    transition: color 0.2s, background 0.2s;
+    transition: color 0.2s, background 0.2s, -webkit-text-stroke-width 0.2s, -webkit-text-stroke-color 0.2s;
 
     &:after{
       font-size: 0.75em;
@@ -55,6 +55,8 @@ const isActive = href === pathname || href === '/' + subpath?.[0];
     &.active{
       color: var(--gray-12);
       background: var(--gray-3);
+      -webkit-text-stroke-width: .2px;
+      -webkit-text-stroke-color: var(--gray-12);
     }
   }
 
