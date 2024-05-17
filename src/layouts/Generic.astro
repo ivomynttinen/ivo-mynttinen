@@ -13,7 +13,7 @@ const { title, description } = Astro.props;
 
   <body>
     <Header />
-    <main>
+    <main class="layout-generic">
       <article>
         <h1>{title}</h1>
         <slot />
@@ -22,3 +22,9 @@ const { title, description } = Astro.props;
     <Footer />
   </body>
 </html>
+
+<style lang="scss">
+  .layout-generic {
+    margin-top: 3rem;
+  }
+</style>
