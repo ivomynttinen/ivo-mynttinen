@@ -23,10 +23,9 @@ import HeaderLink from './HeaderLink.astro';
         </svg>
     </button>
     <div class="social-links">
-      <HeaderLink href="https://twitter.com/ivomynttinen">X</HeaderLink>
       <HeaderLink href="https://mastodon.design/@ivomynttinen">Mastodon</HeaderLink>
+      <HeaderLink href="https://twitter.com/ivomynttinen">X</HeaderLink>
       <HeaderLink href="https://layers.to/ivomynttinen">Layers</HeaderLink>
-      <HeaderLink href="https://github.com/ivomynttinen">Github</HeaderLink>
     </div>
   </div>
 </header>
@@ -66,11 +65,10 @@ import HeaderLink from './HeaderLink.astro';
   });
 </script>
 
-<style>
+<style lang="scss" scoped>
   header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     padding: .75rem 1rem;
     position: sticky;
     top: 0;
@@ -82,10 +80,10 @@ import HeaderLink from './HeaderLink.astro';
       top: 0;
       left: 0;
       right: 0;
-      height: 96px;
+      bottom: -60px;
       z-index: -1;
       pointer-events: none;
-      background: linear-gradient(180deg, #FFF 20%, rgba(255, 255, 255, 0.65) 60%, rgba(255, 255, 255, 0.00) 100%);
+      background: linear-gradient(180deg, #FFF 30%, rgba(255, 255, 255, 0.65) 65%, rgba(255, 255, 255, 0.00) 100%);
       transition: .3s ease-in-out;
     }
   }
@@ -114,6 +112,15 @@ import HeaderLink from './HeaderLink.astro';
     align-items: center;
   }
 
+  .internal-links{
+    margin-left: auto;
+  }
+
+  .toolbar{
+    justify-content: flex-end;
+    margin-top: .25rem;
+  }
+
   .internal-links,
   .social-links{
     display: flex;
@@ -122,6 +129,10 @@ import HeaderLink from './HeaderLink.astro';
   }
 
   .social-links{
+    a{
+      font-size: .8rem;
+    }
+
     &:before{
       content: '';
       width: 1px;
@@ -145,6 +156,11 @@ import HeaderLink from './HeaderLink.astro';
     cursor: pointer;
     transition: color 0.2s, background 0.2s;
 
+    svg{
+      width: 16px;
+      height: 16px;
+    }
+
     &:hover{
       color: var(--gray-12);
       background: var(--gray-2);
@@ -161,12 +177,65 @@ import HeaderLink from './HeaderLink.astro';
     }
   }
 
-  .sun { opacity: 0; }
-  .moon { opacity: 1; }
+  .sun {
+    opacity: 0;
+  }
 
-  :global(.dark) .sun { opacity: 1; }
-  :global(.dark) .moon { opacity: 0; }
-  :global(.dark) header:after { background: linear-gradient(180deg, #111210 20%, rgba(17, 18, 16, 0.65) 60%, rgba(255, 255, 255, 0.00) 100%); }
+  .moon {
+    opacity: 1;
+  }
+
+  :global(.dark) {
+    .sun {
+      opacity: 1;
+    }
+
+    .moon {
+      opacity: 0;
+    }
+
+    header:after {
+      background: linear-gradient(
+        180deg,
+        #111210 20%,
+        rgba(17, 18, 16, 0.65) 60%,
+        rgba(255, 255, 255, 0.00) 100%
+      );
+    }
+  }
+
+  @media (min-width: 540px) {
+    header {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+
+      &:after{
+        bottom: -32px;
+      }
+    }
+
+    .internal-links{
+      margin-left: 0;
+    }
+
+    .toolbar{
+      justify-content: flex-start;
+      margin-top: 0;
+    }
+
+    .social-links{
+    a{
+        font-size: .875rem;
+      }
+    }
+
+    button svg{
+      width: 20px;
+      height: 20px;
+    }
+  }
+
 </style>
 
 

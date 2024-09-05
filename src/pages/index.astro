@@ -24,10 +24,11 @@ const posts = (await getCollection('blog')).sort(
     <Header />
     <main>
       <section>
-        <h1>{SITE_TITLE}</h1>
+        <h1>
+          Ivo Mynttinen
+        </h1>
         <p class="intro">
-          Design engineer with a passion for interior design, and homelabbing.<br>
-          This is my personal space on the web, where I share a little bit of everything.
+          I’m a design engineer with a passion for interior design, and homelabbing. This is my personal space on the web, where I share a little bit of everything.
         </p>
       </section>
       <hr>
@@ -93,11 +94,15 @@ const posts = (await getCollection('blog')).sort(
   }
 
   h1{
-    background: url(../media/ivomynttinen-lettering.png) no-repeat;
-    background-size: contain;
-    width: 242px;
-    height: 20px;
-    text-indent: -999rem;
+    margin-top: 2rem;
+  }
+
+  .intro{
+    color: var(--gray-11);
+    font-size: 1.25rem;
+    line-height: 1.5rem;
+    margin-top: 1rem;
+    font-family: var(--font-family-syne);
   }
 
   h2{
@@ -108,25 +113,19 @@ const posts = (await getCollection('blog')).sort(
     margin-bottom: 1.5rem;
   }
 
-  .intro{
-    color: var(--gray-11);
-    font-size: 1rem;
-    line-height: 1.5rem;
-    margin-top: 1rem;
-    letter-spacing: .25px;
-  }
-
   .tiles{
     display: flex;
     gap: .5rem;
+    flex-wrap: wrap;
   }
 
   .tile{
     border-radius: 6px;
     background: var(--gray-2);
     border: 1px solid transparent;
-    transition: all .6s cubic-bezier(.075,.82,.165,1);
+    transition: background .6s cubic-bezier(.075,.82,.165,1), transform .6s cubic-bezier(.075,.82,.165,1), box-shadow .6s cubic-bezier(.075,.82,.165,1), border .6s cubic-bezier(.075,.82,.165,1);
     text-decoration: none;
+    min-width: 100%;
 
     &:hover{
       z-index: 1;
@@ -148,8 +147,9 @@ const posts = (await getCollection('blog')).sort(
     display: flex;
     flex-direction: column;
     padding: 1rem;
-    height: 180px;
+    height: 140px;
     font-size: 1rem;
+    cursor: alias;
 
     img{
       border-radius: 100%;
@@ -163,6 +163,8 @@ const posts = (await getCollection('blog')).sort(
       gap: 1rem;
       font-weight: 500;
       color: var(--gray-12);
+      font-family: var(--font-family-syne);
+      font-weight: 600;
     }
 
     .description{
@@ -175,6 +177,7 @@ const posts = (await getCollection('blog')).sort(
       font-size: .75rem;
       color: var(--gray-11);
       line-height: 1.25rem;
+      font-family: var(--font-family-syne);
     }
   }
 
@@ -241,12 +244,36 @@ const posts = (await getCollection('blog')).sort(
       padding: 4rem 0 2rem 0;
       gap: 3rem;
     }
+
+    .intro{
+      text-wrap: balance;
+      font-size: 1.375rem;
+      line-height: 1.75rem;
+    }
+  }
+
+  @media (min-width: 650px) {
+    .tiles{
+      flex-wrap: nowrap;
+    }
+
+    .tile{
+      min-width: 198px;
+    }
+
+    .project{
+      height: 180px;
+    }
   }
 
   @media (min-width: 768px) {
     main{
       padding: 20vh 0 2rem 0;
       gap: 4rem;
+    }
+
+    .tile{
+      min-width: auto;
     }
   }
 </style>

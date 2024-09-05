@@ -1,60 +1,53 @@
 ---
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Generic.astro';
+
+import Ivo from '../assets/images/ivo.png';
 ---
 
 <Layout
   title="About Me"
-  description="Lorem ipsum dolor sit amet"
+  description="Ivo Mynttinen: Design Engineer, Studio Owner, and Homelab Enthusiast"
 >
+  <h2>TL;DR: Design Engineer, Studio Owner, and Homelab Enthusiast</h2>
+
   <p>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-    labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo
-    viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam
-    adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus
-    et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-    vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque
-    sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
+    I'm a self-taught design engineer with 15 years of experience in the industry. Currently, I'm leading design at <a href="https://everchron.com">Everchron</a> and running my own design studio, <a href="https://telary.studio">Telary</a>. When I'm not crafting digital experiences, you'll find me designing my dream home, tinkering with my homelab, or immersed in a good game.
+  </p>
+
+  <hr>
+
+  <h2>The Extended Version</h2>
+
+  <p>
+    Born in 1992 in Germany, I grew up alongside the internet, which shaped my perspective and career path. My journey in design began as a self-taught enthusiast, evolving into a 15-year career that has seen me tackle challenges across various sectors of the industry. My journey as a self-taught professional has instilled in me a deep appreciation for continuous learning and adaptation. In an industry that never stands still, I believe in staying curious, embracing challenges, and always being ready to evolve. This mindset has been crucial in navigating the complexities of leading design teams, running a studio, and pursuing personal projects.
+  </p>
+
+  <aside class="right">
+    <figure>
+      <Image
+        src={Ivo}
+        alt="Ivo Mynttinen circa 1995"
+        widths={[320, 540, 720, 960, 280]}
+        sizes={`(max-width: 320px) 320px, (max-width: 540px) 540px, (max-width: 768px) 720px, (max-width: 1024px) 94vw, 280px`}
+      />
+      <figcaption>Circa 1995</figcaption>
+    </figure>
+  </aside>
+
+  <p>
+    For over a decade, I've been at the helm of design at <a href="https://everchron.com">Everchron</a>, steering our visual direction and user experience. Simultaneously, I've nurtured my own creative outlet through <a href="https://telary.studio">Telary Studio</a>, where I continue to push the boundaries of design and collaborate with exciting clients.
   </p>
 
   <p>
-    Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non
-    tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non
-    blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna
-    porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis
-    massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-    Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis
-    bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra
-    massa massa ultricies mi.
+    My professional life is balanced by a rich personal one. In 2024, I tied the knot with my wonderful wife, Antonia, marking the beginning of a new chapter in my life. Together, we're embarking on an exciting journey of designing and building our dream home. <a href="https://hanglage-no8.de">This project</a> is a testament to my passion for interior design and my belief in creating spaces that reflect one's personality and values.
   </p>
 
   <p>
-    Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl
-    suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet
-    nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae
-    turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem
-    dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat
-    semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-    vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum
-    facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam
-    vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla
-    urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
+    Beyond the world of pixels and blueprints, I'm an avid homelabber. This hobby allows me to stay connected to my roots of growing up with technology, constantly learning and experimenting with new systems and setups. It's a perfect blend of my professional skills and personal interests, keeping me on my toes in the ever-evolving tech landscape.
   </p>
 
   <p>
-    Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper
-    viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc
-    scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur
-    gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus
-    pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-    blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id
-    cursus metus aliquam eleifend mi.
-  </p>
-
-  <p>
-    Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta
-    nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam
-    tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci
-    ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar
-    proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
+    As I continue to grow both professionally and personally, I'm excited about the possibilities that lie ahead. Whether it's pushing the boundaries of design, creating our perfect home, or diving into new technological adventures, I approach each day with enthusiasm and a readiness to learn.
   </p>
 </Layout>
