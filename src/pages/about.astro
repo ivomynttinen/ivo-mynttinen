@@ -3,6 +3,8 @@ import { Image } from 'astro:assets';
 import Layout from '../layouts/Generic.astro';
 
 import Ivo from '../assets/images/ivo.png';
+import IvoAntonia from '../assets/images/ivo-antonia.jpg';
+import Hanglage from '../assets/images/hanglage.png';
 ---
 
 <Layout
@@ -23,8 +25,8 @@ import Ivo from '../assets/images/ivo.png';
       <Image
         src={Ivo}
         alt="Ivo Mynttinen circa 1995"
-        widths={[320, 540, 720, 960, 280]}
-        sizes={`(max-width: 320px) 320px, (max-width: 540px) 540px, (max-width: 768px) 720px, (max-width: 1024px) 94vw, 280px`}
+        widths={[260, 540, 720, 960, 1200]}
+        sizes={`(max-width: 320px) 300px, (max-width: 540px) 90vw, (max-width: 768px) 260px, (max-width: 1024px) 260px, 260px`}
       />
       <figcaption>Circa 1995</figcaption>
     </figure>
@@ -35,12 +37,36 @@ import Ivo from '../assets/images/ivo.png';
   </p>
 
   <p>
-    For over a decade, I've been at the helm of design at <a href="https://everchron.com">Everchron</a>, steering our visual direction and user experience. Simultaneously, I've nurtured my own creative outlet through <a href="https://telary.studio">Telary Studio</a>, where I continue to push the boundaries of design and collaborate with exciting clients.
+    For over a decade, I've been at the helm of design at <a href="https://everchron.com" target="_blank">Everchron</a>, steering our visual direction and user experience. Simultaneously, I've nurtured my own creative outlet through <a href="https://telary.studio" target="_blank">Telary Studio</a>, where I continue to push the boundaries of design and collaborate with exciting clients.
   </p>
 
+  <aside class="left">
+    <figure>
+      <Image
+        src={IvoAntonia}
+        alt="Ivo Mynttinen and Antonia"
+        widths={[260, 540, 720, 960, 1200]}
+        sizes={`(max-width: 320px) 300px, (max-width: 540px) 90vw, (max-width: 768px) 260px, (max-width: 1024px) 260px, 260px`}
+      />
+      <figcaption><time datetime="2024-06-28">28.06.2024</time></figcaption>
+    </figure>
+  </aside>
+
   <p>
-    My professional life is balanced by a rich personal one. In 2024, I tied the knot with my wonderful wife, Antonia, marking the beginning of a new chapter in my life. Together, we're embarking on an exciting journey of designing and building our dream home. <a href="https://hanglage-no8.de">This project</a> is a testament to my passion for interior design and my belief in creating spaces that reflect one's personality and values.
+    My professional life is balanced by a rich personal one. In 2024, I tied the knot with my wonderful wife, Antonia, marking the beginning of a new chapter in my life. Together, we're embarking on an exciting journey of designing and building our dream home. This project is a testament to my passion for interior design and my belief in creating spaces that reflect one's personality and values.
   </p>
+
+  <aside class="right">
+    <figure>
+      <Image
+        src={Hanglage}
+        alt="Drawing of the new build"
+        widths={[260, 540, 720, 960, 1200]}
+        sizes={`(max-width: 320px) 300px, (max-width: 540px) 90vw, (max-width: 768px) 260px, (max-width: 1024px) 260px, 260px`}
+      />
+      <figcaption>Building our dream home at <a href="https://hanglage-no8.de" target="_blank">Hanglage No. 8</a></figcaption>
+    </figure>
+  </aside>
 
   <p>
     Beyond the world of pixels and code, I'm an avid homelabber. It allows me to stay connected to my roots of growing up with technology, constantly learning and experimenting with new systems and setups. It's a perfect blend of my professional skills and personal interests, keeping me on my toes in the ever-evolving tech landscape.

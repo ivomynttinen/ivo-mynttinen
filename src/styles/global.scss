@@ -16,8 +16,8 @@ html {
 }
 
 :root ::selection {
-  background-color: var(--crimson-10);
-  color: var(--crimson-1);
+  background-color: var(--yellow-4);
+  color: var(--yellow-12);
 }
 
 :root{
@@ -46,6 +46,19 @@ html {
   --crimson-10: #df3478;
   --crimson-11: #cb1d63;
   --crimson-12: #621639;
+
+  --yellow-1: #fdfdf9;
+  --yellow-2: #fefce9;
+  --yellow-3: #fffab8;
+  --yellow-4: #fff394;
+  --yellow-5: #ffe770;
+  --yellow-6: #f3d768;
+  --yellow-7: #e4c767;
+  --yellow-8: #d5ae39;
+  --yellow-9: #ffe629;
+  --yellow-10: #ffdc00;
+  --yellow-11: #9e6c00;
+  --yellow-12: #473b1f;
   --base: #FFF;
   --font-family-sans: -apple-system, BlinkMacSystemFont, "Syne Variable", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-family-syne: "Syne Variable", sans-serif;
@@ -80,6 +93,19 @@ html.dark{
   --crimson-10: #ee518a;
   --crimson-11: #ff92ad;
   --crimson-12: #fdd3e8;
+
+  --yellow-1: #14120b;
+  --yellow-2: #1b180f;
+  --yellow-3: #2d2305;
+  --yellow-4: #362b00;
+  --yellow-5: #433500;
+  --yellow-6: #524202;
+  --yellow-7: #665417;
+  --yellow-8: #836a21;
+  --yellow-9: #ffe629;
+  --yellow-10: #ffff57;
+  --yellow-11: #f5e147;
+  --yellow-12: #f6eeb4;
   --base: #111210;
 
   --elevation-1: 0px 1px 2px #111210;
@@ -95,7 +121,7 @@ html.dark{
 }
 
 html {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 html, body{
@@ -119,7 +145,7 @@ body > footer{
 }
 
 *:focus-visible{
-  outline: 2px solid var(--crimson-9);
+  outline: 2px solid var(--yellow-11);
   outline-offset: 2px;
 }
 
@@ -148,5 +174,9 @@ h1{
   body > main,
   body > footer{
     max-width: 736px;
+  }
+
+  html{
+    font-size: 16px;
   }
 }
