@@ -12,6 +12,10 @@
 - [ ] Run Lighthouse audit on each page
 - [ ] Analytics
 - [ ] Colophon
+- [ ] Favicon
+- [ ] Listening to (spotify integration)
+- [ ] Work (dribbble, layers integration)
+- [ ] Elsewhere (https://www.samlinville.com/)
 
 - [ ] Test all internal and external links
 - [ ] Verify mobile responsiveness
