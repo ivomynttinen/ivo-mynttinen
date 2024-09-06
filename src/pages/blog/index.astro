@@ -6,23 +6,22 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
 
-// Sort posts in descending order of publication date
-const posts = (await getCollection('blog')).sort(
+// Get all blog posts
+const allPosts = await getCollection('blog');
+
+// Separate active and archived posts
+const activePosts = allPosts.filter(post => post.data.category !== 'archived');
+const archivedPosts = allPosts.filter(post => post.data.category === 'archived');
+
+// Sort active posts in descending order of publication date
+const sortedActivePosts = activePosts.sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
-// Separate the latest post from the rest
-const [latestPost, ...otherPosts] = posts;
-
-// Group the remaining posts by year
-const postsByYear = otherPosts.reduce((acc, post) => {
-  const year = post.data.pubDate.getFullYear();
-  if (!acc[year]) {
-    acc[year] = [];
-  }
-  acc[year].push(post);
-  return acc;
-}, {});
+// Sort archived posts in descending order of publication date
+const sortedArchivedPosts = archivedPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
 ---
 
 <!doctype html>
@@ -35,34 +34,30 @@ const postsByYear = otherPosts.reduce((acc, post) => {
     <main class="layout-blog">
       <h1>Blog</h1>
       <section>
-        <div>
-          <h2>Latest Post</h2>
-          <a href={`/blog/${latestPost.slug}/`}>
-            <h4 class="title">{latestPost.data.title}</h4>
-            <p class="date">
-              <FormattedDate date={latestPost.data.pubDate} />
-            </p>
-          </a>
-        </div>
-        {
-          Object.entries(postsByYear).map(([year, posts]) => (
-            <div>
-              <h2>{year}</h2>
-              <ul>
-                {
-                  posts.map((post) => (
-                    <li>
-                      <a href={`/blog/${post.slug}/`}>
-                        <h4 class="title">{post.data.title}</h4>
-                        <FormattedDate date={post.data.pubDate} />
-                      </a>
-                    </li>
-                  ))
-                }
-              </ul>
-            </div>
-          ))
-        }
+        <h2>All Posts</h2>
+        <ul>
+          {sortedActivePosts.map((post) => (
+            <li>
+              <a href={`/blog/${post.slug}/`}>
+                <h4 class="title">{post.data.title}</h4>
+                <FormattedDate date={post.data.pubDate} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section>
+        <h2>Archived Posts</h2>
+        <ul>
+          {sortedArchivedPosts.map((post) => (
+            <li>
+              <a href={`/blog/${post.slug}/`}>
+                <h4 class="title">{post.data.title}</h4>
+                <FormattedDate date={post.data.pubDate} />
+              </a>
+            </li>
+          ))}
+        </ul>
       </section>
     </main>
     <Footer />
@@ -71,6 +66,11 @@ const postsByYear = otherPosts.reduce((acc, post) => {
 
 <style lang="scss">
 .layout-blog{
-  margin-top: 3rem;
+  margin-top: 4rem;
+
+  h1{
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
 }
 </style>

@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { X_URL, X_HANDLE, MASTODON_HANDLE, MASTODON_URL, LAYERS_URL, EMAIL } from '../consts';
 import Layout from '../layouts/Generic.astro';
 
 import Ivo from '../assets/images/ivo.png';
@@ -75,4 +76,29 @@ import Hanglage from '../assets/images/hanglage.png';
   <p>
     As I continue to grow both professionally and personally, I'm excited about the possibilities that lie ahead. Whether it's pushing the boundaries of design, creating our perfect home, or diving into new technological adventures, I approach each day with enthusiasm and a readiness to learn.
   </p>
+
+  <hr>
+
+  <h2>Find me elsewhere</h2>
+
+  <ul class="tile-list">
+    <li>
+      <a href={MASTODON_URL} target="_blank" class="tile-list-tile">
+        <span class="title">Mastodon</span>
+        <span class="meta">{MASTODON_HANDLE}</span>
+      </a>
+    </li>
+    <li>
+      <a href={X_URL} target="_blank" class="tile-list-tile">
+        <span class="title">X (formerly Twitter)</span>
+        <span class="meta">{X_HANDLE}</span>
+      </a>
+    </li>
+    <li>
+      <a href={`mailto:${EMAIL}`} class="tile-list-tile">
+        <span class="title">Personal Email</span>
+        <span class="meta">{EMAIL}</span>
+      </a>
+    </li>
+  </ul>
 </Layout>

@@ -42,11 +42,11 @@
     margin: 1.25rem 0;
   }
 
-  ul, ol{
+  ul:not(.tile-list), ol:not(.tile-list){
     padding-left: 1.875rem;
   }
 
-  a{
+  a:not(.tile-list-tile){
     color: var(--yellow-11);
     font-weight: 600;
     transition: color 0.2s ease, background 0.2s ease, outline 0.2s ease;

@@ -65,13 +65,13 @@ const posts = (await getCollection('blog')).sort(
       <hr>
       <section>
         <h2>Writing</h2>
-        <ul class="posts">
+        <ul class="tile-list">
           {
             posts.map((post) => (
               <li>
-                <a href={`/blog/${post.slug}/`}>
+                <a href={`/blog/${post.slug}/`} class="tile-list-tile">
                   <h3 class="title">{post.data.title}</h3>
-                  <time datetime={new Date(post.data.pubDate).toISOString()}>
+                  <time datetime={new Date(post.data.pubDate).toISOString()} class="meta">
                     {new Date(post.data.pubDate).getFullYear()}
                   </time>
                 </a>
@@ -178,54 +178,6 @@ const posts = (await getCollection('blog')).sort(
       color: var(--gray-11);
       line-height: 1.25rem;
       font-family: var(--font-family-syne);
-    }
-  }
-
-  .posts{
-    list-style: none;
-    padding: 0;
-    margin: 0;
-
-    li{
-      transition: .2s ease;
-    }
-
-    li:not(:first-child){
-      box-shadow: 0 1px 0 var(--gray-3) inset;
-
-      &:hover{
-        box-shadow: none;
-      }
-    }
-
-    li:hover + li{
-      box-shadow: none;
-    }
-
-    a{
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 1rem;
-      padding: .75rem;
-      text-decoration: none;
-      border-radius: 6px;
-      transition: .2s ease;
-
-      &:hover{
-        background: var(--gray-3);
-      }
-    }
-
-    h3{
-      color: var(--gray-12);
-      font-size: 1rem;
-      font-weight: 500;
-    }
-
-    time{
-      color: var(--gray-11);
-      font-size: 1rem;
     }
   }
 

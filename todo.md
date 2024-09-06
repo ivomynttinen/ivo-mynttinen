@@ -2,9 +2,14 @@
 
 - [ ] Generate and submit sitemap
 - [ ] Set up 301 redirects for old URLs
+- [ ] Styling
+  - [ ] Blog post styling
+  - [ ] Blog post list styling
 - [ ] Write and publish blog posts
-- [ ] Launch announcement post
-- [ ] Create About page
+  - [ ] Launch announcement post
+  - [ ] Tools and Software post
+  - [ ] Setup post
+- [x] Create About page
 - [ ] Review and update legal pages (Privacy Policy, Terms of Service)
 - [ ] Add meta descriptions to all pages
 - [ ] Implement Open Graph tags on all pages

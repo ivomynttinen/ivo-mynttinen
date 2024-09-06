@@ -164,6 +164,54 @@ h1{
   text-wrap: balance;
 }
 
+.tile-list{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li{
+    transition: .2s ease;
+  }
+
+  li:not(:first-child){
+    box-shadow: 0 1px 0 var(--gray-3) inset;
+
+    &:hover{
+      box-shadow: none;
+    }
+  }
+
+  li:hover + li{
+    box-shadow: none;
+  }
+
+  .tile-list-tile{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: .75rem;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background .2s ease;
+
+    &:hover{
+      background: var(--gray-3);
+    }
+  }
+
+  .title{
+    color: var(--gray-12);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .meta{
+    color: var(--gray-11);
+    font-size: 1rem;
+  }
+}
+
 @media screen and (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

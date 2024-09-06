@@ -19,29 +19,42 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 
   <body>
     <Header />
-    <main>
-      <article>
+    <main class="layout-blog-post">
+      <article class="md">
         <div class="hero-image">
           {heroImage && <img width={1020} height={510} src={heroImage} alt="" />}
         </div>
-        <div class="md prose">
-          <div class="title">
-            <div class="date">
-              <FormattedDate date={pubDate} />
-              {
-                updatedDate && (
-                  <div class="last-updated-on">
-                    Last updated on <FormattedDate date={updatedDate} />
-                  </div>
-                )
-              }
-            </div>
-            <h1>{title}</h1>
+        <div class="title">
+          <div class="date">
+            <FormattedDate date={pubDate} />
+            {
+              updatedDate && (
+                <div class="last-updated-on">
+                  Last updated on <FormattedDate date={updatedDate} />
+                </div>
+              )
+            }
           </div>
-          <slot />
+          <h1>{title}</h1>
         </div>
+        <slot />
       </article>
     </main>
     <Footer />
   </body>
 </html>
+
+<style lang="scss">
+  .layout-blog-post {
+    margin-top: 4rem;
+  }
+
+  .hero-image {
+    img {
+      margin: 0;
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
+  }
+</style>
