@@ -137,8 +137,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-body > main,
-body > footer{
+body > main{
   display: block;
   max-width: calc(100vw - 2rem);
   margin: 0 auto;
@@ -162,6 +161,13 @@ h1{
   font-family: var(--font-family-syne);
   font-weight: 800;
   text-wrap: balance;
+}
+
+.intro{
+  color: var(--gray-11);
+  font-size: 1.375rem;
+  line-height: 2rem;
+  font-family: var(--font-family-syne);
 }
 
 .tile-list{
@@ -198,6 +204,10 @@ h1{
     &:hover{
       background: var(--gray-3);
     }
+
+    &:active{
+      background: var(--gray-4);
+    }
   }
 
   .title{
@@ -219,8 +229,7 @@ h1{
 }
 
 @media (min-width: 768px) {
-  body > main,
-  body > footer{
+  body > main{
     max-width: 736px;
   }
 

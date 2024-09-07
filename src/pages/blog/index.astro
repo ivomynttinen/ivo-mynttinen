@@ -2,6 +2,7 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import { Image } from 'astro:assets';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
@@ -33,13 +34,27 @@ const sortedArchivedPosts = archivedPosts.sort(
     <Header />
     <main class="layout-blog">
       <h1>Blog</h1>
+      <p class="intro">
+        This is where I write about things I find interesting.
+      </p>
       <section>
-        <h2>All Posts</h2>
-        <ul>
+        <ul class="posts">
           {sortedActivePosts.map((post) => (
             <li>
               <a href={`/blog/${post.slug}/`}>
-                <h4 class="title">{post.data.title}</h4>
+                <h2 class="title">{post.data.title}</h2>
+                <p class="description">{post.data.description}</p>
+                {post.data.heroImage && (
+                  <div class="hero-image">
+                    <Image 
+                      src={post.data.heroImage}
+                      alt={post.data.title}
+                      widths={[320, 640, 960, 1280, 1600]}
+                      sizes="(max-width: 768px) 98vw, (max-width: 1024px) 48vw, (max-width: 1360px) 32vw, 320px"
+                      class="cover-image"
+                    />
+                  </div>
+                )}
                 <FormattedDate date={post.data.pubDate} />
               </a>
             </li>
@@ -48,29 +63,95 @@ const sortedArchivedPosts = archivedPosts.sort(
       </section>
       <section>
         <h2>Archived Posts</h2>
-        <ul>
+        <ul class="posts">
           {sortedArchivedPosts.map((post) => (
             <li>
               <a href={`/blog/${post.slug}/`}>
-                <h4 class="title">{post.data.title}</h4>
-                <FormattedDate date={post.data.pubDate} />
+                <h3 class="title">{post.data.title}</h3>
+                <FormattedDate date={post.data.pubDate} class="meta" />
               </a>
             </li>
           ))}
         </ul>
       </section>
     </main>
-    <Footer />
+    <Footer class="layout-blog" />
   </body>
 </html>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .layout-blog{
   margin-top: 4rem;
 
   h1{
     font-size: 2rem;
     line-height: 2.5rem;
+  }
+}
+
+.intro{
+  margin-top: 1rem;
+}
+
+.posts{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li{
+    width: 100%;
+  }
+
+  li > a{
+    display: block;
+    border-radius: .5rem;
+    background-color: var(--gray-3);
+    height: 100%;
+    text-decoration: none;
+
+    .title{
+      font-size: 1.25rem;
+      line-height: 1.875rem;
+      font-family: var(--font-family-syne);
+      font-weight: 600;
+    }
+  }
+
+  img{
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  body > main{
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+
+  .posts{
+    li{
+      width: calc(50% - .5rem);
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .posts{
+    li{
+      width: calc(33.33% - .6666rem);
+    }
+  }
+}
+
+@media (min-width: 1360px) {
+  .posts{
+    li{
+      width: 320px;
+    }
   }
 }
 </style>

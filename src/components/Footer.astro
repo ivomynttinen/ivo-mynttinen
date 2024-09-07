@@ -1,8 +1,13 @@
 ---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
 const today = new Date();
 ---
 
-<footer>
+<footer class={className}>
   <ul>
     <li>
       <a href="/imprint">Imprint</a>
@@ -29,7 +34,8 @@ const today = new Date();
     font-size: .7rem;
     font-family: var(--font-family-mono);
     color: var(--gray-8);
-    margin-top: 4rem;
+    margin: 4rem auto 0 auto;
+    max-width: calc(100vw - 2rem);
   }
 
   div{
@@ -77,6 +83,7 @@ const today = new Date();
       flex-direction: row;
       align-items: flex-start;
       justify-content: space-between;
+      max-width: 736px;
     }
 
     ul{
@@ -85,6 +92,11 @@ const today = new Date();
 
     li{
       margin: 0 0 0 1.5rem;
+    }
+
+    footer.layout-blog{
+      max-width: calc(100vw - 2rem);
+      padding: 1.5rem 0 2rem 0;
     }
   }
 </style>
