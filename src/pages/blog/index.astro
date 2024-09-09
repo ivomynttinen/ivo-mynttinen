@@ -80,34 +80,6 @@ const sortedArchivedPosts = archivedPosts.sort(
           ))}
         </ul>
       </section>
-
-      {sortedArchivedPosts.length > 0 && (
-        <section class="archived">
-          <h2>Archived Posts</h2>
-          <ul class="posts">
-            {sortedArchivedPosts.map((post) => (
-              <li>
-                <a href={`/blog/${post.slug}/`} class="tile post">
-                  <h3 class="title">{post.data.title}</h3>
-                  <p class="description">{post.data.description}</p>
-                  {post.data.heroImage && (
-                    <div class="hero-image">
-                      <Image 
-                        src={post.data.heroImage}
-                        alt={post.data.title}
-                        widths={[306, 612, 960, 1280, 1600]}
-                        sizes="(max-width: 768px) 98vw, (max-width: 1024px) 48vw, (max-width: 1360px) 32vw, 306px"
-                        class="cover-image"
-                      />
-                    </div>
-                  )}
-                  <FormattedDate date={post.data.pubDate} class="date" />
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
     </main>
     <Footer class="layout-blog" />
   </body>
@@ -149,13 +121,9 @@ const sortedArchivedPosts = archivedPosts.sort(
   gap: .5rem;
   text-decoration: none;
 
-  &:not(.highlight):not(:hover):not(:active):not(.plain) {
-    background: var(--gray-3);
-  }
-
   .title{
     font-size: 1.25rem;
-    line-height: 1.875rem;
+    line-height: 1.4rem;
     color: var(--gray-12);
     font-weight: 700;
     font-family: var(--font-family-syne);
@@ -163,8 +131,8 @@ const sortedArchivedPosts = archivedPosts.sort(
 
   .description{
     color: var(--gray-11);
-    font-size: .875rem;
-    line-height: 1.25rem;
+    font-size: .9rem;
+    line-height: 1.3rem;
   }
 
   .hero-image{
@@ -212,8 +180,12 @@ const sortedArchivedPosts = archivedPosts.sort(
   }
 }
 
-.archived{
+.archived {
   margin-top: 2rem;
+  
+  &.hidden {
+    display: none;
+  }
 }
 
 @media (min-width: 768px) {
@@ -225,6 +197,7 @@ const sortedArchivedPosts = archivedPosts.sort(
   .posts{
     li{
       width: calc(50% - .5rem);
+      min-height: 320px;
     }
   }
 }
