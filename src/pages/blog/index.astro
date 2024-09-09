@@ -35,51 +35,85 @@ const sortedArchivedPosts = archivedPosts.sort(
     <main class="layout-blog">
       <h1>Blog</h1>
       <p class="intro">
-        This is where I write about things I find interesting.
+        This is where I write about things I find interesting, and little updates about my life.
       </p>
       <section>
         <ul class="posts">
           {sortedActivePosts.map((post) => (
             <li>
-              <a href={`/blog/${post.slug}/`}>
-                <h2 class="title">{post.data.title}</h2>
-                <p class="description">{post.data.description}</p>
-                {post.data.heroImage && (
-                  <div class="hero-image">
-                    <Image 
-                      src={post.data.heroImage}
-                      alt={post.data.title}
-                      widths={[320, 640, 960, 1280, 1600]}
-                      sizes="(max-width: 768px) 98vw, (max-width: 1024px) 48vw, (max-width: 1360px) 32vw, 320px"
-                      class="cover-image"
-                    />
-                  </div>
-                )}
-                <FormattedDate date={post.data.pubDate} />
-              </a>
+              {post.data.plain ? (
+                <div class={`tile post ${post.data.highlight ? 'highlight' : ''} plain`}>
+                  <h2 class="title">{post.data.title}</h2>
+                  <p class="description">{post.data.description}</p>
+                  {post.data.heroImage && (
+                    <div class="hero-image">
+                      <Image 
+                        src={post.data.heroImage}
+                        alt={post.data.title}
+                        widths={[306, 612, 960, 1280, 1600]}
+                        sizes="(max-width: 768px) 98vw, (max-width: 1024px) 48vw, (max-width: 1360px) 32vw, 306px"
+                        class="cover-image"
+                      />
+                    </div>
+                  )}
+                  <FormattedDate date={post.data.pubDate} class="date" />
+                </div>
+              ) : (
+                <a href={`/blog/${post.slug}/`} class={`tile post ${post.data.highlight ? 'highlight' : ''}`}>
+                  <h2 class="title">{post.data.title}</h2>
+                  <p class="description">{post.data.description}</p>
+                  {post.data.heroImage && (
+                    <div class="hero-image">
+                      <Image 
+                        src={post.data.heroImage}
+                        alt={post.data.title}
+                        widths={[306, 612, 960, 1280, 1600]}
+                        sizes="(max-width: 768px) 98vw, (max-width: 1024px) 48vw, (max-width: 1360px) 32vw, 306px"
+                        class="cover-image"
+                      />
+                    </div>
+                  )}
+                  <FormattedDate date={post.data.pubDate} class="date" />
+                </a>
+              )}
             </li>
           ))}
         </ul>
       </section>
-      <section>
-        <h2>Archived Posts</h2>
-        <ul class="posts">
-          {sortedArchivedPosts.map((post) => (
-            <li>
-              <a href={`/blog/${post.slug}/`}>
-                <h3 class="title">{post.data.title}</h3>
-                <FormattedDate date={post.data.pubDate} class="meta" />
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
+
+      {sortedArchivedPosts.length > 0 && (
+        <section class="archived">
+          <h2>Archived Posts</h2>
+          <ul class="posts">
+            {sortedArchivedPosts.map((post) => (
+              <li>
+                <a href={`/blog/${post.slug}/`} class="tile post">
+                  <h3 class="title">{post.data.title}</h3>
+                  <p class="description">{post.data.description}</p>
+                  {post.data.heroImage && (
+                    <div class="hero-image">
+                      <Image 
+                        src={post.data.heroImage}
+                        alt={post.data.title}
+                        widths={[306, 612, 960, 1280, 1600]}
+                        sizes="(max-width: 768px) 98vw, (max-width: 1024px) 48vw, (max-width: 1360px) 32vw, 306px"
+                        class="cover-image"
+                      />
+                    </div>
+                  )}
+                  <FormattedDate date={post.data.pubDate} class="date" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </main>
     <Footer class="layout-blog" />
   </body>
 </html>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .layout-blog{
   margin-top: 4rem;
 
@@ -91,6 +125,7 @@ const sortedArchivedPosts = archivedPosts.sort(
 
 .intro{
   margin-top: 1rem;
+  max-width: 38ch;
 }
 
 .posts{
@@ -99,31 +134,86 @@ const sortedArchivedPosts = archivedPosts.sort(
   gap: 1rem;
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 2rem 0 0 0;
 
   li{
     width: 100%;
   }
+}
 
-  li > a{
-    display: block;
-    border-radius: .5rem;
-    background-color: var(--gray-3);
-    height: 100%;
-    text-decoration: none;
+.post{
+  padding: 1rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  text-decoration: none;
 
-    .title{
-      font-size: 1.25rem;
-      line-height: 1.875rem;
-      font-family: var(--font-family-syne);
-      font-weight: 600;
+  &:not(.highlight):not(:hover):not(:active):not(.plain) {
+    background: var(--gray-3);
+  }
+
+  .title{
+    font-size: 1.25rem;
+    line-height: 1.875rem;
+    color: var(--gray-12);
+    font-weight: 700;
+    font-family: var(--font-family-syne);
+  }
+
+  .description{
+    color: var(--gray-11);
+    font-size: .875rem;
+    line-height: 1.25rem;
+  }
+
+  .hero-image{
+    margin: .325rem -.625rem;
+
+    img{
+      display: block;
+      border-radius: .4rem;
+      max-width: 100%;
+      height: auto;
     }
   }
 
-  img{
-    max-width: 100%;
-    height: auto;
+  :global(.date){
+    margin-top: auto;
+    color: var(--gray-10);
+    font-size: .875rem;
   }
+
+  &.highlight{
+    .title{
+      color: var(--yellow-12);
+    }
+
+    .description{
+      color: var(--yellow-11);
+    }
+
+    :global(.date){
+      color: var(--yellow-11);
+    }
+  }
+
+  &.plain{
+    .title{
+      display: none;
+    }
+
+    .description{
+      font-family: var(--font-family-syne);
+      font-weight: 550;
+      font-size: 1.125rem;
+      line-height: 1.5rem;
+    }
+  }
+}
+
+.archived{
+  margin-top: 2rem;
 }
 
 @media (min-width: 768px) {

@@ -8,7 +8,9 @@ const blog = defineCollection({
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     heroImage: image().optional(),
-    category: z.enum(['general', 'archived', 'tech', 'design']).default('general'),
+    highlight: z.boolean().optional(),
+    plain: z.boolean().optional(),
+    category: z.enum(['general', 'archived', 'tech', 'design', 'code', 'life']).default('general'),
   }),
 });
 
