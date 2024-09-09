@@ -165,8 +165,8 @@ h1{
 
 .intro{
   color: var(--gray-11);
-  font-size: 1.375rem;
-  line-height: 2rem;
+  font-size: 1.275rem;
+  line-height: 1.875rem;
   font-family: var(--font-family-syne);
 }
 
@@ -175,20 +175,8 @@ h1{
   padding: 0;
   margin: 0;
 
-  li{
-    transition: .2s ease;
-  }
-
   li:not(:first-child){
     box-shadow: 0 1px 0 var(--gray-3) inset;
-
-    &:hover{
-      box-shadow: none;
-    }
-  }
-
-  li:hover + li{
-    box-shadow: none;
   }
 
   .tile-list-tile{
@@ -199,15 +187,26 @@ h1{
     padding: .75rem;
     text-decoration: none;
     border-radius: 6px;
-    transition: background .2s ease;
 
-    &:hover{
-      background: var(--gray-3);
-    }
+    &[href] {
+      transition: background .2s ease;
 
-    &:active{
-      background: var(--gray-4);
+      &:hover{
+        background: var(--gray-3);
+      }
+
+      &:active{
+        background: var(--gray-4);
+      }
     }
+  }
+
+  li:has(> a.tile-list-tile:hover) {
+    box-shadow: none;
+  }
+
+  li:has(> a.tile-list-tile:hover) + li {
+    box-shadow: none;
   }
 
   .title{
@@ -230,7 +229,7 @@ h1{
 
 @media (min-width: 768px) {
   body > main{
-    max-width: 736px;
+    max-width: 680px;
   }
 
   html{

@@ -6,6 +6,7 @@ import Layout from '../layouts/Generic.astro';
 import Ivo from '../assets/images/ivo.png';
 import IvoAntonia from '../assets/images/ivo-antonia.jpg';
 import Hanglage from '../assets/images/hanglage.png';
+import Telary from '../assets/images/telary.png';
 ---
 
 <Layout
@@ -14,12 +15,10 @@ import Hanglage from '../assets/images/hanglage.png';
 >
 
   <p class="intro">
-    I'm a self-taught design engineer with 15 years of experience in the industry. Currently, I'm leading design at Everchron and running my own design studio, Telary. When I'm not crafting digital experiences, you'll find me designing my dream home, tinkering with my homelab, or immersed in a good game.
+    I'm a self-taught design engineer with 15 years of industry experience. I lead design at Everchron and run my own studio, Telary. Outside of work, I'm designing my dream home or tinkering with my homelab.
   </p>
 
   <hr>
-
-  <h2>The Extended Version</h2>
 
   <aside class="right">
     <figure>
@@ -37,9 +36,7 @@ import Hanglage from '../assets/images/hanglage.png';
     Born in 1992 in Germany, I grew up alongside the internet, which shaped my perspective and career path. My journey in design began as a self-taught enthusiast, evolving into a 15-year career that has seen me tackle challenges across various sectors of the industry. My professional journey has instilled in me a deep appreciation for continuous learning of new technologies. In an industry that never stands still, I believe in staying curious, embracing challenges, and always being ready to evolve. This mindset has been crucial in navigating the complexities of leading design teams, running a studio, and pursuing personal projects and financial freedom.
   </p>
 
-  <p>
-    For over a decade, I've been leading design at <a href="https://everchron.com" target="_blank">Everchron</a>, steering our visual direction and user experience. Simultaneously, I've nurtured my own creative outlet through <a href="https://telary.studio" target="_blank">Telary Studio</a>, where I continue to push the boundaries of design and collaborate with clients of all sizes.
-  </p>
+  <h2>Personal</h2>
 
   <aside class="left">
     <figure>
@@ -68,7 +65,7 @@ import Hanglage from '../assets/images/hanglage.png';
       <figcaption>Building our dream home at <a href="https://hanglage-no8.de" target="_blank">Hanglage No. 8</a></figcaption>
     </figure>
   </aside>
-
+  
   <p>
     Beyond the world of pixels and code, I'm an avid homelabber. It allows me to stay connected to my roots of growing up with technology, constantly learning and experimenting with new systems and setups. It's a perfect blend of my professional skills and personal interests, keeping me on my toes in the ever-evolving tech landscape.
   </p>
@@ -77,28 +74,29 @@ import Hanglage from '../assets/images/hanglage.png';
     As I continue to grow both professionally and personally, I'm excited about the possibilities that lie ahead. Whether it's pushing the boundaries of design, creating our perfect home, or diving into new technological adventures, I approach each day with enthusiasm and a readiness to learn.
   </p>
 
-  <hr>
+  <h2>Work</h2>
 
-  <h2>Find me elsewhere</h2>
+  <p>
+    For over a decade, I've been leading design at Everchron, steering our visual direction and user experience. Simultaneously, I've nurtured my own creative outlet through Telary Studio, where I continue to push the boundaries of design and collaborate with clients of all sizes.
+  </p>
 
-  <ul class="tile-list">
-    <li>
-      <a href={MASTODON_URL} target="_blank" class="tile-list-tile">
-        <span class="title">Mastodon</span>
-        <span class="meta">{MASTODON_HANDLE}</span>
-      </a>
-    </li>
-    <li>
-      <a href={X_URL} target="_blank" class="tile-list-tile">
-        <span class="title">X (formerly Twitter)</span>
-        <span class="meta">{X_HANDLE}</span>
-      </a>
-    </li>
-    <li>
-      <a href={`mailto:${EMAIL}`} class="tile-list-tile">
-        <span class="title">Personal Email</span>
-        <span class="meta">{EMAIL}</span>
-      </a>
-    </li>
-  </ul>
+  <aside class="left">
+    <figure>
+      <Image
+        src={Telary}
+        alt="Telary Studio Website"
+        widths={[260, 540, 720, 960, 1200]}
+        sizes={`(max-width: 320px) 300px, (max-width: 540px) 90vw, (max-width: 768px) 260px, (max-width: 1024px) 260px, 260px`}
+      />
+      <figcaption>I'm running my own studio, over at <a href="https://telary.studio" target="_blank">Telary Studio</a></figcaption>
+    </figure>
+  </aside>
+
+  <p>
+    My work style is characterized by versatility and adaptability. I seamlessly transition between designing, coding, and acting as a bridge between design and development teams. This multifaceted approach has allowed me to gain a holistic understanding of the product development process.
+  </p>
+
+  <p>
+    Throughout my career, I've honed my project management skills by running my own business, learning to juggle various responsibilities efficiently. My freelance experience has been particularly diverse, collaborating with both fledgling startups and globally established firms. This range has given me a unique perspective on how to scale design solutions and adapt to different organizational structures and needs. Whether it's crafting pixel-perfect designs, writing clean code, or managing complex projects, I bring a comprehensive skill set to every role I take on.
+  </p>
 </Layout>

@@ -3,6 +3,7 @@
   line-height: 1.8rem;
   font-weight: 400;
   color: var(--gray-12);
+  font-family: var(--font-family-serif);
 
   > *:first-child{
     margin-top: 0;
@@ -101,10 +102,10 @@
 @media (min-width: 540px){
   .md{
     aside{
-      width: 280px;
-    user-select: none;
-    padding: .75rem;
-    background: var(--gray-3);
+      width: 220px;
+      user-select: none;
+      padding: .6rem;
+      background: var(--gray-3);
 
     &.right{
       float: right;
@@ -121,9 +122,12 @@
   }
 }
 
-@media (min-width: 980px){
+@media (min-width: 1024px){
   .md{
     aside{
+      padding: .75rem;
+      width: 280px;
+
       &.right{
         margin: 2rem -4rem 2rem 2rem;
       }
@@ -135,7 +139,7 @@
   }
 }
 
-@media (min-width: 1360px){
+@media (min-width: 1320px){
   .md{
     aside{
       &.right{
@@ -149,7 +153,7 @@
   }
 }
 
-@media (min-width: 1480px){
+@media (min-width: 1440px){
   .md{
     aside{
       &.right{
