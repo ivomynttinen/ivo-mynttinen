@@ -12,11 +12,10 @@
 - [x] Create About page
 - [ ] Review and update legal pages (Privacy Policy, Terms of Service)
 - [ ] Add meta descriptions to all pages
-- [ ] Implement Open Graph tags on all pages
+- [x] Implement Open Graph tags on all pages
 - [ ] Create and add Open Graph image for social sharing
 - [ ] Run Lighthouse audit on each page
 - [ ] Analytics
-- [ ] Colophon
 - [x] Favicon
 
 - [ ] Test all internal and external links

@@ -9,12 +9,12 @@ import '../styles/markdown.scss';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, category, heroImage } = Astro.props;
+const { title, description, pubDate, category, heroImage, ogImage } = Astro.props;
 ---
 
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} />
+    <BaseHead title={title} description={description} image={ogImage?.src} />
   </head>
 
   <body>
