@@ -1,12 +1,12 @@
 # Website Launch Checklist
 
-- [ ] Generate and submit sitemap
-- [ ] Set up 301 redirects for old URLs
-- [ ] Styling
-  - [ ] Blog post styling
-  - [ ] Blog post list styling
+- [x] Generate and submit sitemap
+- [x] Set up 301 redirects for old URLs
+- [x] Styling
+  - [x] Blog post styling
+  - [x] Blog post list styling
 - [ ] Write and publish blog posts
-  - [ ] Launch announcement post
+  - [x] Launch announcement post
   - [ ] Tools and Software post
   - [ ] Setup post
 - [x] Create About page

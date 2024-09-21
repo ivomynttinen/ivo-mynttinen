@@ -1,0 +1,85 @@
+---
+title: 'A fresh start'
+description: 'Once again I‘ve rebuilt my website from the ground up. This website has now become my personal playground, while the business side of things moved over to its own site.'
+pubDate: '2024-09-21'
+highlight: false
+category: 'site'
+---
+
+import { Image } from 'astro:assets';
+import Telary from '../../assets/images/telary.png';
+import MarkdownEditing from './a-fresh-start/markdown-editing.png';
+
+## Reinventing My Personal Space Online
+
+For the past 14 years, this website has been my professional showcase — a carefully curated portfolio of design projects aimed at potential clients. But as with all things in life, change is inevitable and often necessary for growth. Today, I'm excited to announce a significant shift in the purpose and content of this space.
+
+### Splitting Personal and Professional
+
+<aside class="left">
+  <figure>
+    <Image
+      src={Telary}
+      alt="Telary Studio Website"
+      widths={[260, 540, 720, 960, 1200]}
+      sizes={`(max-width: 320px) 300px, (max-width: 540px) 90vw, (max-width: 768px) 260px, (max-width: 1024px) 260px, 260px`}
+    />
+    <figcaption>I'm running my own studio, over at <a href="https://telary.studio" target="_blank">Telary Studio</a></figcaption>
+  </figure>
+</aside>
+
+The biggest change is the separation of my personal and professional online presence. With the launch of Telary Studio, my design agency, I've moved my professional portfolio to a newly built website dedicated to the agency's work. This transition has opened up an exciting opportunity: the chance to transform this site into a truly personal space.
+
+### Retiring the Old, Embracing the New
+
+One of the challenges I've faced over the years was maintaining a consistent blog presence on my professional site. The constraint of focusing primarily on design, tech, and business topics often left me struggling to find the right content to share. Now, with this personal platform, I'm free to explore and write about all aspects of life that inspire and move me.
+
+<aside class="right">
+  #### Flexible Content Formats
+
+  One of the challenges I've faced with blogging in the past was the self-imposed pressure to write lengthy, polished articles for every post. This approach, while great for in-depth topics, often made the act of writing feel more like a chore than a joy.
+  
+  It's time to break free from that constraint. Moving forward, this blog will feature a mix of content formats: comprehensive articles, brief updates, quick thoughts, and even simple media shares.
+  
+  You'll notice this diversity reflected in the blog index, where some entries might be standalone snippets or short notes that don't link to a full article.
+</aside>
+
+In light of this new direction, I've made the decision to retire my old blog completely. Many of the articles had become outdated, and rather than trying to update or repurpose them, I'm embracing the opportunity to start from scratch. This clean slate is both liberating and invigorating.
+
+### The Changing Landscape of Online Design Communities
+
+A few years ago, Twitter was my go-to platform to talk design, share ideas, and engage in vibrant discussions in the design community. It was a thriving ecosystem where one could find inspiration, learn from peers, and stay updated on industry trends. However, the landscape has shifted dramatically in recent times.
+
+Today, most platforms have devolved into a space dominated by design hustlers, interaction farming, and rage bait. The quality of discussions has deteriorated, and it no longer feels like the nurturing community it once was. This change has led to a fragmentation of the design community, with many creatives seeking alternative spaces to connect and share.
+
+Some have migrated to Mastodon, others to Bluesky, and many, like myself, have found themselves spread across multiple platforms. This dispersion has made it challenging to maintain a cohesive presence and keep up with meaningful conversations in the field.
+
+### Reclaiming Control of My Online Presence
+
+The fragmentation of online design communities has reinforced the importance of having a personal space on the internet. There's no longer a single, dominant platform where all the important discussions are happening. This realization has led me to prioritize my own website as the primary hub for my thoughts, ideas, and interactions.
+
+By focusing on creating content for my personal site, I can ensure that my voice isn't lost in the noise of social media algorithms. It allows me to maintain control over my content, present it in a context that truly represents me, and build a direct connection with those who are interested in my work and ideas.
+
+
+## How I Built This Site
+
+Technically speaking, this site represents a departure from my previous setup. I've bid farewell to Kirby CMS, which served me well for many iterations of my website. For this simpler, more personal space, I've opted for [Astro](https://astro.build/), a modern static site generator.
+
+<Image
+  src={MarkdownEditing}
+  alt="Markdown editing of a blog post"
+  widths={[320, 640, 960, 1024, 1360]}
+  sizes={`(max-width: 320px) 300px, (max-width: 540px) 90vw, (max-width: 768px) 90vw, (max-width: 1024px) 680px, 680px`}
+/>
+
+Here are some key features of the new setup:
+
+- Content is written in Markdown, allowing for easy editing and version control
+- [Sharp](https://sharp.pixelplumbing.com/) automatically generates responsive images in multiple resolutions and dimensions, converting them to the efficient WebP format
+- The site is hosted on [Manitu](https://www.manitu.de/), where I've consolidated all my web projects for simplified management
+
+## Conclusion
+
+This reinvention of my personal website marks an exciting new chapter. It's a space where I can share thoughts, experiences, and interests without the constraints of professional expectations. I'm looking forward to exploring topics that truly resonate with me and hopefully connecting with like-minded individuals along the way.
+
+As I embark on this fresh start, I invite you to join me on this journey. Whether you're interested in design, technology, or simply the musings of a fellow human navigating life, I hope you'll find something here that speaks to you.

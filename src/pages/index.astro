@@ -71,9 +71,14 @@ const posts = (await getCollection('blog')).sort(
               <li>
                 <a href={`/blog/${post.slug}/`} class="tile-list-tile">
                   <h3 class="title">{post.data.title}</h3>
-                  <time datetime={new Date(post.data.pubDate).toISOString()} class="meta">
-                    {new Date(post.data.pubDate).getFullYear()}
-                  </time>
+                  <span class="meta">
+                    <span>
+                      {post.data.category}
+                    </span> ~ 
+                    <time datetime={new Date(post.data.pubDate).toISOString()}>
+                      {new Date(post.data.pubDate).getFullYear()}
+                    </time>
+                  </span>
                 </a>
               </li>
             ))

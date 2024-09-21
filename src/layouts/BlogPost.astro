@@ -4,13 +4,12 @@ import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
 
 import '../styles/markdown.scss';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, category, heroImage } = Astro.props;
 ---
 
 <html lang="en">
@@ -34,16 +33,36 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
           </div>
         )}
         <div class="title">
-          <div class="date">
-            <FormattedDate date={pubDate} />
-            {
-              updatedDate && (
-                <div class="last-updated-on">
-                  Last updated on <FormattedDate date={updatedDate} />
-                </div>
-              )
-            }
-          </div>
+          <span class="meta">
+            <time datetime={pubDate.toISOString()}>
+              {(() => {
+                const now = new Date();
+                const diff = now.getTime() - pubDate.getTime();
+                const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+
+                const minute = 60 * 1000;
+                const hour = 60 * minute;
+                const day = 24 * hour;
+                const month = 30 * day;
+                const year = 365 * day;
+
+                if (diff < month) {
+                  return rtf.format(-Math.round(diff / day), 'day');
+                } else if (diff < year) {
+                  return rtf.format(-Math.round(diff / month), 'month');
+                } else {
+                  return new Intl.DateTimeFormat('en', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }).format(pubDate);
+                }
+              })()}
+            </time>
+            <span class="category">
+              in <span class="tag">{category}</span>
+            </span>
+          </span>
           <h1>{title}</h1>
         </div>
         <slot />
@@ -70,6 +89,24 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 
   .title {
     margin: 1rem 0 2rem 0;
+
+    h1{
+      margin-top: .5rem;
+    }
+  }
+
+  .meta{
+    font-family: var(--font-family-mono);
+    text-transform: uppercase;
+    font-size: .875rem;
+    color: var(--gray-10);
+  }
+
+  .tag{
+    padding: 2px 6px;
+    background: var(--gray-3);
+    border-radius: 6px;
+    color: var(--gray-11);
   }
 
   .date{

@@ -10,7 +10,7 @@ const blog = defineCollection({
     heroImage: image().optional(),
     highlight: z.boolean().optional(),
     plain: z.boolean().optional(),
-    category: z.enum(['general', 'archived', 'tech', 'design', 'code', 'life']).default('general'),
+    category: z.enum(['general', 'archived', 'tech', 'design', 'code', 'life', 'site']).default('general'),
   }),
 });
 
