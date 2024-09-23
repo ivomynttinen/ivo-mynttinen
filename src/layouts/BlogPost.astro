@@ -9,7 +9,7 @@ import '../styles/markdown.scss';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, category, heroImage, ogImage } = Astro.props;
+const { title, description, pubDate, category, heroImage, ogImage, plain } = Astro.props;
 ---
 
 <html lang="en">
@@ -65,7 +65,11 @@ const { title, description, pubDate, category, heroImage, ogImage } = Astro.prop
           </span>
           <h1>{title}</h1>
         </div>
-        <slot />
+        {plain ? (
+          <div class="description" set:html={description}></div>
+        ) : (
+          <slot />
+        )}
       </article>
     </main>
     <Footer />

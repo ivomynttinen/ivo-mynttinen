@@ -11,7 +11,7 @@ const blog = defineCollection({
     ogImage: image().optional(),
     highlight: z.boolean().optional(),
     plain: z.boolean().optional(),
-    category: z.enum(['general', 'archived', 'tech', 'design', 'code', 'life', 'site']).default('general'),
+    category: z.enum(['general', 'archived', 'tech', 'design', 'code', 'life', 'site', 'travel', 'business']).default('general'),
   }),
 });
 
