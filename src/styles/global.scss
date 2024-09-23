@@ -196,7 +196,7 @@ h1{
   }
 
   &.highlight{
-    background: var(--yellow-3);
+    background: var(--yellow-2);
     border: 1px solid transparent;
 
     &[href] {
@@ -207,7 +207,7 @@ h1{
       }
 
       &:active{
-        background: var(--yellow-3);
+        background: var(--yellow-2);
         border: 1px solid var(--yellow-5);
       }
     }
