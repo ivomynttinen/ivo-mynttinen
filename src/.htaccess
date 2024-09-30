@@ -170,3 +170,6 @@ Header set Cache-Control "max-age=7200, must-revalidate"
   </IfModule> 
   FileETag None 
 </IfModule>
+
+# Custom 404 Error Page
+ErrorDocument 404 /404.html
