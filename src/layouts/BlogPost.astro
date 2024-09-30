@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import MatomoTracking from '../components/MatomoTracking.astro';
 
 import '../styles/markdown.scss';
 
@@ -15,6 +16,7 @@ const { title, description, pubDate, category, heroImage, ogImage, plain } = Ast
 <html lang="en">
   <head>
     <BaseHead title={title} description={description} image={ogImage?.src} />
+    <MatomoTracking />
   </head>
 
   <body>

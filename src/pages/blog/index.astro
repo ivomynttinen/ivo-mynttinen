@@ -6,7 +6,7 @@ import { Image } from 'astro:assets';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
-
+import MatomoTracking from '../../components/MatomoTracking.astro';
 // Get all blog posts
 const allPosts = await getCollection('blog');
 
@@ -29,6 +29,7 @@ const sortedArchivedPosts = archivedPosts.sort(
 <html lang="en">
   <head>
     <BaseHead title='Ivo Mynttinen’s Blog' description='This is where I write about things I find interesting, and little updates about my life.This is where I write about things I find interesting, and little updates about my life.' />
+    <MatomoTracking />
   </head>
   <body>
     <Header />
