@@ -10,7 +10,7 @@ import HeaderLink from './HeaderLink.astro';
       </svg>
     </a>
     <div class="internal-links">
-      <HeaderLink href="/">Home</HeaderLink>
+      <HeaderLink href="/" class="home">Home</HeaderLink>
       <HeaderLink href="/blog">Writing</HeaderLink>
       <HeaderLink href="/about">About</HeaderLink>
     </div>
@@ -31,7 +31,35 @@ import HeaderLink from './HeaderLink.astro';
 </header>
 
 <script>
+  function updateActiveLink() {
+    const navLinks = document.querySelectorAll(".internal-links a");
+    const currentPath = window.location.pathname.slice(1).split("/");
+
+    navLinks.forEach((link) => {
+      link.classList.remove("active");
+    });
+
+    if (currentPath.length === 0 || (currentPath.length === 1 && currentPath[0] === "")) {
+      navLinks.forEach((link) => {
+        if (link.classList.contains("home")) {
+          link.classList.add("active");
+        }
+      });
+    } else {
+      navLinks.forEach((link) => {
+        const hrefArray = link.href.split("/");
+        const isActive = currentPath[0] === hrefArray[hrefArray.length - 1];
+
+        if (isActive) {
+          link.classList.add("active");
+        }
+      });
+    }
+  }
+
   document.addEventListener('astro:page-load', () => {
+    updateActiveLink();
+
     const theme = (() => {
       if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
         return localStorage.getItem("theme");
@@ -63,6 +91,8 @@ import HeaderLink from './HeaderLink.astro';
       themeToggle.addEventListener("click", handleToggleClick);
     }
   });
+
+  document.addEventListener('astro:after-swap', updateActiveLink);
 </script>
 
 <style lang="scss" scoped>
