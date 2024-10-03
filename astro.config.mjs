@@ -9,6 +9,7 @@ export default defineConfig({
   trailingSlash: 'ignore',
   build: {
     inlineStylesheets: 'always',
+    format: 'directory'
   },
   integrations: [
     mdx(),

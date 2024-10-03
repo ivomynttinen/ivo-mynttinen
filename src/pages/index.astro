@@ -11,8 +11,6 @@ import IconTelary from '../assets/images/telary-logo.svg';
 import IconHanglage from '../assets/images/hanglage-logo.png';
 import IconEverchron from '../assets/images/everchron-logo.svg';
 
-import OgImage from '../assets/images/og-image.png';
-
 const posts = (await getCollection('blog')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 ).slice(0, 5);
@@ -25,7 +23,7 @@ const posts = (await getCollection('blog')).sort(
     <MatomoTracking />
   </head>
   <body>
-    <Header />
+    <Header activePath="home" />
     <main>
       <section>
         <h1>
@@ -73,7 +71,7 @@ const posts = (await getCollection('blog')).sort(
           {
             posts.filter(post => !post.data.plain).map((post) => (
               <li>
-                <a href={`/blog/${post.slug}/`} class="tile-list-tile">
+                <a href={`/blog/${post.slug}`} class="tile-list-tile">
                   <h3 class="title">{post.data.title}</h3>
                   <span class="meta">
                     <span>

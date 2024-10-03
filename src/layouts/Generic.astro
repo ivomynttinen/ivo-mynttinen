@@ -6,7 +6,7 @@ import MatomoTracking from '../components/MatomoTracking.astro';
 
 import '../styles/markdown.scss';
 
-const { title, description } = Astro.props;
+const { title, description, activePath } = Astro.props;
 ---
 
 <html lang="en">
@@ -16,7 +16,7 @@ const { title, description } = Astro.props;
   </head>
 
   <body>
-    <Header />
+    <Header activePath={activePath} />
     <main class="layout-generic">
       <article class="md">
         <h1>{title}</h1>
