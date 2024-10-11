@@ -30,6 +30,14 @@
     margin: 2rem 0 1.25rem;
   }
 
+  h4{
+    font-size: 1rem;
+    line-height: 1.25rem;
+    font-weight: 700;
+    font-family: var(--font-family-syne);
+    margin: 2rem 0 .875rem;
+  }
+
   p, ul, ol, blockquote, img, table{
     margin: 1.25rem 0;
   }
@@ -38,15 +46,31 @@
     margin-left: .625rem;
   }
 
-  ul:not(.tile-list) li{
+  ul:not(.tile-list) li {
     list-style: '✲';
     padding-left: .75rem;
     margin-bottom: .5rem;
     
-    &::marker{
+    &::marker {
       color: var(--gray-8);
       font-family: var(--font-family-mono);
       text-indent: -0.05rem;
+    }
+  }
+
+  ol:not(.tile-list){
+    margin-left: 2rem;
+  }
+
+  ol li {
+    padding-left: 0;
+    margin-bottom: .5rem;
+    
+    &::marker {
+      color: var(--gray-8);
+      font-family: var(--font-family-mono);
+      font-size: 1rem;
+      font-weight: 600;
     }
   }
 
@@ -78,16 +102,57 @@
     }
   }
 
-  p > img,
-  img{
-    margin: 0;
+  img,
+  figure{
+    margin: 2.5rem 0;
     max-width: 100%;
     height: auto;
     display: block;
   }
 
+  figure > img,
+  p > img{
+    margin: 0;
+  }
+
+  figure > figcaption{
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 400;
+    font-family: var(--font-family-syne);
+    color: var(--gray-11);
+    margin: 0.5rem 0 0;
+  }
+
   hr{
     margin: 3rem 0;
+  }
+
+  table{
+    width: 100%;
+    font-size: 1rem;
+    line-height: 1.25rem;
+    font-feature-settings: "zero" 1, "tnum" 1;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+
+    th{
+      font-weight: 600;
+      text-align: left;
+      border-bottom: 1px solid var(--gray-6);
+    }
+
+    td{
+      border-bottom: 1px solid var(--gray-4);
+    }
+
+    th, td{
+      padding: .5rem 1rem .5rem 0;
+    }
+
+    th:last-child, td:last-child{
+      padding-right: 0;
+    }
   }
 
   aside{
