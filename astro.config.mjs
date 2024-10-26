@@ -17,5 +17,15 @@ export default defineConfig({
   ],
   devToolbar: {
     enabled: false
-  }
+  },
+  markdown: {
+    shikiConfig: {
+      themes: {
+        light: 'rose-pine-dawn',
+        dark: 'rose-pine',
+      },
+      // Enable word wrap to prevent horizontal scrolling
+      wrap: true
+    },
+  },
 });

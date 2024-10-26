@@ -1,0 +1,143 @@
+---
+title: 'Extracting a color value from a gradient by rating'
+description: 'Two quick ways to extract a single color value by a given percentage from a gradient.'
+pubDate: '2024-10-26'
+highlight: false
+category: 'code'
+ogImage: '../../assets/blog/get-a-color-value-by-percentage-from-gradient/og-image.png'
+---
+
+import { Image } from 'astro:assets';
+import exampleHTML from '../../assets/blog/get-a-color-value-by-percentage-from-gradient/example.html?raw';
+import exampleColorFunctionHTML from '../../assets/blog/get-a-color-value-by-percentage-from-gradient/example-color-function.html?raw';
+import figureTextMask from '../../assets/blog/get-a-color-value-by-percentage-from-gradient/color-from-gradient-css-background-clip.png';
+
+## The Problem
+
+I recently needed a simple way to show a rating number, with the text colored based on the rating value. This had to support various scales (eg. 1-10, 1-4, percentages, etc.) and different color themes. In order to keep the code base lightweight, I did not want to import another package (like Chroma.js or d3.js) to get this done.
+
+
+## Solution 1: Text masking a large CSS Gradient
+
+The initial idea that came to mind was to use a CSS gradient, calculate a `background-position` based on the percentage of the rating and then apply `background-clip: text` to apply a mask to the linear gradient.
+
+<figure>
+  <Image
+    src={figureTextMask}
+    alt="Applying a CSS gradient to a text element with background-clip: text."
+    widths={[320, 640, 960, 1024, 1360]}
+    sizes="(max-width: 320px) 300px, (max-width: 540px) 90vw, (max-width: 768px) 90vw, (max-width: 1024px) 680px, 680px"
+  />
+  <figcaption>Applying a CSS gradient to a text element with background-clip: text to mask the gradient.</figcaption>
+</figure>
+
+```html
+<div class="rating-text" id="ratingText">8</div>
+```
+
+```css
+.rating-text {
+  font-size: 48px;
+  line-height: 48px;
+  font-weight: bold;
+  background: linear-gradient(to right, #08AF5C, #E9A032, #ED223C);
+  background-size: 10000% 100%;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  transition: background-position .1s ease;
+  display: inline-block;
+}
+```
+
+```js
+function updateRating(rating, maxRating = 10) {
+  const percentage = (rating / maxRating) * 100;
+  const ratingText = document.getElementById('ratingText');
+  ratingText.style.backgroundPosition = `${100 - percentage}% 0`;
+  ratingText.textContent = rating.toString();
+}
+
+updateRating(8);
+```
+
+<div set:html={exampleHTML} class="example" />
+
+<aside class="right">
+  #### Colors in data visualizations
+
+  Colors play a crucial role in data visualization, serving two main purposes: setting the mood and guiding the viewer's attention. When choosing colors, it's important to consider whether your data is continuous (requiring color gradients) or categorical (needing distinctive colors). For gradients, ensure sufficient contrast between steps. For distinctive colors, aim for harmony and appeal. Always check for colorblind accessibility and readability.
+</aside>
+
+The issues with this approach are relatively obvious:
+
+- This only works for text. If we want to use the color value for other styling purposes, we can't use the mask approach.
+- Even though we are using CSS to create a hacky solution, it's not pure CSS. It would be possible to hard-code certain background-positions for common scales (like 1-10), but it's not the flexible solution I was looking for. If we need to use Javascript to set the background-position, we might as well just build a proper solution directly.
+- In my situation, I wanted this to work with <span title="Engine to convert HTML to PDF in web applications" class="tooltip">PDFReactor</span>, which would occasionally rasterize the text when masked, increasing the file size of the exported PDF.
+
+
+## Solution 2: Extracting the color value from the gradient
+
+What we really want is a single HEX (or else) color value, based on the percentage of the gradient. The gradient needs to support multiple color stops, instead of just two.
+
+Here is a simple helper function that finds the color value of a given percentage from a list of provided colors, and returns the interpolated color value as a HEX string:
+
+```js
+function getGradientColor(colors, percentage) {
+  // Clamp percentage between 0 and 100
+  percentage = Math.max(0, Math.min(100, percentage));
+  
+  // If there's only one color, return it
+  if (colors.length === 1) return colors[0];
+  
+  // Find the two colors to interpolate between
+  const index = (colors.length - 1) * percentage / 100;
+  const i = Math.floor(index);
+  const t = index - i;
+  
+  const color1 = colors[i];
+  const color2 = colors[Math.min(i + 1, colors.length - 1)];
+  
+  // Interpolate between the two colors
+  const rgb = [0, 1, 2].map(j => {
+    const c1 = parseInt(color1.slice(1 + j * 2, 3 + j * 2), 16);
+    const c2 = parseInt(color2.slice(1 + j * 2, 3 + j * 2), 16);
+    return Math.round(c1 * (1 - t) + c2 * t);
+  });
+  
+  // Convert RGB to hex
+  return '#' + rgb.map(c => c.toString(16).padStart(2, '0')).join('');
+}
+```
+
+With that, we can now apply the color value to text, or as a background-color, etc. to any element.
+
+```html
+<div id="importanceDiv" class="importance">
+  <span id="importanceValue">43</span>
+  <span>Importance</span>
+</div>
+```
+
+```js
+const importanceDiv = document.getElementById('importanceDiv');
+const importanceValue = document.getElementById('importanceValue');
+
+function updateImportance() {
+  const value = parseInt(importanceValue.textContent, 10);
+  const color = getGradientColor(['#A7CFFF', '#0045B2'], value);
+  importanceDiv.style.color = color;
+}
+
+updateImportance();
+```
+
+<div set:html={exampleColorFunctionHTML} class="example" />
+
+While both solutions offer ways to represent a rating or value using colors from a gradient, this approach of extracting the actual color value proves to be more versatile and practical. By calculating the interpolated color directly, we gain several advantages:
+
+- The color value can be applied to any CSS property, not just text.
+- It works across different rendering engines and export formats without issues.
+- The solution is lightweight and doesn't rely on complex CSS tricks or large external libraries.
+
+This method provides a robust foundation for creating dynamic, color-based visualizations in various contexts, from web applications to data representations in exported documents.

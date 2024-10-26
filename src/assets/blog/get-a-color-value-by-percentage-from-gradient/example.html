@@ -1,0 +1,52 @@
+<style>
+  .rating-text {
+      font-size: 48px;
+      line-height: 48px;
+      font-weight: bold;
+      background: linear-gradient(to right, #08AF5C, #E9A032, #ED223C);
+      background-size: 10000% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-fill-color: transparent;
+      transition: background-position .1s ease;
+      display: inline-block;
+  }
+
+  .code-example {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      margin: 2rem 0;
+      border: 1px solid var(--gray-4);
+      padding: 1.5rem;
+      border-radius: 6px;
+  }
+
+  input[type="range"] {
+      width: 300px;
+  }
+</style>
+
+<div class="code-example">
+  <div class="rating-text" id="ratingText">8</div>
+  <input type="range" id="ratingSlider" min="0" max="10" step="1" value="8">
+</div>
+
+<script>
+  function updateRating(rating, maxRating = 10) {
+      const percentage = (rating / maxRating) * 100;
+      const ratingText = document.getElementById('ratingText');
+      ratingText.style.backgroundPosition = `${100 - percentage}% 0`;
+      ratingText.textContent = rating.toString();
+  }
+
+  const ratingSlider = document.getElementById('ratingSlider');
+  ratingSlider.addEventListener('input', function() {
+      updateRating(parseInt(this.value, 10));
+  });
+
+  // Initialize with the default value
+  updateRating(8);
+</script>

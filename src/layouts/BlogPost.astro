@@ -11,11 +11,13 @@ import '../styles/markdown.scss';
 type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, category, heroImage, ogImage, plain } = Astro.props;
+
+const ogImageToUse = ogImage?.src || heroImage?.src || undefined;
 ---
 
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} image={ogImage?.src} />
+    <BaseHead title={title} description={description} image={ogImageToUse} />
     <MatomoTracking />
   </head>
 

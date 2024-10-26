@@ -1,6 +1,6 @@
 ---
 import { ViewTransitions } from "astro:transitions";
-import ogImage from '../assets/images/og-image.png';
+import defaultOgImage from '../assets/images/og-image.png';
 
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
@@ -14,7 +14,10 @@ interface Props {
 
 const canonicalURL = new URL(Astro.url.pathname.replace(/\.html$/, ''), Astro.site);
 
-const { title, description, image = ogImage } = Astro.props;
+const { title, description, image } = Astro.props;
+
+// Determine the image to use
+const ogImageToUse = image || defaultOgImage.src;
 ---
 
 <meta charset="utf-8" />
@@ -33,13 +36,13 @@ const { title, description, image = ogImage } = Astro.props;
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={typeof image === 'string' ? new URL(image, Astro.url) : image.src} />
+<meta property="og:image" content={new URL(ogImageToUse, Astro.url)} />
 
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:url" content={Astro.url} />
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={typeof image === 'string' ? new URL(image, Astro.url) : image.src} />
+<meta property="twitter:image" content={new URL(ogImageToUse, Astro.url)} />
 
 <link rel="sitemap" href="/sitemap-index.xml" />
 

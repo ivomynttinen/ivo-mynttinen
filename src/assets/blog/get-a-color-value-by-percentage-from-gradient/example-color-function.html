@@ -1,0 +1,90 @@
+<style>
+  .importance{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .importance-label{
+    font-weight: bold;
+    font-size: .875rem;
+    line-height: .875rem;
+  }
+
+  #importanceValue {
+      font-size: 48px;
+      line-height: 48px;
+      font-weight: bold;
+      display: inline-block;
+  }
+
+  .code-example {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      margin: 2rem 0;
+      border: 1px solid var(--gray-4);
+      padding: 1.5rem;
+      border-radius: 6px;
+  }
+
+  input[type="range"] {
+      width: 300px;
+  }
+</style>
+
+<div class="code-example">
+  <div id="importanceDiv" class="importance">
+    <span id="importanceValue">43</span>
+    <span class="importance-label">Importance</span>
+  </div>
+  <input type="range" id="importanceSlider" min="0" max="100" step="1" value="43">
+</div>
+
+<script>
+  function getGradientColor(colors, percentage) {
+    // Clamp percentage between 0 and 100
+    percentage = Math.max(0, Math.min(100, percentage));
+    
+    // If there's only one color, return it
+    if (colors.length === 1) return colors[0];
+    
+    // Find the two colors to interpolate between
+    const index = (colors.length - 1) * percentage / 100;
+    const i = Math.floor(index);
+    const t = index - i;
+    
+    const color1 = colors[i];
+    const color2 = colors[Math.min(i + 1, colors.length - 1)];
+    
+    // Interpolate between the two colors
+    const rgb = [0, 1, 2].map(j => {
+      const c1 = parseInt(color1.slice(1 + j * 2, 3 + j * 2), 16);
+      const c2 = parseInt(color2.slice(1 + j * 2, 3 + j * 2), 16);
+      return Math.round(c1 * (1 - t) + c2 * t);
+    });
+    
+    // Convert RGB to hex
+    return '#' + rgb.map(c => c.toString(16).padStart(2, '0')).join('');
+  }
+
+  // Set up event listener for the slider
+  const importanceSlider = document.getElementById('importanceSlider');
+  const importanceDiv = document.getElementById('importanceDiv');
+  const importanceValue = document.getElementById('importanceValue');
+
+  function updateImportance() {
+    const value = importanceSlider.value;
+    importanceValue.textContent = value;
+    const color = getGradientColor(['#A7CFFF', '#0045B2'], value);
+    importanceDiv.style.color = color;
+  }
+
+  importanceSlider.addEventListener('input', updateImportance);
+
+  // Initial update
+  updateImportance();
+</script>

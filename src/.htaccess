@@ -12,6 +12,8 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_URI} !(.*)/$
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI}/ [L,R=301]
 
+Redirect 301 iosdesign.ivomynttinen.com https://ivomynttinen.com/blog/ios-design-guidelines/
+
 
 <IfModule mod_deflate.c>
 # Insert filters / compress text, html, javascript, css, xml:
