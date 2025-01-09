@@ -1,0 +1,114 @@
+---
+title: 'Batch compressing PDF files on Mac and Linux'
+description: 'A guide to locally compressing PDF files, featuring ready-to-use bash scripts for both single and batch processing.'
+pubDate: '2025-01-09'
+highlight: false
+category: 'code'
+heroCode: 'gs -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/${3:-"screen"} -dCompatibilityLevel=1.4 -sOutputFile="$2" "$1"'
+ogImage: '../../assets/blog/batch-compressing-pdf-files/og-image.png'
+---
+
+import { Image } from 'astro:assets';
+
+
+## The Problem
+
+As part of optimizing workflows at [Telary Studio](https://telary.studio), I've been improving various operational processes, including bookkeeping. I recently started using [Cakedesk](https://cakedesk.app/) to write proposals and invoices. One of its standout features is the ability to create fully custom PDF templates—perfect for maintaining a professional and branded appearance in client documents. However, I ran into a problem: the generated PDFs are extremely large due to embedded fonts and lack of image compression. This made sharing and archiving invoices cumbersome, so I set out to find a solution to batch compress these PDFs.
+
+Given the sensitivity of client data, uploading files to online "compress PDF" services was not an option. I needed a tool that would meet the following requirements:
+
+- **Fully local**: Ensures client data remains secure.
+- **Fast and reliable**: Handles large batches without issues or delays.
+- **Customizable**: Supports flexible settings for different compression needs.
+
+## Compressing PDF files with Ghostscript
+
+<aside class="left">
+  #### Installing Ghostscript
+
+  Ghostscript can be easily installed via Homebrew:
+
+  `brew install ghostscript`
+</aside>
+
+[Ghostscript](https://ghostscript.readthedocs.io/) could easily be called the "ffmpeg of PostScript and PDF." It's a powerful command-line utility that allows for extensive processing of PDF files, including compression. Its flexibility and local-first nature made it an ideal choice.
+
+### Compressing a Single PDF with Ghostscript
+
+To compress a single PDF file, you can use the following command:
+
+```bash
+gs -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/${3:-"screen"} -dCompatibilityLevel=1.4 -dDownsampleColorImages=true -dColorImageResolution=300 -dDownsampleGrayImages=true -dGrayImageResolution=300 -dDownsampleMonoImages=true -dMonoImageResolution=300 -sOutputFile="$2" "$1"
+```
+
+To avoid remembering all these parameters every time, I wrote a simple Bash script that can be saved into the `.zshrc` (or else) file to streamline the process:
+
+```bash
+# Usage: compresspdf [input file] [output file] [screen*|ebook|printer|prepress]
+
+compressPdf() {
+    gs -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH \
+        -dCompatibilityLevel=1.4 \
+        -dPDFSETTINGS=/${3:-"screen"} \
+        -dDownsampleColorImages=true -dColorImageResolution=300 \
+        -dDownsampleGrayImages=true -dGrayImageResolution=300 \
+        -dDownsampleMonoImages=true -dMonoImageResolution=300 \
+        -sOutputFile="$2" "$1"
+}
+```
+
+## Batch compressing multiple PDF files
+
+Since I usually just want to compress all PDF files in a folder, I created a simple script that can be run from the terminal to compress all PDF files in a folder. This script will create a new folder called `compressed_pdfs` in the same directory as the input folder and compress all PDF files in the input folder.
+
+```bash
+# Usage: compressPdfs [input_directory]
+
+compressPdfs() {
+  # Check if an input directory is provided
+  if [ -z "$1" ]; then
+      echo "Usage: compressPdfs <input_directory>"
+      return 1
+  fi
+
+  # Define input and output directories
+  local input_dir="$1"
+  local output_dir="${input_dir}/compressed_pdfs"
+
+  # Create the output directory if it doesn't exist
+  mkdir -p "$output_dir"
+
+  # Loop through all PDF files in the input directory
+  for input_file in "$input_dir"/*.pdf; do
+      # Check if any PDFs exist in the input directory
+      if [ ! -e "$input_file" ]; then
+          echo "No PDF files found in $input_dir."
+          return 1
+      fi
+
+      local base_name=$(basename "$input_file")
+      local output_file="${output_dir}/${base_name}"
+
+      # Run the Ghostscript command with corrected parameters
+      gs -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH \
+          -dCompatibilityLevel=1.4 \
+          -dPDFSETTINGS=/screen \
+          -dDownsampleColorImages=true -dColorImageResolution=300 \
+          -dDownsampleGrayImages=true -dGrayImageResolution=300 \
+          -dDownsampleMonoImages=true -dMonoImageResolution=300 \
+          -sOutputFile="$output_file" "$input_file" \
+      || echo "Failed to process $input_file"
+
+      # Feedback for each processed file
+      if [ -e "$output_file" ]; then
+          echo "Compressed $input_file -> $output_file"
+      else
+          echo "Error: Output not created for $input_file"
+      fi
+  done
+
+  echo "Processing completed. Check $output_dir for compressed PDFs."
+}
+```
+
+This batch script compresses 10 PDF files that are ~2MB each to ~100KB each, within just two seconds. Of course, the results vary and depend on the parameters used.

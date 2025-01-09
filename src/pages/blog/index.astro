@@ -46,6 +46,9 @@ const sortedArchivedPosts = archivedPosts.sort(
                 <div class={`tile post ${post.data.highlight ? 'highlight' : ''} plain`}>
                   <h2 class="title">{post.data.title}</h2>
                   <p class="description" set:html={post.data.description}></p>
+                  {post.data.heroCode && (
+                    <pre class="hero-code"><code>{post.data.heroCode}</code></pre>
+                  )}
                   {post.data.heroImage && (
                     <div class="hero-image">
                       <Image 
@@ -63,6 +66,9 @@ const sortedArchivedPosts = archivedPosts.sort(
                 <a href={`/blog/${post.slug}`} class={`tile post ${post.data.highlight ? 'highlight' : ''}`}>
                   <h2 class="title">{post.data.title}</h2>
                   <p class="description" set:html={post.data.description}></p>
+                  {post.data.heroCode && (
+                    <pre class="hero-code"><code>{post.data.heroCode}</code></pre>
+                  )}
                   {post.data.heroImage && (
                     <div class="hero-image">
                       <Image 
@@ -167,6 +173,13 @@ const sortedArchivedPosts = archivedPosts.sort(
     }
   }
 
+  .hero-code {
+    margin-top: 1rem;
+    white-space: pre-wrap;
+    font-size: 1rem;
+    color: var(--gray-8);
+  }
+
   :global(.date){
     margin-top: auto;
     color: var(--gray-10);
@@ -180,6 +193,10 @@ const sortedArchivedPosts = archivedPosts.sort(
 
     .description{
       color: var(--yellow-11);
+    }
+
+    .hero-code{
+      color: var(--yellow-8);
     }
 
     :global(.date){
