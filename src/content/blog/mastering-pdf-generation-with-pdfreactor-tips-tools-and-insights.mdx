@@ -1,0 +1,193 @@
+---
+title: "Mastering PDF Generation with PDFreactor: Tips, Tools, and Insights"
+description: "Learn how to leverage PDFreactor's advanced HTML-to-PDF conversion capabilities, with practical tips and best practices for creating professional-grade PDFs."
+pubDate: "2025-01-17"
+highlight: false
+category: "code"
+ogImage: "../../assets/blog/mastering-pdf-generation-with-pdfreactor-tips-tools-and-insights/og-image.png"
+---
+
+import { Image } from 'astro:assets';
+import PDFReactorInspector from '../../assets/blog/mastering-pdf-generation-with-pdfreactor-tips-tools-and-insights/pdfreactor-inspector.png';
+import PDFReactorFiddle from '../../assets/blog/mastering-pdf-generation-with-pdfreactor-tips-tools-and-insights/pdfreactor-fiddle.png';
+import PDFInspectorApp from '../../assets/blog/mastering-pdf-generation-with-pdfreactor-tips-tools-and-insights/pdf-inspector-app-macos.png';
+import PDFTooltipVideo from '../../assets/blog/mastering-pdf-generation-with-pdfreactor-tips-tools-and-insights/pdf-annotation-tooltips-on-hover.webm';
+import PDFAnnotationsInDifferentViewers from '../../assets/blog/mastering-pdf-generation-with-pdfreactor-tips-tools-and-insights/pdf-annotations-in-different-viewers.png';
+
+PDFreactor by RealObjects is an incredibly powerful engine for generating PDFs from HTML. It supports modern CSS, JavaScript, and goes beyond the capabilities of other libraries like jsPDF, Puppeteer, wkhtml, or pdfHTML. PDFreactor can generate PDFs at professional printing grade and create highly interactive PDFs, such as those containing forms and other interactive elements.
+
+While its versatility makes it a top-tier choice for PDF generation, there are some nuances and best practices to keep in mind when working with it. Having built numerous complex templates using PDFreactor, I am excited to share my learnings, tips, and tricks in this article.
+
+---
+
+## Documentation: Your Best Friend
+
+One of the first things to note about PDFreactor is its excellent documentation. The [official documentation](https://www.pdfreactor.com/resources/11.6.12/doc_html/index.html) is well-written, regularly updated, and indispensable for both beginners and seasoned developers.
+
+---
+
+## Essential Tools for Building and Debugging
+
+<aside class="right">
+  <figure>
+    <Image
+      src={PDFReactorInspector}
+      alt="PDFreactor Inspector"
+      widths={[260, 540, 720, 960, 1200]}
+      sizes={`(max-width: 320px) 300px, (max-width: 540px) 90vw, (max-width: 768px) 260px, (max-width: 1024px) 260px, 260px`}
+    />
+    <figcaption>PDFreactor Inspector allows to inspect any markup and CSS of the generated PDF</figcaption>
+  </figure>
+</aside>
+
+When working with PDFreactor, having the right tools can make the difference between frustration and seamless development. Here are three tools that are helpful when building and debugging PDF templates.
+
+### PDFreactor Inspector
+
+<aside class="right">
+  #### Caution
+
+  Only enable inspectableSettings in testing environments. It adds extra metadata to the generated PDF, which can inflate file size and leak sensitive information.
+</aside>
+
+
+
+Think of the [PDFreactor Inspector](https://developer.pdfreactor.com/inspector/index.html) as a web inspector for your PDF files. This tool allows you to debug the markup and CSS of generated PDF documents. By enabling the `inspectableSettings` option, you can explore the structure and styling of your PDF much like you would inspect a web page in a browser.
+
+### Fiddle for PDFreactor
+
+PDFreactor’s [Fiddle](https://developer.pdfreactor.com/fiddle/index.html) is basically a CodePen-like tool, but designed specifically for PDF templates. It allows you to:
+
+<aside class="left">
+  <figure>
+    <Image
+      src={PDFReactorFiddle}
+      alt="PDFreactor Fiddle"
+      widths={[260, 540, 720, 960, 1200]}
+      sizes={`(max-width: 320px) 300px, (max-width: 540px) 90vw, (max-width: 768px) 260px, (max-width: 1024px) 260px, 260px`}
+    />
+    <figcaption>PDFreactor Fiddle is a CodePen-like tool for PDF templates.</figcaption>
+  </figure>
+</aside>
+
+- Quickly prototype and test HTML/CSS for PDF generation.
+- Isolate issues in your templates.
+- Experiment with solutions in a controlled environment.
+
+### PDF Inspector App
+
+The [PDF Inspector App](https://apps.apple.com/de/app/pdf-inspector/id1497698069?mt=12) is extremely useful for advanced diagnostics and deep dives into the generated PDF file. Unlike the PDFreactor Inspector, this tool analyzes the actual PDF document tree rather than the HTML markup it's generated from. With the PDF Inspector App, you can explore the binary structure of the PDF and analyze various components like objects, fonts, images, and other resources within the file. This makes it invaluable for troubleshooting rendering issues by providing insight into how elements are structured in the final PDF document.
+
+<figure>
+  <Image
+    src={PDFInspectorApp}
+    alt="PDF Inspector App"
+    widths={[320, 640, 960, 1024, 1360]}
+    sizes={`(max-width: 320px) 300px, (max-width: 540px) 90vw, (max-width: 768px) 90vw, (max-width: 1024px) 680px, 680px`}
+  />
+  <figcaption>PDF Inspector App is a tool for advanced diagnostics and deep dives into the generated PDF file.</figcaption>
+</figure>
+
+---
+
+## Tips & Tricks for Effective Template Design
+
+### Avoid Cumulative Rasterized Elements
+
+Embedding rasterized image assets repeatedly can drastically increase PDF file sizes, particularly in multi-page documents. Although PDFreactor employs an internal caching mechanism to enhance generation performance, it does not help with reducing the final file size.
+
+- **Headers and Footers:** Avoid embedding rasterized images in repetitive elements like page headers and footers. These can significantly bloat file sizes in documents spanning many pages.
+- **Vector Graphics:** Leverage the full support for vector graphics in PDFs by using SVGs instead of rasterized images whenever possible. SVGs are resolution-independent and maintain smaller file sizes.
+- **CSS Limitations:** Be mindful of CSS properties like `box-shadow`. While PDFreactor converts many CSS-painted elements (e.g., gradients or borders) into vector layers, box-shadow elements are often rasterized, including their backgrounds. For example, a template spanning ~180 pages with repeated box-shadow elements resulted in a file size difference of 900MB versus 137KB. Utilize the [PDF Inspector App](#pdf-inspector-app) to diagnose such issues by examining embedded binary assets.
+
+### (Ab)using PDF Comments to show content on mouse hover or click
+
+PDF annotations can be leveraged to present additional information interactively, such as showing values for chart axis labels on hover, or displaying additional information on mouse hover of an icon. While this usage extends beyond traditional annotation purposes (which would be document review), it enables creative solutions for dynamic PDF functionality.
+
+<figure>
+  <video src={PDFTooltipVideo} controls autoplay loop muted></video>
+  <figcaption>PDF comments can be (ab)used to show additional content on mouse hover or click.</figcaption>
+</figure>
+
+During my experimentation with PDF comments, I discovered several challenges in achieving consistent visual representation across different PDF viewers. The idea was to use invisible rectangles or icons defined as comments, but this proved to be quite tricky to implement reliably.
+
+After extensive testing, I found that using `-ro-comment-style: underline` provides the best results for nearly hiding the comment indicator while allowing custom icons to be displayed instead. This approach offers the most consistent and visually pleasing solution among the various options I explored.
+
+```css
+.ro-comment{
+  /* Propertary PDFreactor comment properties */
+  -ro-comment-content: -ro-attr(text);
+  -ro-comment-style: underline;
+  -ro-comment-state: open;
+  -ro-comment-title: -ro-attr(author);
+
+  /* Size of the comment indicator */
+  width: 18pt;
+  height: 18pt;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9;
+
+  /* Required to overwrite the default comment background color. */
+  background-color: transparent !important; 
+  /* Position of the comment indicator. */
+  position: absolute;
+  left: 242pt;
+  top: 2pt;
+}
+```
+
+```html
+<span class="ro-comment"
+  text="This is the comment text. It does not support any special formatting, but line breaks are supported."
+  style="-ro-comment-color: #F2F">
+
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    ...
+  </svg>
+</span>
+```
+
+However, it's important to note that comment rendering varies significantly between PDF viewers:
+
+- Adobe Acrobat display these elements almost perfectly, maintaining proper positioning and respecting custom styling
+- Chrome's PDF viewer displays the icon position and marker correctly, but the expanded comment ignores the custom color settings and is for some reason exorbitantly large
+- Apple Preview, on the other hand, often misplaces the comments and may ignore custom color settings, leading to inconsistent user experiences
+
+<figure>
+  <Image
+    src={PDFAnnotationsInDifferentViewers}
+    alt="PDF comments in different PDF viewers"
+    widths={[320, 640, 960, 1024, 1360]}
+    sizes={`(max-width: 320px) 300px, (max-width: 540px) 90vw, (max-width: 768px) 90vw, (max-width: 1024px) 680px, 680px`}
+  />
+  <figcaption>Rendered output of the same `-ro-comment` in different PDF viewers, from left to right: Adobe Acrobat, Chrome, Apple Preview.</figcaption>
+</figure>
+
+These inconsistencies across PDF viewers make it crucial to test your implementation thoroughly across different platforms if you plan to use this technique in production.
+
+---
+
+## JavaScript Integration
+
+The integration of JavaScript in PDF templates offers unique challenges due to the static nature of the generated PDFs. PDFreactor 12.0.0 significantly improved JavaScript support by switching from Rhino to GraalJS, which complies with ECMAScript 2024 standards (could [not be said](https://mozilla.github.io/rhino/compat/engines.html#ES2015) for Rhino).
+
+### Implementation Differences compared to web development
+
+<aside class="right">
+  #### Need help?
+
+  At [Telary Studio](https://telary.studio), my team and I have deep expertise in building custom templates for PDFreactor and troubleshooting even the most complex issues. If you’re tackling a challenging project or need help optimizing your templates, we’d love to help.
+</aside>
+
+- **Execution Environment:** JavaScript in PDFs executes without browser-like interactions; only the final rendered result matters.
+- **Timeouts and Intervals:** The delays of `setTimeout` and `setInterval` are tied to virtual JavaScript processing time and do not delay conversion.
+- **Alerts and Dialogs:** These are logged instead of halting script execution.
+- **Debugging Logs:** Output the JavaScript "console" to the generated PDF as an appended page, or a separate text log file.
+- **DOM and SVG Limitations:** Access to elements within embedded SVGs and form elements is restricted. Coordinates retrieved via `getBoundingClientRect` are relative to their pages, potentially causing unexpected behavior.
+
+### Library & Framework Support
+
+- **Supported Libraries:** Frameworks like jQuery and Highcharts are reliable for use (even though it feels like traveling back to 2010). Modern frameworks such as Vue.js _should have_ improved support with PDFreactor 12.0.0.
+- **Awesomizr.js:** This utility simplifies tasks such as generating tables of contents, adaptive page breaks, and rotating table headers, enhancing efficiency during template design.
