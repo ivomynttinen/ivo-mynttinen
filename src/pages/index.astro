@@ -71,7 +71,7 @@ const posts = (await getCollection('blog')).sort(
           {
             posts.filter(post => !post.data.plain).map((post) => (
               <li>
-                <a href={`/blog/${post.slug}`} class="tile-list-tile">
+                <a href={`/blog/${post.slug}/`} class="tile-list-tile">
                   <h3 class="title">{post.data.title}</h3>
                   <span class="meta">
                     <span>

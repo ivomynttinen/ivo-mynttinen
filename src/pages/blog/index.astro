@@ -63,7 +63,7 @@ const sortedArchivedPosts = archivedPosts.sort(
                   <FormattedDate date={post.data.pubDate} class="date" />
                 </div>
               ) : (
-                <a href={`/blog/${post.slug}`} class={`tile post ${post.data.highlight ? 'highlight' : ''}`}>
+                <a href={`/blog/${post.slug}/`} class={`tile post ${post.data.highlight ? 'highlight' : ''}`}>
                   <h2 class="title">{post.data.title}</h2>
                   <p class="description" set:html={post.data.description}></p>
                   {post.data.heroCode && (

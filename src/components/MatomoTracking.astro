@@ -1,22 +1,27 @@
 ---
+const isLocalhost = Astro.url.hostname === 'localhost' || Astro.url.hostname === '127.0.0.1';
 ---
-<script is:inline>
-  var _paq = window._paq = window._paq || [];
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="//matomo.hanglage-no8.de/";
-    _paq.push(['setTrackerUrl', u+'matomo.php']);
-    _paq.push(['setSiteId', '3']);
-    _paq.push(['setSecureCookie', true]);
-    _paq.push(['setRequestMethod', 'POST']);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-  })();
-</script>
-<script>
-  document.addEventListener('astro:page-load', () => {
-    window._paq.push(['setCustomUrl', window.location.pathname]);
-    window._paq.push(['setDocumentTitle', document.title]);
-    window._paq.push(['trackPageView']);
-  });
-</script>
+{!isLocalhost && (
+  <>
+    <script is:inline>
+      var _paq = window._paq = window._paq || [];
+      _paq.push(['enableLinkTracking']);
+      (function() {
+        var u="//matomo.hanglage-no8.de/";
+        _paq.push(['setTrackerUrl', u+'matomo.php']);
+        _paq.push(['setSiteId', '3']);
+        _paq.push(['setSecureCookie', true]);
+        _paq.push(['setRequestMethod', 'POST']);
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+        g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+      })();
+    </script>
+    <script>
+      document.addEventListener('astro:page-load', () => {
+        window._paq.push(['setCustomUrl', window.location.pathname]);
+        window._paq.push(['setDocumentTitle', document.title]);
+        window._paq.push(['trackPageView']);
+      });
+    </script>
+  </>
+)}
