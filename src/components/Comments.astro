@@ -1,0 +1,91 @@
+---
+import { EMAIL, BSKY_URL, MASTODON_URL } from '../consts';
+---
+
+<div class="comments-container-wrapper">
+  <p class="thanks-for-reading">Thanks for reading! If you'd like to share your thoughts you can leave a comment below, send me an <a href={`mailto:${EMAIL}`} title="Send me an email">email</a>, or hit me up on <a href={MASTODON_URL} title="Ivo Mynttinen on Mastodon" target="_blank">Mastodon</a> or <a href={BSKY_URL} title="Ivo Mynttinen on Bluesky" target="_blank">Bluesky</a>.</p>
+  <div id="comments-container"></div>
+</div>
+
+<script>
+  function loadGiscus(theme) {
+    const commentsContainer = document.getElementById('comments-container');
+    // Only proceed if comments container exists
+    if (!commentsContainer) return;
+
+    // Remove existing giscus element if it exists
+    const existingGiscus = document.querySelector('.giscus');
+    if (existingGiscus) {
+      existingGiscus.remove();
+    }
+
+    // Create new script element
+    const script = document.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.setAttribute('data-repo', 'ivomynttinen/ivo-mynttinen');
+    script.setAttribute('data-repo-id', 'R_kgDOL6M_NA');
+    script.setAttribute('data-category', 'Blog Post Comments');
+    script.setAttribute('data-category-id', 'DIC_kwDOL6M_NM4CmM-D');
+    script.setAttribute('data-mapping', 'url');
+    script.setAttribute('data-strict', '0');
+    script.setAttribute('data-reactions-enabled', '0');
+    script.setAttribute('data-emit-metadata', '0');
+    script.setAttribute('data-input-position', 'top');
+    script.setAttribute('data-lang', 'en');
+    script.setAttribute('data-loading', 'lazy');
+    script.setAttribute('crossorigin', 'anonymous');
+    script.setAttribute('data-theme', `https://ivomynttinen.com/comments-${theme}.css?v=5`);
+    script.async = true;
+
+    commentsContainer.appendChild(script);
+  }
+
+  // Initialize comments with current theme
+  document.addEventListener('astro:page-load', () => {
+    const commentsContainer = document.getElementById('comments-container');
+    // Only initialize if comments container exists
+    if (!commentsContainer) return;
+
+    const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    loadGiscus(theme);
+
+    // Listen for theme changes
+    const themeButton = document.getElementById('theme-button');
+    if (themeButton) {
+      themeButton.addEventListener('click', () => {
+        setTimeout(() => {
+          const newTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+          loadGiscus(newTheme);
+        }, 0);
+      });
+    }
+  });
+</script>
+
+<style lang="scss">
+  .thanks-for-reading{
+    font-family: var(--font-family-syne);
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    color: var(--gray-10);
+    margin-bottom: 2rem;
+
+    a{
+      color: var(--yellow-11);
+      text-decoration-color: var(--yellow-10);
+      transition: color 0.2s, text-decoration-color 0.2s;
+
+      &:hover{
+        color: var(--yellow-12);
+        text-decoration-color: var(--yellow-11);
+      }
+    }
+  }
+
+  .comments-container-wrapper{
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--gray-4);
+  }
+</style>
+

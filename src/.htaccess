@@ -164,6 +164,19 @@ Header set Cache-Control "max-age=172800, public, must-revalidate"
 Header set Cache-Control "max-age=7200, must-revalidate"
 </FilesMatch>
 
+# Allow CORS for custom css and loaders from github (Giscus Comments component)
+<FilesMatch "comments-(light|dark)\.css$">
+  Header set Access-Control-Allow-Origin "https://giscus.app"
+  Header set Access-Control-Allow-Methods "GET"
+  Header set Access-Control-Allow-Headers "Content-Type"
+</FilesMatch>
+
+<FilesMatch "mona-loading-(default|dark)\.gif$">
+  Header set Access-Control-Allow-Origin "https://github.githubassets.com"
+  Header set Access-Control-Allow-Methods "GET"
+  Header set Access-Control-Allow-Headers "Content-Type"
+</FilesMatch>
+
 </IfModule>
 
 

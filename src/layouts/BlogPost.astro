@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Comments from '../components/Comments.astro';
 import MatomoTracking from '../components/MatomoTracking.astro';
 
 import '../styles/markdown.scss';
@@ -75,6 +76,7 @@ const ogImageToUse = ogImage?.src || heroImage?.src || undefined;
           <slot />
         )}
       </article>
+      <Comments />
     </main>
     <Footer />
   </body>

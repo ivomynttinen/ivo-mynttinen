@@ -6,8 +6,8 @@ export const SITE_DESCRIPTION = 'Design engineer with a passion for interior des
 
 export const EMAIL = 'hi@ivomynttinen.com';
 
-export const X_HANDLE = '@ivomynttinen';
-export const X_URL = `https://x.com/${X_HANDLE}`;
+export const BSKY_HANDLE = '@ivomynttinen';
+export const BSKY_URL = `https://bsky.app/profile/ivomynttinen.bsky.social`;
 
 export const MASTODON_HANDLE = '@ivomynttinen';
 export const MASTODON_URL = `https://mastodon.design/@ivomynttinen`;

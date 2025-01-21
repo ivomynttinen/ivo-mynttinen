@@ -1,4 +1,5 @@
 ---
+import { BSKY_URL, MASTODON_URL, LAYERS_URL, EMAIL } from '../consts';
 import HeaderLink from './HeaderLink.astro';
 
 type Props = {
@@ -29,9 +30,9 @@ const { activePath } = Astro.props;
         </svg>
     </button>
     <div class="social-links">
-      <HeaderLink href="https://mastodon.design/@ivomynttinen">Mastodon</HeaderLink>
-      <HeaderLink href="https://bsky.app/profile/ivomynttinen.bsky.social">Bsky</HeaderLink>
-      <HeaderLink href="https://layers.to/ivomynttinen">Layers</HeaderLink>
+      <HeaderLink href={MASTODON_URL} target="_blank">Mastodon</HeaderLink>
+      <HeaderLink href={BSKY_URL} target="_blank">Bsky</HeaderLink>
+      <HeaderLink href={LAYERS_URL} target="_blank">Layers</HeaderLink>
     </div>
   </div>
 </header>
