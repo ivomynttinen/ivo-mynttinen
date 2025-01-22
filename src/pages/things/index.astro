@@ -1,0 +1,71 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import MatomoTracking from '../../components/MatomoTracking.astro';
+import { SITE_TITLE, SITE_DESCRIPTION, THINGS_CATEGORIES } from '../../consts';
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+const thingsPosts = (await getCollection('things')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const postsByCategory = THINGS_CATEGORIES.reduce((acc, category) => {
+  acc[category] = thingsPosts.filter(post => post.data.category === category);
+  return acc;
+}, {});
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`Things | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+    <MatomoTracking />
+  </head>
+  <body>
+    <Header activePath="things" />
+    <main>
+      <section>
+        <h1>Things</h1>
+        <p>A curated collection of hardware, software, and tools I use and recommend.</p>
+        
+        <div class="categories">
+          {THINGS_CATEGORIES.map(category => {
+            const posts = postsByCategory[category];
+            return posts.length > 0 && (
+              <a href={`/things/category/${category}`} class="category-card">
+                <h2>{category.charAt(0).toUpperCase() + category.slice(1)}</h2>
+                <p>{posts.length} {posts.length === 1 ? 'item' : 'items'}</p>
+              </a>
+            );
+          })}
+        </div>
+
+        <div class="recent-posts">
+          <h2>Recent Additions</h2>
+          <ul>
+            {thingsPosts.slice(0, 6).map((post) => (
+              <li>
+                <a href={`/things/${post.slug}/`}>
+                  {post.data.heroImage && (
+                    <img width={720} height={360} src={post.data.heroImage.src} alt="" />
+                  )}
+                  <h2 class="title">{post.data.title}</h2>
+                  <p class="date">
+                    <FormattedDate date={post.data.pubDate} />
+                    {post.data.updatedDate && (
+                      <span> (Updated: <FormattedDate date={post.data.updatedDate} />)</span>
+                    )}
+                  </p>
+                  <p class="description">{post.data.description}</p>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html> 

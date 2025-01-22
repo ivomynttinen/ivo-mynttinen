@@ -1,4 +1,5 @@
 import { defineCollection, z } from 'astro:content';
+import { THINGS_CATEGORIES } from '../consts';
 
 const blog = defineCollection({
   type: 'content',
@@ -16,4 +17,18 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+const things = defineCollection({
+  type: 'content',
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.coerce.date(),
+    heroImage: image().optional(),
+    ogImage: image().optional(),
+    category: z.enum(THINGS_CATEGORIES).default('archive'),
+    price: z.number().optional(),
+    link: z.string().url().optional(),
+  }),
+});
+
+export const collections = { blog, things };

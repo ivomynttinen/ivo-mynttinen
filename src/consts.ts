@@ -13,3 +13,5 @@ export const MASTODON_HANDLE = '@ivomynttinen';
 export const MASTODON_URL = `https://mastodon.design/@ivomynttinen`;
 
 export const LAYERS_URL = 'https://layers.to/ivomynttinen';
+
+export const THINGS_CATEGORIES = ['workspace', 'homelab', 'home', 'apps', 'mobility', 'archive'] as const;

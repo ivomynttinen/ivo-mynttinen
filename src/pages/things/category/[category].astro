@@ -1,0 +1,63 @@
+---
+import BaseHead from '../../../components/BaseHead.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import MatomoTracking from '../../../components/MatomoTracking.astro';
+import { SITE_TITLE, THINGS_CATEGORIES } from '../../../consts';
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../../components/FormattedDate.astro';
+
+export async function getStaticPaths() {
+  return THINGS_CATEGORIES.map((category) => ({
+    params: { category },
+  }));
+}
+
+const { category } = Astro.params;
+const capitalizedCategory = category.charAt(0).toUpperCase() + category.slice(1);
+
+const thingsPosts = (await getCollection('things'))
+  .filter(post => post.data.category === category)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`${capitalizedCategory} Things | ${SITE_TITLE}`} description={`A collection of ${category} things I use and recommend.`} />
+    <MatomoTracking />
+  </head>
+  <body>
+    <Header activePath="things" />
+    <main>
+      <a href="/things" class="back-link">← Back to All Things</a>
+      <div class="category-header">
+        <h1>{capitalizedCategory} Things</h1>
+        <p>A collection of {category} things I use and recommend.</p>
+      </div>
+
+      <ul>
+        {
+          thingsPosts.map((post) => (
+            <li>
+              <a href={`/things/${post.slug}/`}>
+                {post.data.heroImage && (
+                  <img width={720} height={360} src={post.data.heroImage.src} alt="" />
+                )}
+                <h2 class="title">{post.data.title}</h2>
+                <p class="date">
+                  <FormattedDate date={post.data.pubDate} />
+                  {post.data.updatedDate && (
+                    <span> (Updated: <FormattedDate date={post.data.updatedDate} />)</span>
+                  )}
+                </p>
+                <p class="description">{post.data.description}</p>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </main>
+    <Footer />
+  </body>
+</html> 
