@@ -26,7 +26,6 @@ const things = defineCollection({
     heroImage: image().optional(),
     ogImage: image().optional(),
     category: z.enum(THINGS_CATEGORIES).default('archive'),
-    price: z.number().optional(),
     link: z.string().url().optional(),
   }),
 });
