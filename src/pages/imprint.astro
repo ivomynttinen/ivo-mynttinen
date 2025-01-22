@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Generic.astro';
+import { EMAIL } from '../consts';
 ---
 
 <Layout
@@ -16,7 +17,7 @@ import Layout from '../layouts/Generic.astro';
 
   <p>
     Telephone: +49 (0) 176 914 989 67<br>
-    Email: <a href="mailto:hi@ivomynttinen.com">hi@ivomynttinen.com</a>
+    Email: <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
   </p>
 
   <h2>Disclaimer</h2>

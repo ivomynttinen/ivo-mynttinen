@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Generic.astro';
+import { EMAIL } from '../consts';
 ---
 
 <Layout
@@ -71,7 +72,7 @@ import Layout from '../layouts/Generic.astro';
   90441 Nürnberg<br>
   Deutschland<br>
   Phone: +49 17691498967<br>
-  Email: <a href="mailto:hi@ivomynttinen.com">hi@ivomynttinen.com</a><br>
+  Email: <a href={`mailto:${EMAIL}`}>{EMAIL}</a><br>
   Website: <a href="https://ivomynttinen.com">https://ivomynttinen.com</a></p>
 
   <h2>3. Cookies</h2>
