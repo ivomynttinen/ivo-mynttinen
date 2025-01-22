@@ -44,6 +44,8 @@ const ogImageToUse = image || defaultOgImage.src;
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL(ogImageToUse, Astro.url)} />
 
+<meta name="fediverse:creator" content="@ivomynttinen@mastodon.design">
+
 <link rel="sitemap" href="/sitemap-index.xml" />
 
 <ViewTransitions />
