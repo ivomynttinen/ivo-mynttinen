@@ -53,7 +53,7 @@ const sortedCategories = THINGS_CATEGORIES
         {sortedCategories.map(category => (
           <div class="category-section">
             <h2 class="category-title">
-              <a href={`/things/category/${category}/`} title={`View all items in ${category}`}>
+              <a href={`/things/${category}/`} title={`View all items in ${category}`}>
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </a>
               <div class="carousel-controls">
