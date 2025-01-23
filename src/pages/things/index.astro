@@ -41,7 +41,7 @@ const sortedCategories = THINGS_CATEGORIES
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={`Collection of Things by Ivo Mynttinen`} description="A curated collection of hardware, software, and tools I use and recommend." />
+    <BaseHead title={`Collection of Things by Ivo Mynttinen`} description="A curated collection of hardware, software, tools, and objects I use and recommend." />
     <MatomoTracking />
   </head>
   <body>
@@ -54,12 +54,12 @@ const sortedCategories = THINGS_CATEGORIES
             <Fragment set:html={RSSIcon} />
           </a>
         </div>
-        <p class="intro">A curated collection of hardware, software, and tools I use and recommend.</p>
+        <p class="intro">A curated collection of hardware, software, tools, and objects I use and recommend.</p>
         
         {sortedCategories.map(category => (
           <div class="category-section">
             <h2 class="category-title">
-              <a href={`/things/category/${category}/`} title={`View all items in ${category}`}>
+              <a href={`/things/${category}/`} title={`View all items in ${category}`}>
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </a>
               <div class="carousel-controls">

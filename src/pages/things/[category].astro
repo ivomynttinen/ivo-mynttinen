@@ -5,7 +5,8 @@ import Footer from '../../components/Footer.astro';
 import MatomoTracking from '../../components/MatomoTracking.astro';
 import { SITE_TITLE, THINGS_CATEGORIES } from '../../consts';
 import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
+import { Image } from 'astro:assets';
+import ChevronLeft from '../../assets/images/chevron-left.svg?raw';
 
 export async function getStaticPaths() {
   return THINGS_CATEGORIES.map((category) => ({
@@ -25,34 +26,37 @@ const thingsPosts = (await getCollection('things'))
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={`${capitalizedCategory} Things | ${SITE_TITLE}`} description={`A collection of ${category} things I use and recommend.`} />
+    <BaseHead title={`${capitalizedCategory} Things - ${SITE_TITLE}`} description={`A collection of ${category} things I use and recommend.`} />
     <MatomoTracking />
   </head>
   <body>
     <Header activePath="things" />
-    <main>
-      <a href="/things" class="back-link">← Back to All Things</a>
-      <div class="category-header">
-        <h1>{capitalizedCategory} Things</h1>
-        <p>A collection of {category} things I use and recommend.</p>
+    <main class="layout-category">
+      <div class="page-title">
+        <a href="/things" class="back-link" title="Back to all Things">
+          <Fragment set:html={ChevronLeft} />
+        </a>
+        <h1>{capitalizedCategory}</h1>
       </div>
+      <p class="intro">A collection of {category} [things] I use and recommend.</p>
 
-      <ul>
+      <ul class="posts">
         {
           thingsPosts.map((post) => (
             <li>
-              <a href={`/things/${post.slug}/`}>
+              <a href={`/things/${post.slug}/`} class="post tile">
                 {post.data.heroImage && (
-                  <img width={720} height={360} src={post.data.heroImage.src} alt="" />
+                  <div class="hero-image">
+                    <Image 
+                      src={post.data.heroImage}
+                      alt={post.data.title}
+                      widths={[240, 360, 480]}
+                      sizes="(max-width: 768px) calc(50vw - 24px), calc(33.33vw - 24px)"
+                      class="cover-image"
+                    />
+                  </div>
                 )}
                 <h2 class="title">{post.data.title}</h2>
-                <p class="date">
-                  <FormattedDate date={post.data.pubDate} />
-                  {post.data.updatedDate && (
-                    <span> (Updated: <FormattedDate date={post.data.updatedDate} />)</span>
-                  )}
-                </p>
-                <p class="description">{post.data.description}</p>
               </a>
             </li>
           ))
@@ -61,4 +65,88 @@ const thingsPosts = (await getCollection('things'))
     </main>
     <Footer />
   </body>
-</html> 
+</html>
+
+<style lang="scss">
+  .layout-category{
+    margin-top: 4rem;
+
+    h1{
+      font-size: 2rem;
+      line-height: 2.5rem;
+    }
+  }
+
+  .back-link{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.8rem;
+    height: 1.75rem;
+    border-radius: 24px;
+    color: var(--gray-11);
+    background-color: var(--gray-4);
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+
+    &:hover{
+      background-color: var(--gray-5);
+      color: var(--gray-12);
+    }
+  }
+
+  .intro{
+    margin-top: 1rem;
+    max-width: 38ch;
+  }
+
+  .page-title{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+
+  .posts{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0 0 0;
+
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    li{
+      min-height: 200px;
+    }
+  }
+
+  .post{
+    padding: .2rem .2rem .625rem .2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    text-decoration: none;
+
+    .title{
+      font-size: .875rem;
+      line-height: 1rem;
+      color: var(--gray-11);
+      font-weight: 700;
+      font-family: var(--font-family-syne);
+      padding: 0 .625rem;
+    }
+
+    .hero-image{
+      img{
+        width: 100%;
+        display: block;
+        border-radius: 4px;
+        height: auto;
+      }
+    }
+  }
+</style>
