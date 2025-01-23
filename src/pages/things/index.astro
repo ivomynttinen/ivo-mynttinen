@@ -6,6 +6,9 @@ import MatomoTracking from '../../components/MatomoTracking.astro';
 import { THINGS_CATEGORIES } from '../../consts';
 import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
+import { Image } from 'astro:assets';
+import ChevronRight from '../../assets/images/chevron-right.svg?raw';
+import ChevronLeft from '../../assets/images/chevron-left.svg?raw';
 
 const thingsPosts = (await getCollection('things')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -49,35 +52,41 @@ const sortedCategories = THINGS_CATEGORIES
         
         {sortedCategories.map(category => (
           <div class="category-section">
-            <h2>
-              <a href={`/things/category/${category}/`}>
+            <h2 class="category-title">
+              <a href={`/things/category/${category}/`} title={`View all items in ${category}`}>
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </a>
               <div class="carousel-controls">
-                <button class="carousel-btn prev" aria-label="Previous items">←</button>
-                <button class="carousel-btn next" aria-label="Next items">→</button>
+                <button class="carousel-button prev" aria-label="Previous items">
+                  <Fragment set:html={ChevronLeft} />
+                </button>
+                <button class="carousel-button next" aria-label="Next items">
+                  <Fragment set:html={ChevronRight} />
+                </button>
               </div>
             </h2>
             <div class="carousel">
               <div class="carousel-container">
-                <ul class="posts-list">
+                <ul class="posts">
                   {postsByCategory[category].map((post) => (
                     <li>
-                      <a href={`/things/${post.slug}/`}>
+                      <a href={`/things/${post.slug}/`} class="post tile">
                         {post.data.heroImage && (
-                          <img width={720} height={360} src={post.data.heroImage.src} alt="" />
+                          <div class="hero-image">
+                            <Image 
+                              src={post.data.heroImage}
+                              alt={post.data.title}
+                              widths={[200, 240, 280, 400, 480, 560]}
+                              sizes="(max-width: 768px) 200px, (max-width: 1024px) 240px, 280px"
+                              class="cover-image"
+                            />
+                          </div>
                         )}
                         <h3 class="title">{post.data.title}</h3>
-                        <p class="date">
-                          <FormattedDate date={post.data.pubDate} />
-                          {post.data.updatedDate && (
-                            <span> (Updated: <FormattedDate date={post.data.updatedDate} />)</span>
-                          )}
-                        </p>
-                        <p class="description">{post.data.description}</p>
                       </a>
                     </li>
                   ))}
+                  <li class="spacer"></li>
                 </ul>
               </div>
             </div>
@@ -92,7 +101,63 @@ const sortedCategories = THINGS_CATEGORIES
     </main>
     <Footer class="layout-blog" />
   </body>
-</html> 
+</html>
+
+<script>
+  function initializeCarousels() {
+    const carousels = document.querySelectorAll('.carousel');
+    
+    carousels.forEach(carousel => {
+      const container = carousel.querySelector('.carousel-container');
+      const prevBtn = carousel.parentElement.querySelector('.prev');
+      const nextBtn = carousel.parentElement.querySelector('.next');
+      
+      if (!container || !prevBtn || !nextBtn) return;
+      
+      const scrollAmount = 300;
+
+      // Remove existing event listeners if any
+      const oldPrevClick = prevBtn.onclick;
+      const oldNextClick = nextBtn.onclick;
+      if (oldPrevClick) prevBtn.removeEventListener('click', oldPrevClick);
+      if (oldNextClick) nextBtn.removeEventListener('click', oldNextClick);
+
+      prevBtn.addEventListener('click', () => {
+        container.scrollBy({
+          left: -scrollAmount,
+          behavior: 'smooth'
+        });
+        updateButtonStates();
+      });
+
+      nextBtn.addEventListener('click', () => {
+        container.scrollBy({
+          left: scrollAmount,
+          behavior: 'smooth'
+        });
+        updateButtonStates();
+      });
+
+      function updateButtonStates() {
+        const isPrevDisabled = container.scrollLeft === 0;
+        const isNextDisabled = container.scrollLeft >= container.scrollWidth - container.clientWidth;
+        
+        prevBtn.disabled = isPrevDisabled;
+        nextBtn.disabled = isNextDisabled;
+      }
+
+      container.addEventListener('scroll', updateButtonStates);
+      updateButtonStates();
+      window.addEventListener('resize', updateButtonStates);
+    });
+  }
+
+  // Initialize on initial page load
+  document.addEventListener('DOMContentLoaded', initializeCarousels);
+
+  // Initialize on Astro view transitions
+  document.addEventListener('astro:page-load', initializeCarousels);
+</script>
 
 <style lang="scss">
   .layout-things{
@@ -107,6 +172,52 @@ const sortedCategories = THINGS_CATEGORIES
   .intro{
     margin-top: 1rem;
     max-width: 38ch;
+  }
+
+  .posts{
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li{
+      width: 200px;
+      min-height: 200px;
+      flex-shrink: 0;
+    }
+
+    .spacer{
+      width: 10px;
+      flex-shrink: 0;
+    }
+  }
+
+  .post{
+    padding: .2rem .2rem .625rem .2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    text-decoration: none;
+
+    .title{
+      font-size: .875rem;
+      line-height: 1rem;
+      color: var(--gray-11);
+      font-weight: 700;
+      font-family: var(--font-family-syne);
+      padding: 0 .625rem;
+    }
+
+    .hero-image{
+      img{
+        display: block;
+        border-radius: 4px;
+        max-width: 100%;
+        height: auto;
+      }
+    }
   }
 
   .transparency-note{
@@ -129,11 +240,28 @@ const sortedCategories = THINGS_CATEGORIES
   }
 
   .category-section {
-    h2 {
+    margin-top: 2rem;
+
+    .category-title {
+      font-family: var(--font-family-syne);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      margin: 0;
+      font-size: 1.5rem;
+      line-height: 1.6rem;
+
+      a{
+        text-decoration: none;
+        color: var(--gray-12);
+        border-radius: 6px;
+        padding: 4px 8px;
+        transition: background 0.2s;
+
+        &:hover{
+          background: var(--gray-3);
+        }
+      }
     }
   }
 
@@ -144,42 +272,36 @@ const sortedCategories = THINGS_CATEGORIES
 
   .carousel {
     position: relative;
-    width: 100%;
-    margin: 1rem 0;
+    width: calc(100% + 1rem);
+    margin-right: -1rem;
   }
 
   .carousel-container {
     width: 100%;
     overflow-x: auto;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     scroll-behavior: smooth;
+    padding: 14px 0 16px 8px;
     
     &::-webkit-scrollbar {
-      display: none; /* Chrome, Safari and Opera */
+      display: none;
     }
   }
 
-  .posts-list {
-    display: flex;
-    gap: 1rem;
-    width: max-content; // Allow natural width of all items
-
-    li{
-      width: 300px;
-      background-color: var(--gray-3);
-    }
-  }
-
-  .carousel-btn {
+  .carousel-button {
     padding: 0.25rem;
     background: var(--gray-5);
+    color: var(--gray-11);
     border: none;
-    border-radius: 50%;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 2rem;
     height: 2rem;
     cursor: pointer;
-    opacity: 0.8;
+    opacity: .8;
     transition: opacity 0.2s;
 
     &:hover {
@@ -187,7 +309,7 @@ const sortedCategories = THINGS_CATEGORIES
     }
 
     &:disabled {
-      opacity: 0.3;
+      opacity: 0.4;
       cursor: not-allowed;
     }
   }
@@ -197,49 +319,31 @@ const sortedCategories = THINGS_CATEGORIES
       max-width: 100%;
       padding: 0 1rem;
     }
+
+    .posts{
+      li{
+        width: 240px;
+        min-height: 240px;
+      }
+    }
+
+    .post{
+      gap: 1rem;
+      padding: .375rem .375rem 1rem .375rem;
+
+      .title{
+        font-size: 1.125rem;
+        line-height: 1.2rem;
+      }
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .posts{
+      li{
+        width: 280px;
+        min-height: 280px;
+      }
+    }
   }
 </style>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const carousels = document.querySelectorAll('.carousel');
-    
-    carousels.forEach(carousel => {
-      const container = carousel.querySelector('.carousel-container');
-      const prevBtn = carousel.parentElement.querySelector('.prev');
-      const nextBtn = carousel.parentElement.querySelector('.next');
-      
-      if (!container || !prevBtn || !nextBtn) return;
-      
-      const scrollAmount = 300;
-
-      prevBtn.addEventListener('click', () => {
-        container.scrollBy({
-          left: -scrollAmount,
-          behavior: 'smooth'
-        });
-        updateButtonStates();
-      });
-
-      nextBtn.addEventListener('click', () => {
-        container.scrollBy({
-          left: scrollAmount,
-          behavior: 'smooth'
-        });
-        updateButtonStates();
-      });
-
-      function updateButtonStates() {
-        prevBtn.disabled = container.scrollLeft === 0;
-        nextBtn.disabled = container.scrollLeft >= container.scrollWidth - container.clientWidth;
-        prevBtn.style.opacity = prevBtn.disabled ? '0.3' : '0.8';
-        nextBtn.style.opacity = nextBtn.disabled ? '0.3' : '0.8';
-      }
-
-      container.addEventListener('scroll', updateButtonStates);
-      updateButtonStates();
-      window.addEventListener('resize', updateButtonStates);
-    });
-  });
-</script>
-  
