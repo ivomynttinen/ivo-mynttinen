@@ -7,6 +7,8 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
 import MatomoTracking from '../../components/MatomoTracking.astro';
+import RSSIcon from '../../assets/images/rss.svg?raw';
+
 // Get all blog posts
 const allPosts = await getCollection('blog');
 
@@ -34,7 +36,12 @@ const sortedArchivedPosts = archivedPosts.sort(
   <body>
     <Header activePath="blog" />
     <main class="layout-blog">
-      <h1>Blog</h1>
+      <div class="page-title">
+        <h1>Blog</h1>
+        <a href="/rss.xml" title="Subscribe to RSS Feed" class="rss-icon">
+          <Fragment set:html={RSSIcon} />
+        </a>
+      </div>
       <p class="intro">
         This is where I write about things I find interesting, and little updates about my life.
       </p>
@@ -100,6 +107,13 @@ const sortedArchivedPosts = archivedPosts.sort(
     font-size: 2rem;
     line-height: 2.5rem;
   }
+}
+
+.page-title{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5rem;
 }
 
 .intro{

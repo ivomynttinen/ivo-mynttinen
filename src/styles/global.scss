@@ -60,6 +60,8 @@ html {
   --yellow-11: #9e6c00;
   --yellow-12: #473b1f;
   --base: #FFF;
+
+  --orange-10: #EF5F00;
   --font-family-sans: -apple-system, BlinkMacSystemFont, "Syne Variable", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-family-syne: "Syne Variable", sans-serif;
   --font-family-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
@@ -106,6 +108,7 @@ html.dark{
   --yellow-10: #ffff57;
   --yellow-11: #f5e147;
   --yellow-12: #f6eeb4;
+  --orange-10: #FF801F;
   --base: #111210;
 
   --elevation-1: 0px 1px 2px #111210;
@@ -265,6 +268,31 @@ h1{
     text-transform: uppercase;
     font-size: .8rem;
     display: none;
+  }
+}
+
+.rss-icon{
+  display: inline-block;
+  width: 1.925rem;
+  height: 1.925rem;
+  background-color: var(--base);
+  border-radius: .5rem;
+  color: var(--gray-8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .2s ease, color .2s ease, transform .2s ease;
+
+  &:hover{
+    background-color: var(--orange-10);
+    color: var(--base);
+    transform: scale(1.1) rotate(4deg);
+  }
+
+  &:active{
+    background-color: var(--orange-10);
+    color: var(--base);
+    transform: scale(1) rotate(2deg);
   }
 }
 

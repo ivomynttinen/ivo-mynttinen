@@ -9,6 +9,7 @@ import FormattedDate from '../../components/FormattedDate.astro';
 import { Image } from 'astro:assets';
 import ChevronRight from '../../assets/images/chevron-right.svg?raw';
 import ChevronLeft from '../../assets/images/chevron-left.svg?raw';
+import RSSIcon from '../../assets/images/rss.svg?raw';
 
 const thingsPosts = (await getCollection('things')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -47,13 +48,18 @@ const sortedCategories = THINGS_CATEGORIES
     <Header activePath="things" />
     <main class="layout-things">
       <section>
-        <h1>Things</h1>
+        <div class="page-title">
+          <h1>Things</h1>
+          <a href="/things/rss.xml" title="RSS feed for Things" class="rss-icon">
+            <Fragment set:html={RSSIcon} />
+          </a>
+        </div>
         <p class="intro">A curated collection of hardware, software, and tools I use and recommend.</p>
         
         {sortedCategories.map(category => (
           <div class="category-section">
             <h2 class="category-title">
-              <a href={`/things/${category}/`} title={`View all items in ${category}`}>
+              <a href={`/things/category/${category}/`} title={`View all items in ${category}`}>
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </a>
               <div class="carousel-controls">
@@ -167,6 +173,13 @@ const sortedCategories = THINGS_CATEGORIES
       font-size: 2rem;
       line-height: 2.5rem;
     }
+  }
+
+  .page-title{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
   }
   
   .intro{
