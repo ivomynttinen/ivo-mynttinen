@@ -11,14 +11,15 @@ import '../styles/markdown.scss';
 
 type Props = CollectionEntry<'things'>['data'];
 
-const { title, description, pubDate, category, heroImage, ogImage, plain } = Astro.props;
+const { title, description, pubDate, category, heroImage, ogImage, link } = Astro.props;
 
 const ogImageToUse = ogImage?.src || heroImage?.src || undefined;
+const capitalizedCategory = category.charAt(0).toUpperCase() + category.slice(1);
 ---
 
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} image={ogImageToUse} />
+    <BaseHead title={`${capitalizedCategory}: ${title}`} description={description} image={ogImageToUse} />
     <MatomoTracking />
   </head>
 
@@ -32,13 +33,16 @@ const ogImageToUse = ogImage?.src || heroImage?.src || undefined;
               in <a href={`/things/${category}/`} class="tag">{category}</a>
             </span>
           </span>
-          <h1>{title}</h1>
+          <div class="page-title">
+            <h1>{title}</h1>
+            {link && (
+              <a href={link} target="_blank" rel="noopener noreferrer" class="get-link">
+                Get
+              </a>
+            )}
+          </div>
         </div>
-        {plain ? (
-          <div class="description" set:html={description}></div>
-        ) : (
-          <slot />
-        )}
+        <slot />
       </article>
     </main>
     <Footer />
@@ -50,14 +54,12 @@ const ogImageToUse = ogImage?.src || heroImage?.src || undefined;
     margin-top: 4rem;
   }
 
-  .hero-image {
-    img {
-      margin: 0;
-      width: 100%;
-      height: auto;
-      border-radius: 6px;
-      display: block;
-    }
+  .page-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
   .title {
@@ -65,6 +67,30 @@ const ogImageToUse = ogImage?.src || heroImage?.src || undefined;
 
     h1{
       margin-top: .5rem;
+    }
+  }
+
+  .get-link {
+    background: var(--yellow-5);
+    padding: .25rem .875rem;
+    color: var(--yellow-12);
+    text-decoration: none;
+    font-size: 1rem;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+
+    &:before{
+      content: '↗';
+      color: var(--yellow-11);
+      transition: color .2s ease-in-out;
+    }
+
+    &:hover{
+      &:before{
+        color: var(--yellow-12);
+      }
     }
   }
 
