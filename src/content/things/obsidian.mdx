@@ -1,0 +1,37 @@
+---
+title: 'Obsidian'
+description: 'A powerful, local-first note-taking app with extensive plugin support and unique visualization features.'
+pubDate: '2024-01-24'
+category: 'apps'
+heroImage: '../../assets/things/app-obsidian-hero.png'
+ogImage: '../../assets/things/app-obsidian-og.png'
+link: 'https://obsidian.md/'
+---
+
+import { Image } from 'astro:assets';
+import ObsidianNotes from '../../assets/things/app-obsidian-note-window.png';
+import ObsidianCanvas from '../../assets/things/app-obsidian-canvas.png';
+
+<figure>
+  <Image
+    src={ObsidianNotes}
+    alt="Obsidian note taking app"
+    widths={[320, 640, 960, 1024, 1360]}
+    sizes={`(max-width: 320px) 300px, (max-width: 540px) 90vw, (max-width: 768px) 90vw, (max-width: 1024px) 680px, 680px`}
+  />
+  <figcaption>Obsidian notes are written in extendable markdown.</figcaption>
+</figure>
+
+When it comes to writing things down, Obsidian has been my go-to tool. It’s a powerful, local-first app that goes way beyond basic note-taking. Thanks to its robust community plugins, Obsidian can adapt to almost any note-taking workflow. Features like the Canvas and Graph view provide unique, alternative ways to visualize and navigate your notes, making it perfect for both structured documentation and creative brainstorming.
+
+<figure>
+  <Image
+    src={ObsidianCanvas}
+    alt="Obsidian canvas view"
+    widths={[320, 640, 960, 1024, 1360]}
+    sizes={`(max-width: 320px) 300px, (max-width: 540px) 90vw, (max-width: 768px) 90vw, (max-width: 1024px) 680px, 680px`}
+  />
+  <figcaption>Obsidian canvas view</figcaption>
+</figure>
+
+However, as much as I love Obsidian, the lack of a self-hostable sync server is a drawback for me. For now, it’s still my main note-taking app, but I’m considering replacing it with [SiYuan](https://github.com/siyuan-note/siyuan), which is sadly not as polished as Obsidian, but better aligns with my preference for self-hosted solutions.
