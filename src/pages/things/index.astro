@@ -76,7 +76,7 @@ const sortedCategories = THINGS_CATEGORIES
                 <ul class="posts">
                   {postsByCategory[category].map((post) => (
                     <li>
-                      <a href={`/things/${post.slug}/`} class="post tile">
+                      <a href={`/things/${post.data.category}/${post.slug}/`} class="post tile">
                         {post.data.heroImage && (
                           <div class="hero-image">
                             <Image 

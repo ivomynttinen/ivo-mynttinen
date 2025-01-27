@@ -44,7 +44,7 @@ const thingsPosts = (await getCollection('things'))
         {
           thingsPosts.map((post) => (
             <li>
-              <a href={`/things/${post.slug}/`} class="post tile">
+              <a href={`/things/${post.data.category}/${post.slug}/`} class="post tile">
                 {post.data.heroImage && (
                   <div class="hero-image">
                     <Image 
