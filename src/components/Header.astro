@@ -19,7 +19,6 @@ const { activePath } = Astro.props;
     <div class="internal-links">
       <HeaderLink href="/" class={`home ${activePath === 'home' ? 'active' : ''}`}>Home</HeaderLink>
       <HeaderLink href="/blog/" class={`${activePath === 'blog' ? 'active' : ''}`}>Writing</HeaderLink>
-      <HeaderLink href="/things/" class={`${activePath === 'things' ? 'active' : ''}`}>Things</HeaderLink>
       <HeaderLink href="/about/" class={`${activePath === 'about' ? 'active' : ''}`}>About</HeaderLink>
     </div>
   </nav>
