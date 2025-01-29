@@ -1,0 +1,301 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { Image } from 'astro:assets';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import galleryData from '../data/gallery.json';
+
+// Replace the image import section with this:
+const images = import.meta.glob('../assets/gallery/*.{png,jpg,jpeg,gif,webp}', {
+  eager: true,
+});
+
+// Create a map of filenames to their image objects
+const imageMap = new Map();
+for (const [path, image] of Object.entries(images)) {
+  const filename = path.split('/').pop();
+  if (filename) {
+    imageMap.set(filename, image.default);
+  }
+}
+
+// Helper function to check if file is a GIF
+const isGif = (filename: string) => filename.toLowerCase().endsWith('.gif');
+
+// Sort and filter helpers
+const sortByDate = (a: any, b: any) => b.lastModified - a.lastModified;
+
+// Get unique folders and tags from gallery data, excluding specific folders
+const excludedFolders = ['Personal 2024', 'Website 2024'];
+const uniqueFolders = [...new Set(galleryData.flatMap(item => item.folders || []))].filter(folder => !excludedFolders.includes(folder));
+const uniqueTags = [...new Set(galleryData.flatMap(item => item.tags || []))];
+
+// Get date range with fixed minimum date
+const dates = galleryData.map(item => item.lastModified);
+const maxDate = new Date(Math.max(...dates)).toISOString().split('T')[0];
+const minDate = '2010-01-01'; // Set fixed minimum date
+
+// Sort items by date descending
+const sortedGalleryData = [...galleryData].sort(sortByDate);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
+  <body>
+    <Header />
+    <main class="gallery-page">
+      <section class="gallery">
+        <h1>Gallery</h1>
+        
+        <!-- Add filter toolbar -->
+        <div class="filter-toolbar">
+          <select id="folderFilter" multiple>
+            <option value="">All Folders</option>
+            {uniqueFolders.map(folder => (
+              <option value={folder}>{folder}</option>
+            ))}
+          </select>
+
+          <select id="tagFilter" multiple>
+            <option value="">All Tags</option>
+            {uniqueTags.map(tag => (
+              <option value={tag}>{tag}</option>
+            ))}
+          </select>
+
+          <div class="date-filters">
+            <label>
+              From:
+              <input type="date" id="dateFrom" min={minDate} max={maxDate} data-min-date={minDate} />
+            </label>
+            <label>
+              To:
+              <input type="date" id="dateTo" min={minDate} max={maxDate} />
+            </label>
+          </div>
+        </div>
+
+        <div class="gallery-grid" id="gallery-grid">
+          {sortedGalleryData.map((item, index) => {
+            const imageSource = imageMap.get(item.filename);
+            return (
+              <div 
+                class="gallery-item" 
+                data-index={index}
+                data-folders={JSON.stringify(item.folders || [])}
+                data-tags={JSON.stringify(item.tags || [])}
+                data-last-modified={item.lastModified}
+              >
+                <a href={`/gallery/${item.id}`}>
+                  {imageSource ? (
+                    isGif(item.filename) ? (
+                      <img
+                        src={imageSource.src}
+                        alt={item.name}
+                        width={item.width}
+                        height={item.height}
+                        loading="lazy"
+                        style={`aspect-ratio: ${item.width}/${item.height}`}
+                      />
+                    ) : (
+                      <Image
+                        src={imageSource}
+                        alt={item.name}
+                        width={item.width}
+                        height={item.height}
+                        loading="lazy"
+                        sizes="(min-width: 1024px) 400px, (min-width: 768px) 32vw, 98vw"
+                        widths={[320, 400, 800]}
+                        style={`aspect-ratio: ${item.width}/${item.height}`}
+                      />
+                    )
+                  ) : (
+                    <div class="error-placeholder" style="aspect-ratio: 16/9; background: var(--gray-200); display: flex; align-items: center; justify-content: center; padding: 1rem; text-align: center;">
+                      Image not found: {item.filename}
+                    </div>
+                  )}
+                  <div class="gallery-item-info">
+                    <h2>{item.name}</h2>
+                  </div>
+                </a>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    </main>
+    <Footer />
+
+    <script type="module">
+      window.addEventListener('load', () => {
+        // Store scroll position before navigation
+        document.querySelectorAll('.gallery-item').forEach(link => {
+          link.addEventListener('click', (e) => {
+            const currentScroll = window.scrollY;
+            // Store the scroll position in sessionStorage instead of history state
+            sessionStorage.setItem('galleryScrollPosition', currentScroll.toString());
+          });
+        });
+
+        // Restore scroll position if we're returning from a gallery item
+        if (document.referrer.includes('/gallery/')) {
+          const savedPosition = sessionStorage.getItem('galleryScrollPosition');
+          if (savedPosition) {
+            requestAnimationFrame(() => {
+              window.scrollTo(0, parseInt(savedPosition, 10));
+              // Clear the stored position after using it
+              sessionStorage.removeItem('galleryScrollPosition');
+            });
+          }
+        }
+
+        // Filter functionality
+        const folderFilter = document.getElementById('folderFilter');
+        const tagFilter = document.getElementById('tagFilter');
+        const dateFrom = document.getElementById('dateFrom');
+        const dateTo = document.getElementById('dateTo');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        // Add event listeners
+        folderFilter.addEventListener('change', applyFilters);
+        tagFilter.addEventListener('change', applyFilters);
+        dateFrom.addEventListener('change', applyFilters);
+        dateTo.addEventListener('change', applyFilters);
+
+        function applyFilters() {
+          const selectedFolders = [...folderFilter.selectedOptions].map(opt => opt.value).filter(Boolean);
+          const selectedTags = [...tagFilter.selectedOptions].map(opt => opt.value).filter(Boolean);
+          const fromDate = dateFrom.value ? new Date(dateFrom.value).getTime() : 0;
+          const toDate = dateTo.value ? new Date(dateTo.value).getTime() + 86400000 : Number.MAX_SAFE_INTEGER;
+
+          galleryItems.forEach(item => {
+            const itemData = item.dataset;
+            const itemFolders = itemData.folders ? JSON.parse(itemData.folders) : [];
+            const itemTags = itemData.tags ? JSON.parse(itemData.tags) : [];
+            const itemDate = parseInt(itemData.lastModified);
+
+            const folderMatch = selectedFolders.length === 0 || itemFolders.some(f => selectedFolders.includes(f));
+            const tagMatch = selectedTags.length === 0 || itemTags.some(t => selectedTags.includes(t));
+            const dateMatch = itemDate >= fromDate && itemDate <= toDate;
+
+            item.style.display = folderMatch && tagMatch && dateMatch ? 'block' : 'none';
+          });
+        }
+
+        // Get minDate from data attribute
+        const minDate = dateFrom.dataset.minDate;
+        
+        // Initialize date inputs with today and fixed minimum date
+        const today = new Date().toISOString().split('T')[0];
+        dateFrom.value = minDate;
+        dateTo.value = today;
+      });
+    </script>
+  </body>
+</html> 
+
+<style lang="scss">
+  .gallery {
+    width: 100%;
+    max-width: 100%;
+
+    h1 {
+      margin-bottom: 2rem;
+    }
+
+    .gallery-grid {
+      width: 100%;
+      display: grid;
+      gap: 1em;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-rows: masonry; 
+    }
+
+    .gallery-item {
+      background: var(--gray-50);
+      border-radius: 8px;
+      position: relative;
+      margin-bottom: 1em;
+
+      a {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.2s ease;
+
+        &:hover {
+          transform: translateY(-4px);
+        }
+      }
+
+      img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        display: block;
+      }
+
+      .gallery-item-info {
+        padding: 1rem;
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      &:hover .gallery-item-info {
+        opacity: 1;
+      }
+    }
+
+    .filter-toolbar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      align-items: center;
+
+      select, input {
+        padding: 0.5rem;
+        border: 1px solid var(--gray-200);
+        border-radius: 4px;
+        background: var(--gray-50);
+        
+        &:focus {
+          outline: 2px solid var(--gray-300);
+          outline-offset: 2px;
+        }
+      }
+
+      select[multiple] {
+        min-width: 200px;
+      }
+
+      .date-filters {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+
+        label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+      }
+    }
+  }
+
+  @media (min-width: 768px) {
+    body > main{
+      max-width: 100%;
+      padding: 0 1rem;
+    }
+  }
+</style>

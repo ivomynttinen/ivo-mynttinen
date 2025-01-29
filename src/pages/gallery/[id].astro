@@ -1,0 +1,273 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { Image } from 'astro:assets';
+import galleryData from '../../data/gallery.json';
+
+// Fix the image import section
+const images = await import.meta.glob('../../assets/gallery/*.{png,jpg,jpeg,gif,webp}', {
+  eager: true,
+});
+
+// Create a map of filenames to their image objects
+const imageMap = new Map();
+for (const [path, image] of Object.entries(images)) {
+  const filename = path.split('/').pop();
+  if (filename) {
+    imageMap.set(filename, image.default);
+  }
+}
+
+// Helper function to check if file is a GIF
+const isGif = (filename: string) => filename.toLowerCase().endsWith('.gif');
+
+// Debug logging in dev mode
+if (import.meta.env.DEV) {
+  console.log('Available image files:', Array.from(imageMap.keys()));
+}
+
+export async function getStaticPaths() {
+  return galleryData.map((item, index) => {
+    return {
+      params: { id: item.id },
+      props: { 
+        item,
+        prevItem: index > 0 ? galleryData[index - 1] : null,
+        nextItem: index < galleryData.length - 1 ? galleryData[index + 1] : null,
+        index
+      }
+    };
+  });
+}
+
+const { item, prevItem, nextItem, index } = Astro.props;
+
+// Ensure we have the image or provide a fallback
+const imageSource = imageMap.get(item.filename);
+if (!imageSource && import.meta.env.DEV) {
+  console.error(`Error: Image not found: ${item.filename}`);
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={item.name} description={`Gallery item: ${item.name}`} />
+  </head>
+  <body>
+    <Header />
+    <main class="gallery-item-page">
+      <div class="content">
+        <div class="image-container">
+          {imageSource ? (
+            isGif(item.filename) ? (
+              // For GIFs, use regular img tag to bypass Astro's image processing
+              <img
+                src={imageSource.src}
+                alt={item.name}
+                width={item.width}
+                height={item.height}
+                loading="eager"
+              />
+            ) : (
+              // For other formats, use Astro's Image component
+              <Image
+                src={imageSource}
+                alt={item.name}
+                width={item.width}
+                height={item.height}
+                loading="eager"
+              />
+            )
+          ) : (
+            <div class="error-placeholder" style="aspect-ratio: 16/9; background: var(--gray-200); display: flex; align-items: center; justify-content: center; padding: 2rem; text-align: center;">
+              Image not found: {item.filename}
+            </div>
+          )}
+          <nav class="navigation">
+            {prevItem && (
+              <a href={`/gallery/${prevItem.id}`} class="nav-button prev" data-id={prevItem.id}>
+                ← Previous
+              </a>
+            )}
+            {nextItem && (
+              <a href={`/gallery/${nextItem.id}`} class="nav-button next" data-id={nextItem.id}>
+                Next →
+              </a>
+            )}
+          </nav>
+        </div>
+        <aside class="metadata">
+          <a href="/gallery" class="back-to-gallery" data-index={index}>← Back to Gallery</a>
+          <h1>{item.name}</h1>
+          
+          {item.tags && item.tags.length > 0 && (
+            <div class="tags">
+              <h2>Tags</h2>
+              <div class="tags-list">
+                {item.tags.map((tag) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {item.url && (
+            <div class="source">
+              <h2>Source</h2>
+              <a href={item.url} target="_blank" rel="noopener noreferrer">View Original</a>
+            </div>
+          )}
+          
+          <div class="details">
+            <h2>Details</h2>
+            <dl>
+              <dt>Dimensions</dt>
+              <dd>{item.width} × {item.height}px</dd>
+              
+              <dt>File Type</dt>
+              <dd>{item.file_type}</dd>
+              
+              {item.annotation && (
+                <>
+                  <dt>Notes</dt>
+                  <dd>{item.annotation}</dd>
+                </>
+              )}
+            </dl>
+          </div>
+        </aside>
+      </div>
+    </main>
+    <Footer />
+    <style lang="scss">
+      .gallery-item-page {
+        padding: 2rem;
+        
+        .content {
+          display: grid;
+          grid-template-columns: 1fr 300px;
+          gap: 2rem;
+          max-width: 1800px;
+          margin: 0 auto;
+          
+          @media (max-width: 1024px) {
+            grid-template-columns: 1fr;
+          }
+        }
+        
+        .image-container {
+          position: relative;
+          
+          img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+          }
+        }
+        
+        .navigation {
+          position: absolute;
+          bottom: 1rem;
+          left: 1rem;
+          right: 1rem;
+          display: flex;
+          justify-content: space-between;
+          gap: 1rem;
+          
+          .nav-button {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            
+            &:hover {
+              background: rgba(0, 0, 0, 0.9);
+            }
+          }
+        }
+        
+        .metadata {
+          background: var(--gray-50);
+          padding: 2rem;
+          border-radius: 8px;
+          
+          .back-to-gallery {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--gray-600);
+            text-decoration: none;
+            
+            &:hover {
+              color: var(--gray-900);
+            }
+          }
+          
+          h1 {
+            font-size: 1.5rem;
+            margin: 0 0 1.5rem 0;
+          }
+          
+          h2 {
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.5rem 0;
+          }
+          
+          .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            
+            .tag {
+              background: var(--gray-200);
+              padding: 0.25rem 0.5rem;
+              border-radius: 4px;
+              font-size: 0.875rem;
+            }
+          }
+          
+          dl {
+            margin: 0;
+            
+            dt {
+              font-weight: bold;
+              margin-top: 0.5rem;
+            }
+            
+            dd {
+              margin-left: 0;
+              color: var(--gray-600);
+            }
+          }
+        }
+      }
+    </style>
+    <script>
+      // Simplified back button handler
+      document.querySelector('.back-to-gallery')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.href = '/gallery';
+      });
+      
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (['ArrowLeft', 'ArrowUp'].includes(e.key)) {
+          const prevButton = document.querySelector('.nav-button.prev');
+          if (prevButton) {
+            e.preventDefault();
+            window.location.href = `/gallery/${prevButton.dataset.id}`;
+          }
+        } else if (['ArrowRight', 'ArrowDown'].includes(e.key)) {
+          const nextButton = document.querySelector('.nav-button.next');
+          if (nextButton) {
+            e.preventDefault();
+            window.location.href = `/gallery/${nextButton.dataset.id}`;
+          }
+        }
+      });
+    </script>
+  </body>
+</html> 
