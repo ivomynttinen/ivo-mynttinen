@@ -9,11 +9,12 @@ import MatomoTracking from '../components/MatomoTracking.astro';
 
 import '../styles/markdown.scss';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & { slug: string };
 
-const { title, description, pubDate, category, heroImage, ogImage, plain } = Astro.props;
+const { title, description, pubDate, category, heroImage, ogImage, plain, slug } = Astro.props;
 
-const ogImageToUse = ogImage?.src || heroImage?.src || undefined;
+// Use custom OG image if provided, otherwise use the dynamic OG image URL
+const ogImageToUse = ogImage?.src || `/blog/${slug}/og-image.png`;
 ---
 
 <html lang="en">
@@ -26,7 +27,7 @@ const ogImageToUse = ogImage?.src || heroImage?.src || undefined;
     <Header activePath="blog" />
     <main class="layout-blog-post">
       <article class="md">
-        {heroImage && (
+        {heroImage && plain && (
           <div class="hero-image">
             <Image 
               src={heroImage}
