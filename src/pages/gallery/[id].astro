@@ -4,6 +4,7 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { Image } from 'astro:assets';
 import galleryData from '../../data/gallery.json';
+import { slugMap, getSlugById } from '../../utils/slugs';
 
 // Fix the image import section
 const images = await import.meta.glob('../../assets/gallery/*.{png,jpg,jpeg,gif,webp}', {
@@ -22,6 +23,30 @@ for (const [path, image] of Object.entries(images)) {
 // Helper function to check if file is a GIF
 const isGif = (filename: string) => filename.toLowerCase().endsWith('.gif');
 
+// Helper function to generate URL-friendly slug
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric chars with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+}
+
+// Generate unique slugs for all items
+const slugMap = new Map();
+galleryData.forEach(item => {
+  let baseSlug = generateSlug(item.name);
+  let slug = baseSlug;
+  let counter = 1;
+  
+  // If slug already exists, append part of the ID
+  while (slugMap.has(slug)) {
+    // Use first 6 characters of ID to keep URLs reasonably short
+    slug = `${baseSlug}-${item.id.substring(0, 6)}`;
+  }
+  
+  slugMap.set(slug, item);
+});
+
 // Debug logging in dev mode
 if (import.meta.env.DEV) {
   console.log('Available image files:', Array.from(imageMap.keys()));
@@ -29,19 +54,26 @@ if (import.meta.env.DEV) {
 
 export async function getStaticPaths() {
   return galleryData.map((item, index) => {
+    const slug = getSlugById(item.id);
     return {
-      params: { id: item.id },
+      params: { id: slug },
       props: { 
         item,
         prevItem: index > 0 ? galleryData[index - 1] : null,
         nextItem: index < galleryData.length - 1 ? galleryData[index + 1] : null,
-        index
+        index,
+        slug
       }
     };
   });
 }
 
-const { item, prevItem, nextItem, index } = Astro.props;
+const { id } = Astro.params;
+const { item, prevItem, nextItem, index, slug } = Astro.props;
+
+// Get slugs for navigation
+const prevSlug = prevItem ? getSlugById(prevItem.id) : null;
+const nextSlug = nextItem ? getSlugById(nextItem.id) : null;
 
 // Ensure we have the image or provide a fallback
 const imageSource = imageMap.get(item.filename);
@@ -86,13 +118,13 @@ if (!imageSource && import.meta.env.DEV) {
             </div>
           )}
           <nav class="navigation">
-            {prevItem && (
-              <a href={`/gallery/${prevItem.id}`} class="nav-button prev" data-id={prevItem.id}>
+            {prevItem && prevSlug && (
+              <a href={`/gallery/${prevSlug}`} class="nav-button prev" data-slug={prevSlug}>
                 ← Previous
               </a>
             )}
-            {nextItem && (
-              <a href={`/gallery/${nextItem.id}`} class="nav-button next" data-id={nextItem.id}>
+            {nextItem && nextSlug && (
+              <a href={`/gallery/${nextSlug}`} class="nav-button next" data-slug={nextSlug}>
                 Next →
               </a>
             )}
@@ -252,19 +284,19 @@ if (!imageSource && import.meta.env.DEV) {
         window.location.href = '/gallery';
       });
       
-      // Keyboard navigation
+      // Keyboard navigation with view transitions
       document.addEventListener('keydown', (e) => {
         if (['ArrowLeft', 'ArrowUp'].includes(e.key)) {
           const prevButton = document.querySelector('.nav-button.prev');
           if (prevButton) {
             e.preventDefault();
-            window.location.href = `/gallery/${prevButton.dataset.id}`;
+            prevButton.click(); // Use the button's click event to maintain view transitions
           }
         } else if (['ArrowRight', 'ArrowDown'].includes(e.key)) {
           const nextButton = document.querySelector('.nav-button.next');
           if (nextButton) {
             e.preventDefault();
-            window.location.href = `/gallery/${nextButton.dataset.id}`;
+            nextButton.click(); // Use the button's click event to maintain view transitions
           }
         }
       });

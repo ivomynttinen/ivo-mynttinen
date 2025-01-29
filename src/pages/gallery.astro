@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import galleryData from '../data/gallery.json';
+import { getSlugById } from '../utils/slugs';
 
 // Replace the image import section with this:
 const images = import.meta.glob('../assets/gallery/*.{png,jpg,jpeg,gif,webp}', {
@@ -22,6 +23,29 @@ for (const [path, image] of Object.entries(images)) {
 
 // Helper function to check if file is a GIF
 const isGif = (filename: string) => filename.toLowerCase().endsWith('.gif');
+
+// Helper function to generate URL-friendly slug
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric chars with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+}
+
+// Generate unique slugs for all items
+const slugMap = new Map();
+galleryData.forEach(item => {
+  let baseSlug = generateSlug(item.name);
+  let slug = baseSlug;
+  
+  // If slug already exists, append part of the ID
+  while (slugMap.has(slug)) {
+    // Use first 6 characters of ID to keep URLs reasonably short
+    slug = `${baseSlug}-${item.id.substring(0, 6)}`;
+  }
+  
+  slugMap.set(slug, item);
+});
 
 // Sort and filter helpers
 const sortByDate = (a: any, b: any) => b.lastModified - a.lastModified;
@@ -82,6 +106,7 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
         <div class="gallery-grid" id="gallery-grid">
           {sortedGalleryData.map((item, index) => {
             const imageSource = imageMap.get(item.filename);
+            const itemSlug = getSlugById(item.id);
             return (
               <div 
                 class="gallery-item" 
@@ -90,7 +115,7 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
                 data-tags={JSON.stringify(item.tags || [])}
                 data-last-modified={item.lastModified}
               >
-                <a href={`/gallery/${item.id}`}>
+                <a href={`/gallery/${itemSlug}`}>
                   {imageSource ? (
                     isGif(item.filename) ? (
                       <img
@@ -132,39 +157,84 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
 
     <script type="module">
       window.addEventListener('load', () => {
-        // Store scroll position before navigation
-        document.querySelectorAll('.gallery-item').forEach(link => {
-          link.addEventListener('click', (e) => {
-            const currentScroll = window.scrollY;
-            // Store the scroll position in sessionStorage instead of history state
-            sessionStorage.setItem('galleryScrollPosition', currentScroll.toString());
-          });
-        });
-
-        // Restore scroll position if we're returning from a gallery item
-        if (document.referrer.includes('/gallery/')) {
-          const savedPosition = sessionStorage.getItem('galleryScrollPosition');
-          if (savedPosition) {
-            requestAnimationFrame(() => {
-              window.scrollTo(0, parseInt(savedPosition, 10));
-              // Clear the stored position after using it
-              sessionStorage.removeItem('galleryScrollPosition');
-            });
-          }
-        }
-
-        // Filter functionality
+        // Get filter elements
         const folderFilter = document.getElementById('folderFilter');
         const tagFilter = document.getElementById('tagFilter');
         const dateFrom = document.getElementById('dateFrom');
         const dateTo = document.getElementById('dateTo');
         const galleryItems = document.querySelectorAll('.gallery-item');
 
-        // Add event listeners
-        folderFilter.addEventListener('change', applyFilters);
-        tagFilter.addEventListener('change', applyFilters);
-        dateFrom.addEventListener('change', applyFilters);
-        dateTo.addEventListener('change', applyFilters);
+        // Function to save filter state
+        function saveFilterState() {
+          const filterState = {
+            folders: [...folderFilter.selectedOptions].map(opt => opt.value),
+            tags: [...tagFilter.selectedOptions].map(opt => opt.value),
+            dateFrom: dateFrom.value,
+            dateTo: dateTo.value
+          };
+          sessionStorage.setItem('galleryFilters', JSON.stringify(filterState));
+        }
+
+        // Function to restore filter state
+        function restoreFilterState() {
+          const savedState = sessionStorage.getItem('galleryFilters');
+          if (savedState) {
+            const filterState = JSON.parse(savedState);
+            
+            // Restore folder selections
+            filterState.folders.forEach(folder => {
+              const option = folderFilter.querySelector(`option[value="${folder}"]`);
+              if (option) option.selected = true;
+            });
+
+            // Restore tag selections
+            filterState.tags.forEach(tag => {
+              const option = tagFilter.querySelector(`option[value="${tag}"]`);
+              if (option) option.selected = true;
+            });
+
+            // Restore dates
+            if (filterState.dateFrom) dateFrom.value = filterState.dateFrom;
+            if (filterState.dateTo) dateTo.value = filterState.dateTo;
+
+            // Apply the restored filters
+            applyFilters();
+          } else {
+            // Initialize date inputs with default values if no saved state
+            const minDate = dateFrom.dataset.minDate;
+            const today = new Date().toISOString().split('T')[0];
+            dateFrom.value = minDate;
+            dateTo.value = today;
+          }
+        }
+
+        // Store scroll position before navigation
+        document.querySelectorAll('.gallery-item').forEach(link => {
+          link.addEventListener('click', () => {
+            const currentScroll = window.scrollY;
+            sessionStorage.setItem('galleryScrollPosition', currentScroll.toString());
+            // Save filter state before navigation
+            saveFilterState();
+          });
+        });
+
+        // Add event listeners for filters
+        folderFilter.addEventListener('change', () => {
+          applyFilters();
+          saveFilterState();
+        });
+        tagFilter.addEventListener('change', () => {
+          applyFilters();
+          saveFilterState();
+        });
+        dateFrom.addEventListener('change', () => {
+          applyFilters();
+          saveFilterState();
+        });
+        dateTo.addEventListener('change', () => {
+          applyFilters();
+          saveFilterState();
+        });
 
         function applyFilters() {
           const selectedFolders = [...folderFilter.selectedOptions].map(opt => opt.value).filter(Boolean);
@@ -186,13 +256,19 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
           });
         }
 
-        // Get minDate from data attribute
-        const minDate = dateFrom.dataset.minDate;
-        
-        // Initialize date inputs with today and fixed minimum date
-        const today = new Date().toISOString().split('T')[0];
-        dateFrom.value = minDate;
-        dateTo.value = today;
+        // Restore scroll position and filters if returning from a gallery item
+        if (document.referrer.includes('/gallery/')) {
+          const savedPosition = sessionStorage.getItem('galleryScrollPosition');
+          if (savedPosition) {
+            requestAnimationFrame(() => {
+              window.scrollTo(0, parseInt(savedPosition, 10));
+              sessionStorage.removeItem('galleryScrollPosition');
+            });
+          }
+        }
+
+        // Restore filter state on page load
+        restoreFilterState();
       });
     </script>
   </body>
