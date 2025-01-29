@@ -1,0 +1,149 @@
+---
+title: 'How to Publish Your Eagle Library on the Web (Part I)'
+description: 'How to export and transform an Eagle library into a library that can be published on the web.'
+pubDate: '2025-01-28'
+highlight: false
+category: 'site'
+heroImage: '../../assets/blog/publishing-eagle-app-library-on-the-web-part-1/eagle-app-hero.png'
+---
+
+import { Image } from 'astro:assets';
+import EagleApp from '../../assets/blog/publishing-eagle-app-library-on-the-web-part-1/eagle-app.png';
+import EagleTransformerScript from '../../assets/blog/publishing-eagle-app-library-on-the-web-part-1/python3-eagle-transform-script.gif';
+
+## From Local Inspiration to Online Gallery: Exporting Your Eagle App Library
+
+I’ve been using [Eagle App](https://eagle.cool/) to collect design inspiration, organize ideas, and generally hoard beautiful visuals for years. It has been my go-to tool for grabbing media from the web—whether it's a sleek web design, stunning interior decor, or just something that catches my eye. Its powerful metadata tagging, folder organization, and ease of use make it perfect for discovering inspiration when you need it most.
+
+<figure>
+  <Image src={EagleApp} alt="Eagle App" />
+  <figcaption>My design inspiration collection in Eagle App</figcaption>
+</figure>
+
+But as much as I love Eagle, I’ve wanted to take things a step further. Back in the golden ages of "CSS Gallery Websites", I’ve always wanted to create a a gallery site to share my favorite design inspirations with others. However, maintaining such a site manually seemed like a massive time sink—one I’d never realistically commit to. So, why not leverage my existing Eagle library to power the gallery automatically?
+
+In this first part of this article series, I’ll walk through how I exported my Eagle library and transformed it into a better format for web publishing.
+
+---
+
+## The Limits of Eagle’s Export Options
+
+Eagle makes exporting easy—to a point. You can grab all your media files in various formats, but there’s no built-in way to export everything in a clean, consistent format, including metadata of all the collected gallery items.
+
+To streamline the process, I needed a custom solution — something that would:
+
+1. Consolidate all metadata into a single JSON file.
+2. Normalize media filenames into URL-friendly formats.
+3. Filter out unnecessary files, like thumbnails or unsupported media types.
+
+The goal was simple: make re-publishing updates to my Eagle library as seamless as possible — and maybe even automate the whole thing down the line.
+
+---
+
+## What I Needed for Astro
+
+My website is built with [Astro](https://astro.build/), which is fantastic for static site generation. To integrate my Eagle library into Astro, I decided to transform all the Eagle library metadata into a single JSON file, containing all entries. This file could then serve as the data source for an Astro content collection.
+
+Images could be used as is, with some basic renaming. I'm planning to process images via Astro's `<Image>` component, which will allow me to optimize images for the web.
+
+---
+
+## Transforming the Eagle Library
+
+I created a simple [Python script](https://github.com/ivomynttinen/eagle-library-transformer) to process Eagle libraries. The script consolidates metadata, renames and normalizes files, and copies everything to a new directory structure—ready for use with Astro.
+
+### Directory Structure
+
+Here’s how your directory should look like:
+
+```bash
+├ library/  # Drop the images folder from your Eagle library here
+│ └── images/
+│     ├── LSVNSY7DPP56X.info/  # Example subfolder
+│     │   ├── metadata.json
+│     │   ├── image1.jpg
+│     │   └── image2.png
+│     ├── LSVNSY9BDDQWU.info/
+│     │   ├── metadata.json 
+│     │   └── video1.mp4
+│     └── LSVNSYH6FPOPZ.info/
+│         ├── metadata.json
+│         └── image3.jpg
+```
+
+### Run the Script
+
+<aside class="right">
+  #### Installing Python
+
+  Youll need to have Python installed on your machine. [Here](https://realpython.com/installing-python/) is a great guide to get you started (I recommend using Homebrew).
+</aside>
+
+1. Set up your library structure as shown above.
+2. Run the script:
+   ```bash
+   python3 transform.py
+   ```
+3. When prompted, choose whether to process only image files:
+   - Enter `y` to process only images (skips videos, documents, and other media).
+   - Enter `n` or press Enter to process all supported media files.
+
+<figure>
+  <Image src={EagleTransformerScript} alt="Eagle Transformer Script" style={{ borderRadius: '.55rem' }} />
+  <figcaption>An Eagle library with 500+ items processes in less than a second.</figcaption>
+</figure>
+
+The script will:
+
+1. Create a consolidated `metadata.json` file in the `dist` directory.
+2. Copy and rename media files to the `dist/images` directory.
+3. Update file references in the metadata to match the new file locations.
+4. Add file type information to each metadata entry.
+5. Leave all original files in the library directory unchanged.
+
+The output directory structure should look like this:
+
+```bash
+├ dist/  # Output directory
+│ ├── images/  # Contains processed media files with rewritten filenames
+│ └── metadata.json  # Consolidated metadata file with file references
+```
+
+The structure of the metadata.json file will look like this:
+
+```json
+{
+  "id": "LUS9I4JH6WX6G",
+  "name": "Asketic \u2013 Business Branding",
+  "size": 220927,
+  "btime": 1712659931264, // Unix timestamps
+  "mtime": 1712659931265,
+  "ext": "png",
+  "tags": [
+    "teaser",
+    "header",
+    "navigation",
+    "hero"
+  ],
+  "url": "https://www.asketic.com/?ref=land-book.com#top",
+  "annotation": "",
+  "modificationTime": 1712659931261,
+  "height": 2292,
+  "width": 3426,
+  "palettes": [
+    // Color palette objects
+  ],
+  "lastModified": 1712663115329,
+  "filename": "asketic--business-branding.png", // File name of the image that was renamed and moved to the dist/images directory
+  "file_type": "image"
+}
+```
+
+---
+
+## What’s Next?
+
+With my Eagle library exported and transformed, I now have a clean, web-friendly dataset that’s ready for the next step: turning it into a searchable, visually appealing gallery on my website using Astro.
+
+In **Part II**, I’ll show you how to build the gallery page itself. We’ll use the transformed data to create a dynamic, user-friendly interface for browsing design inspiration—no manual updates required. Stay tuned!
+
