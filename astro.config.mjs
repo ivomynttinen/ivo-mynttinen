@@ -27,5 +27,14 @@ export default defineConfig({
       // Enable word wrap to prevent horizontal scrolling
       wrap: true
     },
+  },
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: "modern-compiler"
+        }
+      }
+    }
   }
 });
