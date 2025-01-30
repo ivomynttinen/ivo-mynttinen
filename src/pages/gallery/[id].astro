@@ -131,7 +131,14 @@ if (!imageSource && import.meta.env.DEV) {
           </nav>
         </div>
         <aside class="metadata">
-          <a href="/gallery" class="back-to-gallery" data-index={index}>← Back to Gallery</a>
+          <a 
+            href="/gallery" 
+            class="back-to-gallery" 
+            data-astro-history="replace"
+            data-index={index}
+          >
+            ← Back to Gallery
+          </a>
           <h1>{item.name}</h1>
           
           {item.tags && item.tags.length > 0 && (
@@ -278,25 +285,19 @@ if (!imageSource && import.meta.env.DEV) {
       }
     </style>
     <script>
-      // Simplified back button handler
-      document.querySelector('.back-to-gallery')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        window.location.href = '/gallery';
-      });
-      
-      // Keyboard navigation with view transitions
+      // Only handle keyboard navigation
       document.addEventListener('keydown', (e) => {
         if (['ArrowLeft', 'ArrowUp'].includes(e.key)) {
           const prevButton = document.querySelector('.nav-button.prev');
           if (prevButton) {
             e.preventDefault();
-            prevButton.click(); // Use the button's click event to maintain view transitions
+            prevButton.click();
           }
         } else if (['ArrowRight', 'ArrowDown'].includes(e.key)) {
           const nextButton = document.querySelector('.nav-button.next');
           if (nextButton) {
             e.preventDefault();
-            nextButton.click(); // Use the button's click event to maintain view transitions
+            nextButton.click();
           }
         }
       });

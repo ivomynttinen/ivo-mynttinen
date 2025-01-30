@@ -1,0 +1,547 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import MatomoTracking from '../../components/MatomoTracking.astro';
+import { Image } from 'astro:assets';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import galleryData from '../../data/gallery.json';
+import { getSlugById } from '../../utils/slugs';
+import RSSIcon from '../../assets/images/rss.svg?raw';
+import FilterIcon from '../../assets/images/filter.svg?raw';
+
+// Replace the image import section with this:
+const images = import.meta.glob('../../assets/gallery/*.{png,jpg,jpeg,gif,webp}', {
+  eager: true,
+});
+
+// Get URL parameters for initial state
+const url = new URL(Astro.request.url);
+const initialFolders = url.searchParams.get('folders')?.split(',').filter(Boolean) || [];
+const initialTags = url.searchParams.get('tags')?.split(',').filter(Boolean) || [];
+const initialDateFrom = url.searchParams.get('from') || '';
+const initialDateTo = url.searchParams.get('to') || '';
+const isFilterOpen = url.searchParams.get('filters') === 'open';
+
+// Create a map of filenames to their image objects
+const imageMap = new Map();
+for (const [path, image] of Object.entries(images)) {
+  const filename = path.split('/').pop();
+  if (filename) {
+    imageMap.set(filename, image.default);
+  }
+}
+
+// Helper function to check if file is a GIF
+const isGif = (filename: string) => filename.toLowerCase().endsWith('.gif');
+
+// Helper function to generate URL-friendly slug
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric chars with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+}
+
+// Generate unique slugs for all items
+const slugMap = new Map();
+galleryData.forEach(item => {
+  let baseSlug = generateSlug(item.name);
+  let slug = baseSlug;
+  
+  // If slug already exists, append part of the ID
+  while (slugMap.has(slug)) {
+    // Use first 6 characters of ID to keep URLs reasonably short
+    slug = `${baseSlug}-${item.id.substring(0, 6)}`;
+  }
+  
+  slugMap.set(slug, item);
+});
+
+// Sort and filter helpers
+const sortByDate = (a: any, b: any) => b.lastModified - a.lastModified;
+
+// Get unique folders and tags from gallery data, excluding specific folders
+const excludedFolders = ['Personal 2024', 'Website 2024'];
+const uniqueFolders = [...new Set(galleryData.flatMap(item => item.folders || []))].filter(folder => !excludedFolders.includes(folder));
+const uniqueTags = [...new Set(galleryData.flatMap(item => item.tags || []))];
+
+// Get date range with fixed minimum date
+const dates = galleryData.map(item => item.lastModified);
+const maxDate = new Date(Math.max(...dates)).toISOString().split('T')[0];
+const minDate = '2010-01-01'; // Set fixed minimum date
+
+// Sort items by date descending
+const sortedGalleryData = [...galleryData].sort(sortByDate);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title='Ivo’s Design Inspiration Gallery' description='Designs of websites, apps and other digital products carefully curated by Ivo Mynttinen.' />
+    <MatomoTracking />
+  </head>
+  <body>
+    <Header />
+    <main class="layout-gallery">
+      <section class="gallery">
+        <div class="page-title">
+          <h1>Gallery</h1>
+          <a href="/gallery.rss.xml" title="Subscribe to RSS Feed" class="rss-icon">
+            <Fragment set:html={RSSIcon} />
+          </a>
+        </div>
+        <p class="intro">
+          Design inspiration gallery carefully curated by myself. <a href="/blog/publishing-eagle-app-library-on-the-web-part-1/">Read</a> more about how all this works.
+        </p>
+        
+        <div class="filter-controls">
+          <div class="filter-toggles">
+            <button id="toggleFilters" class="filter-button" data-initial-state={isFilterOpen ? 'open' : 'closed'}>
+              <Fragment set:html={FilterIcon} />
+              Filters
+            </button>
+            <span id="resultCount" class="result-count"></span>
+          </div>
+
+          <div class="filter-toolbar" class:list={[{ open: isFilterOpen }]}>
+            <div class="filter-section">
+              <h3>Categories</h3>
+              <div class="filter-buttons" id="folderFilter">
+                {uniqueFolders.map(folder => (
+                  <button 
+                    class:list={["filter-btn", { active: initialFolders.includes(folder) }]} 
+                    data-value={folder}
+                  >
+                    {folder}
+                  </button>
+                ))}
+              </div>
+            </div>
+  
+            <div class="filter-section">
+              <h3>Tags</h3>
+              <div class="filter-buttons" id="tagFilter">
+                {uniqueTags.map(tag => (
+                  <button 
+                    class:list={["filter-btn", { active: initialTags.includes(tag) }]} 
+                    data-value={tag}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+  
+            <div class="filter-section">
+              <h3>Date Range</h3>
+              <div class="date-filters">
+                <label>
+                  From:
+                  <input 
+                    type="date" 
+                    id="dateFrom" 
+                    min={minDate} 
+                    max={maxDate} 
+                    data-min-date={minDate}
+                    value={initialDateFrom} 
+                  />
+                </label>
+                <label>
+                  To:
+                  <input 
+                    type="date" 
+                    id="dateTo" 
+                    min={minDate} 
+                    max={maxDate}
+                    value={initialDateTo} 
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-grid" id="gallery-grid">
+          {sortedGalleryData.map((item, index) => {
+            const imageSource = imageMap.get(item.filename);
+            const itemSlug = getSlugById(item.id);
+            return (
+              <div 
+                class="gallery-item" 
+                data-index={index}
+                data-folders={JSON.stringify(item.folders || [])}
+                data-tags={JSON.stringify(item.tags || [])}
+                data-last-modified={item.lastModified}
+              >
+                <a href={`/gallery/${itemSlug}`}>
+                  {imageSource ? (
+                    isGif(item.filename) ? (
+                      <img
+                        src={imageSource.src}
+                        alt={item.name}
+                        width={item.width}
+                        height={item.height}
+                        loading="lazy"
+                        style={`aspect-ratio: ${item.width}/${item.height}`}
+                      />
+                    ) : (
+                      <Image
+                        src={imageSource}
+                        alt={item.name}
+                        width={item.width}
+                        height={item.height}
+                        loading="lazy"
+                        sizes="(min-width: 1024px) 400px, (min-width: 768px) 32vw, 98vw"
+                        widths={[320, 400, 800]}
+                        style={`aspect-ratio: ${item.width}/${item.height}`}
+                      />
+                    )
+                  ) : (
+                    <div class="error-placeholder" style="aspect-ratio: 16/9; background: var(--gray-200); display: flex; align-items: center; justify-content: center; padding: 1rem; text-align: center;">
+                      Image not found: {item.filename}
+                    </div>
+                  )}
+                  <div class="gallery-item-info">
+                    {item.name}
+                  </div>
+                </a>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    </main>
+    <Footer class="layout-blog" />
+  </body>
+</html>
+
+<script>
+  function initializeGallery() {
+    // Wait for elements to be available
+    const filterToolbar = document.querySelector('.filter-toolbar');
+    const toggleFiltersBtn = document.getElementById('toggleFilters');
+    const folderButtons = document.querySelectorAll('#folderFilter .filter-btn');
+    const tagButtons = document.querySelectorAll('#tagFilter .filter-btn');
+    const dateFrom = document.getElementById('dateFrom');
+    const dateTo = document.getElementById('dateTo');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    const resultCount = document.getElementById('resultCount');
+
+    // Only initialize if elements exist
+    if (!filterToolbar || !toggleFiltersBtn) {
+      console.warn('Gallery elements not found, skipping initialization');
+      return;
+    }
+
+    function updateResultCount(visibleCount) {
+      resultCount.textContent = `${visibleCount} Images`;
+    }
+
+    function applyFilters() {
+      const selectedFolders = [...document.querySelectorAll('#folderFilter .filter-btn.active')]
+        .map(btn => btn.dataset.value);
+      const selectedTags = [...document.querySelectorAll('#tagFilter .filter-btn.active')]
+        .map(btn => btn.dataset.value);
+      const fromDate = dateFrom.value ? new Date(dateFrom.value).getTime() : 0;
+      const toDate = dateTo.value ? new Date(dateTo.value).getTime() + 86400000 : Number.MAX_SAFE_INTEGER;
+
+      let visibleCount = 0;
+      galleryItems.forEach(item => {
+        const itemData = item.dataset;
+        const itemFolders = itemData.folders ? JSON.parse(itemData.folders) : [];
+        const itemTags = itemData.tags ? JSON.parse(itemData.tags) : [];
+        const itemDate = parseInt(itemData.lastModified);
+
+        const folderMatch = selectedFolders.length === 0 || itemFolders.some(f => selectedFolders.includes(f));
+        const tagMatch = selectedTags.length === 0 || itemTags.some(t => selectedTags.includes(t));
+        const dateMatch = itemDate >= fromDate && itemDate <= toDate;
+
+        const isVisible = folderMatch && tagMatch && dateMatch;
+        item.style.display = isVisible ? 'block' : 'none';
+        if (isVisible) visibleCount++;
+      });
+
+      updateResultCount(visibleCount);
+    }
+
+    // Update toggle filters functionality
+    toggleFiltersBtn.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent any default behavior
+      const isOpen = filterToolbar.classList.contains('open');
+      
+      // Toggle the hidden class
+      if (isOpen) {
+        filterToolbar.classList.remove('open');
+      } else {
+        filterToolbar.classList.add('open');
+      }
+      
+      // Save the new state
+      const filterState = {
+        isOpen: !isOpen,
+        folders: [...document.querySelectorAll('#folderFilter .filter-btn.active')].map(btn => btn.dataset.value),
+        tags: [...document.querySelectorAll('#tagFilter .filter-btn.active')].map(btn => btn.dataset.value),
+        dateFrom: dateFrom.value,
+        dateTo: dateTo.value
+      };
+      localStorage.setItem('galleryFilters', JSON.stringify(filterState));
+    });
+
+    folderButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('active');
+        applyFilters();
+      });
+    });
+
+    tagButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('active');
+        applyFilters();
+      });
+    });
+
+    dateFrom.addEventListener('change', applyFilters);
+    dateTo.addEventListener('change', applyFilters);
+
+    // Initialize with all items visible
+    updateResultCount(galleryItems.length);
+  }
+
+  // Handle both regular page loads and Astro view transitions
+  document.addEventListener('astro:page-load', initializeGallery, { once: false });
+</script>
+
+<style lang="scss">
+  .layout-gallery{
+    margin-top: 4rem;
+
+    h1{
+      font-size: 2rem;
+      line-height: 2.5rem;
+    }
+  }
+
+  .page-title{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+
+  .intro{
+    margin-top: 1rem;
+    max-width: 38ch;
+
+    a{
+      color: var(--yellow-11);
+      text-decoration-color: var(--yellow-10);
+      transition: color 0.2s, text-decoration-color 0.2s;
+
+      &:hover{
+        color: var(--yellow-12);
+        text-decoration-color: var(--yellow-11);
+      }
+    }
+  }
+
+  .filter-controls{
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gray-4);
+  }
+
+  .filter-toggles{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .result-count {
+    color: var(--gray-11);
+    font-size: 0.875rem;
+  }
+
+  .filter-toolbar {
+    background: var(--gray-3);
+    border-radius: .6rem;
+    height: 0;
+    opacity: .5;
+    overflow-y: clip;
+    transition: height .3s, opacity .3s, margin-top .3s;
+    interpolate-size: allow-keywords;
+
+    &.open {
+      height: auto;
+      opacity: 1;
+      margin-top: 1rem;
+    }
+  }
+
+  .filter-button{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-family: var(--font-family-sans);
+    font-weight: 500;
+    font-size: .875rem;
+    color: var(--gray-11);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: .3rem .5rem;
+    border-radius: .3rem;
+    transition: background 0.2s ease, color 0.2s ease;
+
+    &:hover{
+      background: var(--gray-4);
+    }
+
+    &.active{
+      background: var(--yellow-4);
+      color: var(--yellow-11);
+
+      &:hover{
+        background: var(--yellow-5);
+        color: var(--yellow-12);
+      }
+    }
+  }
+
+  .filter-section{
+    padding: 1rem;
+
+    h3{
+      color: var(--gray-11);
+      font-size: .875rem;
+      font-weight: 500;
+      font-stretch: 135%;
+      margin-bottom: .5rem;
+    }
+  }
+
+  .filter-buttons{
+    display: flex;
+    flex-wrap: wrap;
+    gap: .2rem;
+  }
+
+  .filter-btn {
+    padding: 0.2rem 0.4rem;
+    background: var(--gray-3);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    font-family: var(--font-family-sans);
+    font-size: .875rem;
+    color: var(--gray-11);
+
+    &:hover {
+      background: var(--gray-5);
+      color: var(--gray-12);
+    }
+
+    &.active {
+      background: var(--base);
+      color: var(--gray-12);
+      box-shadow: var(--elevation-1);
+    }
+  }
+
+  .date-filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: .875rem;
+      color: var(--gray-11);
+    }
+
+    input {
+      font-family: var(--font-family-sans);
+      color: var(--gray-12);
+      padding: 0.2rem 0.4rem;
+      font-size: .875rem;
+      border: none;
+      border-radius: 4px;
+      background: var(--gray-5);
+    }
+  }
+
+  .gallery {
+    width: 100%;
+    max-width: 100%;
+
+    .gallery-grid {
+      width: 100%;
+      display: grid;
+      gap: 1em;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-rows: masonry; 
+    }
+  }
+
+  .gallery-item {
+    position: relative;
+    margin-bottom: 1em;
+
+    a {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.2s ease;
+      border-radius: 6px;
+      padding: 3px;
+      background: var(--base);
+      border: 1px solid var(--gray-3);
+
+      &:hover{
+        background: var(--gray-4);
+        border-color: var(--gray-4);
+      }
+    }
+
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      border-radius: 4px;
+    }
+
+    .gallery-item-info {
+      padding: .4rem;
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      opacity: 0;
+      backdrop-filter: blur(4px);
+      transition: opacity 0.3s ease;
+      font-size: .625rem;
+      font-weight: 500;
+      border-radius: 4px;
+      max-width: calc(100% - 24px);
+    }
+
+    &:hover .gallery-item-info {
+      opacity: 1;
+    }
+  }
+
+  @media (min-width: 768px) {
+    body > main{
+      max-width: 100%;
+      padding: 0 1rem;
+    }
+  }
+</style>

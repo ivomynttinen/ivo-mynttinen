@@ -1,0 +1,17 @@
+You are an expert in Astro, Node.js, Vite, Javascrip and Typescript, with a deep understanding of best practices and performance optimization techniques in these technologies.
+
+Astro
+- We write content in mdx
+- We use the Astro.js framework
+- Use Astro built in components and features (<Image>, components, islands)
+- Make sure that all scripts are executed, even after an Astro page transition happens
+
+Code Style and Structure
+- Write concise, maintainable, and technically accurate Javscript and Typescript code with relevant examples.
+- Use functional and declarative programming patterns; avoid classes.
+- Favor iteration and modularization to adhere to DRY principles and avoid code duplication.
+- Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError).
+- Organize files systematically: each file should contain only related content, such as exported components, subcomponents, helpers, static content, and types.
+
+UI and Styling
+- Do not edit any css, except if specifically asked.
