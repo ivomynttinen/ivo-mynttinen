@@ -15,14 +15,6 @@ const images = import.meta.glob('../../assets/gallery/*.{png,jpg,jpeg,gif,webp}'
   eager: true,
 });
 
-// Get URL parameters for initial state
-const url = new URL(Astro.request.url);
-const initialFolders = url.searchParams.get('folders')?.split(',').filter(Boolean) || [];
-const initialTags = url.searchParams.get('tags')?.split(',').filter(Boolean) || [];
-const initialDateFrom = url.searchParams.get('from') || '';
-const initialDateTo = url.searchParams.get('to') || '';
-const isFilterOpen = url.searchParams.get('filters') === 'open';
-
 // Create a map of filenames to their image objects
 const imageMap = new Map();
 for (const [path, image] of Object.entries(images)) {
@@ -97,20 +89,20 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
         
         <div class="filter-controls">
           <div class="filter-toggles">
-            <button id="toggleFilters" class="filter-button" data-initial-state={isFilterOpen ? 'open' : 'closed'}>
+            <button id="toggleFilters" class="filter-button">
               <Fragment set:html={FilterIcon} />
               Filters
             </button>
             <span id="resultCount" class="result-count"></span>
           </div>
 
-          <div class="filter-toolbar" class:list={[{ open: isFilterOpen }]}>
+          <div class="filter-toolbar">
             <div class="filter-section">
               <h3>Categories</h3>
               <div class="filter-buttons" id="folderFilter">
                 {uniqueFolders.map(folder => (
                   <button 
-                    class:list={["filter-btn", { active: initialFolders.includes(folder) }]} 
+                    class="filter-btn"
                     data-value={folder}
                   >
                     {folder}
@@ -124,7 +116,7 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
               <div class="filter-buttons" id="tagFilter">
                 {uniqueTags.map(tag => (
                   <button 
-                    class:list={["filter-btn", { active: initialTags.includes(tag) }]} 
+                    class="filter-btn"
                     data-value={tag}
                   >
                     {tag}
@@ -144,7 +136,6 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
                     min={minDate} 
                     max={maxDate} 
                     data-min-date={minDate}
-                    value={initialDateFrom} 
                   />
                 </label>
                 <label>
@@ -154,7 +145,7 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
                     id="dateTo" 
                     min={minDate} 
                     max={maxDate}
-                    value={initialDateTo} 
+                    data-min-date={minDate}
                   />
                 </label>
               </div>
@@ -289,6 +280,13 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
 
       updateResultCount(visibleCount);
       updateGalleryItemAttributes();
+
+      // If any filters are set, add the active class to the filter button. Else remove it.
+      if (selectedFolders.length > 0 || selectedTags.length > 0 || fromDate || toDate) {
+        toggleFiltersBtn.classList.add('active');
+      } else {
+        toggleFiltersBtn.classList.remove('active');
+      }
     }
 
     // Update toggle filters functionality
