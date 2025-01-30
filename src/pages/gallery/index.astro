@@ -214,9 +214,13 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
     </main>
     <Footer class="layout-blog" />
     
-    <!-- Add modal markup -->
+    <!-- Update modal markup -->
     <div id="gallery-modal" class="gallery-modal">
       <button class="modal-close" aria-label="Close modal">×</button>
+      <nav class="modal-navigation">
+        <button class="nav-button prev" aria-label="Previous image">←</button>
+        <button class="nav-button next" aria-label="Next image">→</button>
+      </nav>
       <div class="modal-content"></div>
     </div>
   </body>
@@ -244,6 +248,21 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
       resultCount.textContent = `${visibleCount} Images`;
     }
 
+    function updateGalleryItemAttributes() {
+      const visibleItems = [...galleryItems].filter(item => item.style.display !== 'none');
+      visibleItems.forEach((item, index) => {
+        item.dataset.show = 'true';
+        item.dataset.visibleIndex = index.toString();
+      });
+      
+      // Clear attributes for hidden items
+      const hiddenItems = [...galleryItems].filter(item => item.style.display === 'none');
+      hiddenItems.forEach(item => {
+        delete item.dataset.show;
+        delete item.dataset.visibleIndex;
+      });
+    }
+
     function applyFilters() {
       const selectedFolders = [...document.querySelectorAll('#folderFilter .filter-btn.active')]
         .map(btn => btn.dataset.value);
@@ -269,6 +288,7 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
       });
 
       updateResultCount(visibleCount);
+      updateGalleryItemAttributes();
     }
 
     // Update toggle filters functionality
@@ -340,7 +360,7 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
         }
       } catch (error) {
         console.error('Error loading gallery item:', error);
-        window.location.href = url; // Fallback to regular navigation
+        Astro.redirect(url); // Fallback to regular navigation, but use astro.redirect
       }
     }
 
@@ -381,6 +401,56 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
         openModal(location.pathname);
       }
     });
+
+    // Modal navigation functions
+    function navigateModal(direction) {
+      const currentUrl = window.location.pathname;
+      const currentItem = document.querySelector(`[href="${currentUrl}"]`)?.closest('.gallery-item');
+      
+      if (!currentItem) return;
+      
+      const visibleItems = [...document.querySelectorAll('.gallery-item[data-show="true"]')];
+      const currentIndex = parseInt(currentItem.dataset.visibleIndex || '0');
+      
+      let nextIndex;
+      if (direction === 'next') {
+        nextIndex = currentIndex + 1 >= visibleItems.length ? 0 : currentIndex + 1;
+      } else {
+        nextIndex = currentIndex - 1 < 0 ? visibleItems.length - 1 : currentIndex - 1;
+      }
+      
+      const nextItem = visibleItems[nextIndex];
+      if (nextItem) {
+        const link = nextItem.querySelector('a');
+        if (link) {
+          history.pushState({}, '', link.href);
+          openModal(link.href);
+        }
+      }
+    }
+
+    // Update modal event listeners
+    const modalPrev = modal?.querySelector('.nav-button.prev');
+    const modalNext = modal?.querySelector('.nav-button.next');
+
+    modalPrev?.addEventListener('click', () => navigateModal('prev'));
+    modalNext?.addEventListener('click', () => navigateModal('next'));
+
+    // Update keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (!modal?.classList.contains('open')) return;
+
+      if (['ArrowLeft', 'ArrowUp'].includes(e.key)) {
+        e.preventDefault();
+        navigateModal('prev');
+      } else if (['ArrowRight', 'ArrowDown'].includes(e.key)) {
+        e.preventDefault();
+        navigateModal('next');
+      }
+    });
+
+    // Initial attribute setup
+    updateGalleryItemAttributes();
   }
 
   // Handle both regular page loads and Astro view transitions
@@ -663,5 +733,35 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
     padding: 2rem;
     max-width: 1800px;
     margin: 0 auto;
+  }
+
+  .modal-navigation {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem;
+    pointer-events: none;
+    z-index: 1001;
+
+    .nav-button {
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 3rem;
+      height: 3rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.8);
+      }
+    }
   }
 </style>

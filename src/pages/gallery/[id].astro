@@ -92,43 +92,23 @@ if (!imageSource && import.meta.env.DEV) {
     <main id="gallery-item" class="gallery-item-page">
       <div class="content">
         <div class="image-container">
-          {imageSource ? (
-            isGif(item.filename) ? (
-              // For GIFs, use regular img tag to bypass Astro's image processing
-              <img
-                src={imageSource.src}
-                alt={item.name}
-                width={item.width}
-                height={item.height}
-                loading="eager"
-              />
-            ) : (
-              // For other formats, use Astro's Image component
-              <Image
-                src={imageSource}
-                alt={item.name}
-                width={item.width}
-                height={item.height}
-                loading="eager"
-              />
-            )
+          {isGif(item.filename) ? (
+            <img
+              src={imageSource.src}
+              alt={item.name}
+              width={item.width}
+              height={item.height}
+              loading="eager"
+            />
           ) : (
-            <div class="error-placeholder" style="aspect-ratio: 16/9; background: var(--gray-200); display: flex; align-items: center; justify-content: center; padding: 2rem; text-align: center;">
-              Image not found: {item.filename}
-            </div>
+            <Image
+              src={imageSource}
+              alt={item.name}
+              width={item.width}
+              height={item.height}
+              loading="eager"
+            />
           )}
-          <nav class="navigation">
-            {prevItem && prevSlug && (
-              <a href={`/gallery/${prevSlug}`} class="nav-button prev" data-slug={prevSlug}>
-                ← Previous
-              </a>
-            )}
-            {nextItem && nextSlug && (
-              <a href={`/gallery/${nextSlug}`} class="nav-button next" data-slug={nextSlug}>
-                Next →
-              </a>
-            )}
-          </nav>
         </div>
         <aside class="metadata">
           <a 
@@ -182,26 +162,6 @@ if (!imageSource && import.meta.env.DEV) {
     <Footer />
   </body>
 </html>
-
-
-<script>
-  // Only handle keyboard navigation
-  document.addEventListener('keydown', (e) => {
-    if (['ArrowLeft', 'ArrowUp'].includes(e.key)) {
-      const prevButton = document.querySelector('.nav-button.prev');
-      if (prevButton) {
-        e.preventDefault();
-        prevButton.click();
-      }
-    } else if (['ArrowRight', 'ArrowDown'].includes(e.key)) {
-      const nextButton = document.querySelector('.nav-button.next');
-      if (nextButton) {
-        e.preventDefault();
-        nextButton.click();
-      }
-    }
-  });
-</script>
 
 <style lang="scss">
   .gallery-item-page {
