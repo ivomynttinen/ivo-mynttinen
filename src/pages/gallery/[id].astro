@@ -89,7 +89,7 @@ if (!imageSource && import.meta.env.DEV) {
   </head>
   <body>
     <Header />
-    <main class="gallery-item-page">
+    <main id="gallery-item" class="gallery-item-page">
       <div class="content">
         <div class="image-container">
           {imageSource ? (
@@ -180,127 +180,130 @@ if (!imageSource && import.meta.env.DEV) {
       </div>
     </main>
     <Footer />
-    <style lang="scss">
-      .gallery-item-page {
-        padding: 2rem;
+  </body>
+</html>
+
+
+<script>
+  // Only handle keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowLeft', 'ArrowUp'].includes(e.key)) {
+      const prevButton = document.querySelector('.nav-button.prev');
+      if (prevButton) {
+        e.preventDefault();
+        prevButton.click();
+      }
+    } else if (['ArrowRight', 'ArrowDown'].includes(e.key)) {
+      const nextButton = document.querySelector('.nav-button.next');
+      if (nextButton) {
+        e.preventDefault();
+        nextButton.click();
+      }
+    }
+  });
+</script>
+
+<style lang="scss">
+  .gallery-item-page {
+    padding: 2rem;
+    
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
+      max-width: 1800px;
+      margin: 0 auto;
+      
+      @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .image-container {
+      position: relative;
+      
+      img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+    }
+    
+    .navigation {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      
+      .nav-button {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
         
-        .content {
-          display: grid;
-          grid-template-columns: 1fr 300px;
-          gap: 2rem;
-          max-width: 1800px;
-          margin: 0 auto;
-          
-          @media (max-width: 1024px) {
-            grid-template-columns: 1fr;
-          }
-        }
-        
-        .image-container {
-          position: relative;
-          
-          img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-          }
-        }
-        
-        .navigation {
-          position: absolute;
-          bottom: 1rem;
-          left: 1rem;
-          right: 1rem;
-          display: flex;
-          justify-content: space-between;
-          gap: 1rem;
-          
-          .nav-button {
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            text-decoration: none;
-            transition: background-color 0.2s ease;
-            
-            &:hover {
-              background: rgba(0, 0, 0, 0.9);
-            }
-          }
-        }
-        
-        .metadata {
-          background: var(--gray-50);
-          padding: 2rem;
-          border-radius: 8px;
-          
-          .back-to-gallery {
-            display: inline-block;
-            margin-bottom: 1rem;
-            color: var(--gray-600);
-            text-decoration: none;
-            
-            &:hover {
-              color: var(--gray-900);
-            }
-          }
-          
-          h1 {
-            font-size: 1.5rem;
-            margin: 0 0 1.5rem 0;
-          }
-          
-          h2 {
-            font-size: 1.2rem;
-            margin: 1.5rem 0 0.5rem 0;
-          }
-          
-          .tags-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            
-            .tag {
-              background: var(--gray-200);
-              padding: 0.25rem 0.5rem;
-              border-radius: 4px;
-              font-size: 0.875rem;
-            }
-          }
-          
-          dl {
-            margin: 0;
-            
-            dt {
-              font-weight: bold;
-              margin-top: 0.5rem;
-            }
-            
-            dd {
-              margin-left: 0;
-              color: var(--gray-600);
-            }
-          }
+        &:hover {
+          background: rgba(0, 0, 0, 0.9);
         }
       }
-    </style>
-    <script>
-      // Only handle keyboard navigation
-      document.addEventListener('keydown', (e) => {
-        if (['ArrowLeft', 'ArrowUp'].includes(e.key)) {
-          const prevButton = document.querySelector('.nav-button.prev');
-          if (prevButton) {
-            e.preventDefault();
-            prevButton.click();
-          }
-        } else if (['ArrowRight', 'ArrowDown'].includes(e.key)) {
-          const nextButton = document.querySelector('.nav-button.next');
-          if (nextButton) {
-            e.preventDefault();
-            nextButton.click();
-          }
+    }
+    
+    .metadata {
+      background: var(--gray-50);
+      padding: 2rem;
+      border-radius: 8px;
+      
+      .back-to-gallery {
+        display: inline-block;
+        margin-bottom: 1rem;
+        color: var(--gray-600);
+        text-decoration: none;
+        
+        &:hover {
+          color: var(--gray-900);
         }
-      });
-    </script>
-  </body>
-</html> 
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+        margin: 0 0 1.5rem 0;
+      }
+      
+      h2 {
+        font-size: 1.2rem;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+      
+      .tags-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        
+        .tag {
+          background: var(--gray-200);
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          font-size: 0.875rem;
+        }
+      }
+      
+      dl {
+        margin: 0;
+        
+        dt {
+          font-weight: bold;
+          margin-top: 0.5rem;
+        }
+        
+        dd {
+          margin-left: 0;
+          color: var(--gray-600);
+        }
+      }
+    }
+  }
+</style>

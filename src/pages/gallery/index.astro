@@ -213,6 +213,12 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
       </section>
     </main>
     <Footer class="layout-blog" />
+    
+    <!-- Add modal markup -->
+    <div id="gallery-modal" class="gallery-modal">
+      <button class="modal-close" aria-label="Close modal">×</button>
+      <div class="modal-content"></div>
+    </div>
   </body>
 </html>
 
@@ -307,6 +313,74 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
 
     // Initialize with all items visible
     updateResultCount(galleryItems.length);
+
+    // Add modal functionality
+    const modal = document.getElementById('gallery-modal');
+    const modalContent = modal?.querySelector('.modal-content');
+    const modalClose = modal?.querySelector('.modal-close');
+
+    async function openModal(url) {
+      if (!modal || !modalContent) return;
+      
+      try {
+        // Fetch the content
+        const response = await fetch(url);
+        const html = await response.text();
+        
+        // Create a temporary element to parse the HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Extract the main content
+        const content = doc.getElementById('gallery-item');
+        if (content) {
+          modalContent.innerHTML = content.innerHTML;
+          modal.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        }
+      } catch (error) {
+        console.error('Error loading gallery item:', error);
+        window.location.href = url; // Fallback to regular navigation
+      }
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+      history.pushState({}, '', '/gallery');
+    }
+
+    // Handle gallery item clicks
+    document.querySelectorAll('.gallery-item a').forEach(link => {
+      link.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const url = link.href;
+        history.pushState({}, '', url);
+        await openModal(url);
+      });
+    });
+
+    // Close modal on button click
+    modalClose?.addEventListener('click', () => {
+      closeModal();
+    });
+
+    // Close modal on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal?.classList.contains('open')) {
+        closeModal();
+      }
+    });
+
+    // Handle browser back/forward
+    window.addEventListener('popstate', () => {
+      if (modal?.classList.contains('open')) {
+        closeModal();
+      } else if (location.pathname.startsWith('/gallery/')) {
+        openModal(location.pathname);
+      }
+    });
   }
 
   // Handle both regular page loads and Astro view transitions
@@ -543,5 +617,51 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
       max-width: 100%;
       padding: 0 1rem;
     }
+  }
+
+  .gallery-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    display: none;
+    overflow-y: auto;
+    
+    &.open {
+      display: block;
+    }
+  }
+
+  .modal-close {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 1001;
+    padding: 0.5rem;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  }
+
+  .modal-content {
+    padding: 2rem;
+    max-width: 1800px;
+    margin: 0 auto;
   }
 </style>
