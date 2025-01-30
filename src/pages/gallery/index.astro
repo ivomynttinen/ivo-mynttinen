@@ -10,6 +10,8 @@ import { getSlugById } from '../../utils/slugs';
 import RSSIcon from '../../assets/images/rss.svg?raw';
 import FilterIcon from '../../assets/images/filter.svg?raw';
 
+import '../../styles/gallery-modal.scss';
+
 // Replace the image import section with this:
 const images = import.meta.glob('../../assets/gallery/*.{png,jpg,jpeg,gif,webp}', {
   eager: true,
@@ -205,13 +207,14 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
     </main>
     <Footer class="layout-blog" />
     
-    <!-- Update modal markup -->
     <div id="gallery-modal" class="gallery-modal">
-      <button class="modal-close" aria-label="Close modal">×</button>
-      <nav class="modal-navigation">
-        <button class="nav-button prev" aria-label="Previous image">←</button>
-        <button class="nav-button next" aria-label="Next image">→</button>
-      </nav>
+      <header class="modal-header">
+        <button class="modal-close" aria-label="Close modal">×</button>
+        <nav class="modal-navigation">
+          <button class="nav-button prev" aria-label="Previous image">←</button>
+          <button class="nav-button next" aria-label="Next image">→</button>
+        </nav>
+      </header>
       <div class="modal-content"></div>
     </div>
   </body>
@@ -341,24 +344,24 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
       if (!modal || !modalContent) return;
       
       try {
-        // Fetch the content
         const response = await fetch(url);
         const html = await response.text();
         
-        // Create a temporary element to parse the HTML
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
-        // Extract the main content
         const content = doc.getElementById('gallery-item');
         if (content) {
           modalContent.innerHTML = content.innerHTML;
+          modal.style.display = 'block';
+          // Trigger reflow to ensure display takes effect
+          modal.offsetHeight;
           modal.classList.add('open');
           document.body.style.overflow = 'hidden';
         }
       } catch (error) {
         console.error('Error loading gallery item:', error);
-        Astro.redirect(url); // Fallback to regular navigation, but use astro.redirect
+        Astro.redirect(url);
       }
     }
 
@@ -366,6 +369,14 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
       if (!modal) return;
       modal.classList.remove('open');
       document.body.style.overflow = '';
+      
+      // Wait for transition to complete before hiding
+      setTimeout(() => {
+        if (!modal.classList.contains('open')) {
+          modal.style.display = 'none';
+        }
+      }, 200); // Match transition duration
+      
       history.pushState({}, '', '/gallery');
     }
 
@@ -684,82 +695,6 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
     body > main{
       max-width: 100%;
       padding: 0 1rem;
-    }
-  }
-
-  .gallery-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.9);
-    z-index: 1000;
-    display: none;
-    overflow-y: auto;
-    
-    &.open {
-      display: block;
-    }
-  }
-
-  .modal-close {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 2rem;
-    cursor: pointer;
-    z-index: 1001;
-    padding: 0.5rem;
-    width: 3rem;
-    height: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.5);
-    
-    &:hover {
-      background: rgba(0, 0, 0, 0.8);
-    }
-  }
-
-  .modal-content {
-    padding: 2rem;
-    max-width: 1800px;
-    margin: 0 auto;
-  }
-
-  .modal-navigation {
-    position: fixed;
-    top: 50%;
-    left: 0;
-    right: 0;
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: space-between;
-    padding: 0 1rem;
-    pointer-events: none;
-    z-index: 1001;
-
-    .nav-button {
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 3rem;
-      height: 3rem;
-      font-size: 1.5rem;
-      cursor: pointer;
-      pointer-events: auto;
-      transition: background-color 0.2s ease;
-
-      &:hover {
-        background: rgba(0, 0, 0, 0.8);
-      }
     }
   }
 </style>

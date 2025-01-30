@@ -6,6 +6,8 @@ import { Image } from 'astro:assets';
 import galleryData from '../../data/gallery.json';
 import { slugMap, getSlugById } from '../../utils/slugs';
 
+import '../../styles/gallery-modal.scss';
+
 // Fix the image import section
 const images = await import.meta.glob('../../assets/gallery/*.{png,jpg,jpeg,gif,webp}', {
   eager: true,
@@ -90,7 +92,7 @@ if (!imageSource && import.meta.env.DEV) {
   <body>
     <Header />
     <main id="gallery-item" class="gallery-item-page">
-      <div class="content">
+      <div class="gallery-item-content">
         <div class="image-container">
           {isGif(item.filename) ? (
             <img
@@ -110,7 +112,7 @@ if (!imageSource && import.meta.env.DEV) {
             />
           )}
         </div>
-        <aside class="metadata">
+        <aside class="gallery-metadata">
           <a 
             href="/gallery" 
             class="back-to-gallery" 
@@ -120,6 +122,31 @@ if (!imageSource && import.meta.env.DEV) {
             ← Back to Gallery
           </a>
           <h1>{item.name}</h1>
+          
+          {item.palettes && item.palettes.length > 0 && (
+            <div class="color-palette">
+              <h2>Color Palette</h2>
+              <ul>
+                {item.palettes.map(({ color, ratio }) => (
+                  <li 
+                    style={`background-color: rgb(${color.join(',')})`}
+                    title={`RGB(${color.join(', ')}) - ${ratio.toFixed(1)}%`}
+                  />
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div class="timestamps">
+            <h2>Timestamps</h2>
+            <dl>
+              <dt>Created</dt>
+              <dd>{new Date(item.btime).toLocaleString()}</dd>
+              
+              <dt>Modified</dt>
+              <dd>{new Date(item.mtime).toLocaleString()}</dd>
+            </dl>
+          </div>
           
           {item.tags && item.tags.length > 0 && (
             <div class="tags">
@@ -159,111 +186,24 @@ if (!imageSource && import.meta.env.DEV) {
         </aside>
       </div>
     </main>
-    <Footer />
+    <Footer class="layout-blog" />
   </body>
 </html>
 
 <style lang="scss">
-  .gallery-item-page {
-    padding: 2rem;
-    
-    .content {
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 2rem;
-      max-width: 1800px;
-      margin: 0 auto;
-      
-      @media (max-width: 1024px) {
-        grid-template-columns: 1fr;
-      }
+  .gallery-item-page{
+    margin-top: 4rem;
+
+    h1{
+      font-size: 2rem;
+      line-height: 2.5rem;
     }
-    
-    .image-container {
-      position: relative;
-      
-      img {
-        width: 100%;
-        height: auto;
-        border-radius: 8px;
-      }
-    }
-    
-    .navigation {
-      position: absolute;
-      bottom: 1rem;
-      left: 1rem;
-      right: 1rem;
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      
-      .nav-button {
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        text-decoration: none;
-        transition: background-color 0.2s ease;
-        
-        &:hover {
-          background: rgba(0, 0, 0, 0.9);
-        }
-      }
-    }
-    
-    .metadata {
-      background: var(--gray-50);
-      padding: 2rem;
-      border-radius: 8px;
-      
-      .back-to-gallery {
-        display: inline-block;
-        margin-bottom: 1rem;
-        color: var(--gray-600);
-        text-decoration: none;
-        
-        &:hover {
-          color: var(--gray-900);
-        }
-      }
-      
-      h1 {
-        font-size: 1.5rem;
-        margin: 0 0 1.5rem 0;
-      }
-      
-      h2 {
-        font-size: 1.2rem;
-        margin: 1.5rem 0 0.5rem 0;
-      }
-      
-      .tags-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        
-        .tag {
-          background: var(--gray-200);
-          padding: 0.25rem 0.5rem;
-          border-radius: 4px;
-          font-size: 0.875rem;
-        }
-      }
-      
-      dl {
-        margin: 0;
-        
-        dt {
-          font-weight: bold;
-          margin-top: 0.5rem;
-        }
-        
-        dd {
-          margin-left: 0;
-          color: var(--gray-600);
-        }
-      }
+  }
+
+  @media (min-width: 768px) {
+    body > main{
+      max-width: 100%;
+      padding: 0 1rem;
     }
   }
 </style>
