@@ -5,8 +5,11 @@ import Footer from '../../components/Footer.astro';
 import { Image } from 'astro:assets';
 import galleryData from '../../data/gallery.json';
 import { slugMap, getSlugById } from '../../utils/slugs';
+import OgImage from '../../assets/images/og-image-gallery.png';
 
 import '../../styles/gallery-modal.scss';
+
+const ogImageToUse = OgImage?.src;
 
 // Fix the image import section
 const images = await import.meta.glob('../../assets/gallery/*.{png,jpg,jpeg,gif,webp}', {
@@ -83,7 +86,7 @@ const imageSource = imageMap.get(item.filename);
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={item.name} description={`Gallery item: ${item.name}`} />
+    <BaseHead title={item.name} description={`Gallery item: ${item.name}`} image={ogImageToUse} />
   </head>
   <body>
     <Header activePath="gallery" />
