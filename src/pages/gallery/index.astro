@@ -76,7 +76,7 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
     <MatomoTracking />
   </head>
   <body>
-    <Header />
+    <Header activePath="gallery" />
     <main class="layout-gallery">
       <section class="gallery">
         <div class="page-title">
@@ -238,7 +238,6 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
 
     // Only initialize if elements exist
     if (!filterToolbar || !toggleFiltersBtn) {
-      console.warn('Gallery elements not found, skipping initialization');
       return;
     }
 
