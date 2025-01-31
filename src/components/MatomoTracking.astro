@@ -17,9 +17,17 @@ const isLocalhost = Astro.url.hostname === 'localhost' || Astro.url.hostname ===
       })();
     </script>
     <script>
+      // Track regular page views
       document.addEventListener('astro:page-load', () => {
         window._paq.push(['setCustomUrl', window.location.pathname]);
         window._paq.push(['setDocumentTitle', document.title]);
+        window._paq.push(['trackPageView']);
+      });
+
+      // Track gallery modal navigation
+      document.addEventListener('gallery:navigation', (event) => {
+        window._paq.push(['setCustomUrl', event.detail.url]);
+        window._paq.push(['setDocumentTitle', event.detail.title]);
         window._paq.push(['trackPageView']);
       });
     </script>

@@ -77,11 +77,7 @@ const { item, prevItem, nextItem, index, slug } = Astro.props;
 const prevSlug = prevItem ? getSlugById(prevItem.id) : null;
 const nextSlug = nextItem ? getSlugById(nextItem.id) : null;
 
-// Ensure we have the image or provide a fallback
 const imageSource = imageMap.get(item.filename);
-if (!imageSource && import.meta.env.DEV) {
-  console.error(`Error: Image not found: ${item.filename}`);
-}
 ---
 
 <!doctype html>
@@ -108,6 +104,8 @@ if (!imageSource && import.meta.env.DEV) {
               alt={item.name}
               width={item.width}
               height={item.height}
+              widths={[320, 640, 980, 1400, 1800, 2400]}
+              sizes="(max-width: 1024px) 98vw, calc(100vw - 340px)"
               loading="eager"
             />
           )}
@@ -122,11 +120,13 @@ if (!imageSource && import.meta.env.DEV) {
             ← Back to Gallery
           </a>
           <h1>{item.name}</h1>
+
+          <hr>
           
           {item.palettes && item.palettes.length > 0 && (
-            <div class="color-palette">
+            <section>
               <h2>Color Palette</h2>
-              <ul>
+              <ul class="color-palette">
                 {item.palettes.map(({ color, ratio }) => (
                   <li 
                     style={`background-color: rgb(${color.join(',')})`}
@@ -134,55 +134,35 @@ if (!imageSource && import.meta.env.DEV) {
                   />
                 ))}
               </ul>
-            </div>
+            </section>
           )}
-
-          <div class="timestamps">
-            <h2>Timestamps</h2>
-            <dl>
-              <dt>Created</dt>
-              <dd>{new Date(item.btime).toLocaleString()}</dd>
-              
-              <dt>Modified</dt>
-              <dd>{new Date(item.mtime).toLocaleString()}</dd>
-            </dl>
-          </div>
           
           {item.tags && item.tags.length > 0 && (
-            <div class="tags">
+            <section>
               <h2>Tags</h2>
-              <div class="tags-list">
+              <ul class="tags-list">
                 {item.tags.map((tag) => (
-                  <span class="tag">{tag}</span>
+                  <li class="tag">{tag}</li>
                 ))}
-              </div>
-            </div>
+              </ul>
+            </section>
           )}
           
           {item.url && (
-            <div class="source">
+            <section>
               <h2>Source</h2>
-              <a href={item.url} target="_blank" rel="noopener noreferrer">View Original</a>
-            </div>
+              <span>
+                <a href={item.url} target="_blank" rel="noopener noreferrer">
+                  {new URL(item.url).hostname.replace(/^www\./, '')}
+                </a>
+              </span>
+            </section>
           )}
-          
-          <div class="details">
-            <h2>Details</h2>
-            <dl>
-              <dt>Dimensions</dt>
-              <dd>{item.width} × {item.height}px</dd>
-              
-              <dt>File Type</dt>
-              <dd>{item.file_type}</dd>
-              
-              {item.annotation && (
-                <>
-                  <dt>Notes</dt>
-                  <dd>{item.annotation}</dd>
-                </>
-              )}
-            </dl>
-          </div>
+
+          <section>
+            <h2>Created</h2>
+            <span>{new Date(item.btime).toLocaleString('de-DE')}</span>
+          </section>
         </aside>
       </div>
     </main>
@@ -193,17 +173,26 @@ if (!imageSource && import.meta.env.DEV) {
 <style lang="scss">
   .gallery-item-page{
     margin-top: 4rem;
+  }
 
-    h1{
-      font-size: 2rem;
-      line-height: 2.5rem;
-    }
+  .gallery-metadata{
+    padding: 1rem 0 0 0;
+  }
+
+  .back-to-gallery{
+    display: flex;
   }
 
   @media (min-width: 768px) {
     body > main{
       max-width: 100%;
       padding: 0 1rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .gallery-metadata{
+      padding: 0 2rem 2rem 2rem;
     }
   }
 </style>
