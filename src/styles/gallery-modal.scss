@@ -108,6 +108,24 @@
   }
 }
 
+.tags-list{
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem;
+  list-style: none;
+  padding: 0;
+
+  > li{
+    font-size: .875rem;
+    line-height: 1rem;
+    color: var(--gray-11);
+    border-radius: 4px;
+    padding: .25rem .5rem;
+    background: var(--gray-3);
+    cursor: default;
+  }
+}
+
 @media (min-width: 1024px) {
   .gallery-item-content{
     flex-direction: row;

@@ -53,7 +53,7 @@ galleryData.forEach(item => {
 });
 
 // Sort and filter helpers
-const sortByDate = (a: any, b: any) => b.lastModified - a.lastModified;
+const sortByDate = (a: any, b: any) => b.btime - a.btime;
 
 // Get unique folders and tags from gallery data, excluding specific folders
 const excludedFolders = ['Personal 2024', 'Website 2024'];
@@ -61,7 +61,7 @@ const uniqueFolders = [...new Set(galleryData.flatMap(item => item.folders || []
 const uniqueTags = [...new Set(galleryData.flatMap(item => item.tags || []))];
 
 // Get date range with fixed minimum date
-const dates = galleryData.map(item => item.lastModified);
+const dates = galleryData.map(item => item.btime);
 const maxDate = new Date(Math.max(...dates)).toISOString().split('T')[0];
 const minDate = '2010-01-01'; // Set fixed minimum date
 
@@ -757,6 +757,7 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
     height: 1.6rem;
     line-height: 1.3rem;
     cursor: pointer;
+    color: #FFF;
     transition: background 0.2s ease, border-color 0.2s ease;
 
     &:hover{
