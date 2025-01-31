@@ -91,10 +91,13 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
         
         <div class="filter-controls">
           <div class="filter-toggles">
-            <button id="toggleFilters" class="filter-button">
-              <Fragment set:html={FilterIcon} />
-              Filters
-            </button>
+            <div class="filter-toggle-wrapper">
+              <button id="toggleFilters" class="filter-button">
+                <Fragment set:html={FilterIcon} />
+                Filters
+              </button>
+              <button id="resetFilters" class="filter-button" style="display: none;">Reset</button>
+            </div>
             <span id="resultCount" class="result-count"></span>
           </div>
 
@@ -231,6 +234,7 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
     const dateTo = document.getElementById('dateTo');
     const galleryItems = document.querySelectorAll('.gallery-item');
     const resultCount = document.getElementById('resultCount');
+    const resetFiltersBtn = document.getElementById('resetFilters');
 
     // Only initialize if elements exist
     if (!filterToolbar || !toggleFiltersBtn) {
@@ -262,8 +266,8 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
         .map(btn => btn.dataset.value);
       const selectedTags = [...document.querySelectorAll('#tagFilter .filter-btn.active')]
         .map(btn => btn.dataset.value);
-      const fromDate = dateFrom.value ? new Date(dateFrom.value).getTime() : 0;
-      const toDate = dateTo.value ? new Date(dateTo.value).getTime() + 86400000 : Number.MAX_SAFE_INTEGER;
+      const fromDate = dateFrom.value ? new Date(dateFrom.value).getTime() : null;
+      const toDate = dateTo.value ? new Date(dateTo.value).getTime() + 86400000 : null;
 
       let visibleCount = 0;
       galleryItems.forEach(item => {
@@ -274,7 +278,7 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
 
         const folderMatch = selectedFolders.length === 0 || itemFolders.some(f => selectedFolders.includes(f));
         const tagMatch = selectedTags.length === 0 || itemTags.some(t => selectedTags.includes(t));
-        const dateMatch = itemDate >= fromDate && itemDate <= toDate;
+        const dateMatch = (fromDate === null || itemDate >= fromDate) && (toDate === null || itemDate <= toDate);
 
         const isVisible = folderMatch && tagMatch && dateMatch;
         item.style.display = isVisible ? 'block' : 'none';
@@ -284,11 +288,16 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
       updateResultCount(visibleCount);
       updateGalleryItemAttributes();
 
-      // If any filters are set, add the active class to the filter button. Else remove it.
-      if (selectedFolders.length > 0 || selectedTags.length > 0 || fromDate || toDate) {
+      // Check if any filters are active
+      const hasActiveFilters = selectedFolders.length > 0 || selectedTags.length > 0 || fromDate !== null || toDate !== null;
+
+      // Update the active class on the filter button
+      if (hasActiveFilters) {
         toggleFiltersBtn.classList.add('active');
+        resetFiltersBtn.style.display = 'flex';
       } else {
         toggleFiltersBtn.classList.remove('active');
+        resetFiltersBtn.style.display = 'none';
       }
     }
 
@@ -331,6 +340,18 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
 
     dateFrom.addEventListener('change', applyFilters);
     dateTo.addEventListener('change', applyFilters);
+
+    // Reset filters functionality
+    resetFiltersBtn.addEventListener('click', () => {
+      // Clear active classes from filter buttons
+      document.querySelectorAll('#folderFilter .filter-btn.active').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('#tagFilter .filter-btn.active').forEach(btn => btn.classList.remove('active'));
+      dateFrom.value = '';
+      dateTo.value = '';
+
+      // Reapply filters to update the gallery
+      applyFilters();
+    });
 
     // Initialize with all items visible
     updateResultCount(galleryItems.length);
@@ -513,6 +534,12 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
     gap: 1rem;
   }
 
+  .filter-toggle-wrapper{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
   .result-count {
     color: var(--gray-11);
     font-size: 0.875rem;
@@ -548,6 +575,7 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
     padding: .3rem .5rem;
     border-radius: .3rem;
     transition: background 0.2s ease, color 0.2s ease;
+    line-height: 18px;
 
     &:hover{
       background: var(--gray-4);
