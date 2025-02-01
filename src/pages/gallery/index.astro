@@ -153,49 +153,9 @@ const minDate = '2010-01-01'; // Set fixed minimum date
         </div>
 
         <div class="gallery-grid" id="gallery-grid">
-          {currentPageItems.map((item, index) => {
-            const imageSource = imageMap.get(item.filename);
-            const itemSlug = getSlugById(item.id);
-            return (
-              <div 
-                class="gallery-item" 
-                data-show="true"
-              >
-                <a href={`/gallery/${itemSlug}`}>
-                  {imageSource ? (
-                    isGif(item.filename) ? (
-                      <img
-                        src={imageSource.src}
-                        alt={item.name}
-                        width={item.width}
-                        height={item.height}
-                        loading="lazy"
-                        style={`aspect-ratio: ${item.width}/${item.height}`}
-                      />
-                    ) : (
-                      <Image
-                        src={imageSource}
-                        alt={item.name}
-                        width={item.width}
-                        height={item.height}
-                        loading="lazy"
-                        sizes="(min-width: 1024px) 400px, (min-width: 768px) 32vw, 98vw"
-                        widths={[320, 400, 800]}
-                        style={`aspect-ratio: ${item.width}/${item.height}`}
-                      />
-                    )
-                  ) : (
-                    <div class="error-placeholder" style="aspect-ratio: 16/9; background: var(--gray-200); display: flex; align-items: center; justify-content: center; padding: 1rem; text-align: center;">
-                      Image not found: {item.filename}
-                    </div>
-                  )}
-                  <div class="gallery-item-info">
-                    {item.name}
-                  </div>
-                </a>
-              </div>
-            );
-          })}
+          {currentPageItems.map((item) => (
+            <GalleryItem item={item} imageMap={imageMap} />
+          ))}
         </div>
 
         <button id="loadMore" class="load-more" style={hasMorePages ? '' : 'display: none;'}>
@@ -220,155 +180,140 @@ const minDate = '2010-01-01'; // Set fixed minimum date
 
 <script>
   function initializeGallery() {
-    // Wait for elements to be available
-    const filterToolbar = document.querySelector('.filter-toolbar');
-    const toggleFiltersBtn = document.getElementById('toggleFilters');
     const galleryGrid = document.getElementById('gallery-grid');
 
-    if (!filterToolbar || !toggleFiltersBtn || !galleryGrid) {
+    if (!galleryGrid) {
       return;
     }
 
-    // Add modal functionality
+    initializeModal(galleryGrid);
+    initializeLoadMore();
+  }
+
+  function initializeModal(galleryGrid) {
     const modal = document.getElementById('gallery-modal');
     const modalContent = modal?.querySelector('.modal-content');
-    const modalClose = modal?.querySelector('.modal-close');
+    let currentIndex = -1;
 
-    async function openModal(url) {
-      if (!modal || !modalContent) return;
-      
+    async function loadGalleryItem(url) {
       try {
-        // Show loading state
-        modalContent.innerHTML = '<div class="loading-indicator">Loading...</div>';
-        modal.style.display = 'block';
-        modal.classList.add('open');
-        document.body.style.overflow = 'hidden';
-
         const response = await fetch(url);
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const html = await response.text();
+        const text = await response.text();
         const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
+        const doc = parser.parseFromString(text, 'text/html');
+        const galleryItem = doc.getElementById('gallery-item');
         
-        const content = doc.querySelector('main'); // Get the main content instead of specific ID
-        if (content) {
-          modalContent.innerHTML = content.innerHTML;
-        } else {
-          throw new Error('Content not found');
+        if (galleryItem && modalContent) {
+          modalContent.innerHTML = '';
+          modalContent.appendChild(galleryItem);
         }
       } catch (error) {
         console.error('Error loading gallery item:', error);
-        // Fallback to direct navigation
-        window.location.href = url;
       }
+    }
+
+    function openModal(url, index) {
+      if (!modal) return;
+      
+      currentIndex = index;
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      loadGalleryItem(url);
+      
+      // Update URL without navigation
+      window.history.pushState({ modalOpen: true }, '', url);
     }
 
     function closeModal() {
       if (!modal) return;
+      
       modal.classList.remove('open');
       document.body.style.overflow = '';
+      currentIndex = -1;
       
-      // Wait for transition to complete before hiding
-      setTimeout(() => {
-        if (!modal.classList.contains('open')) {
-          modal.style.display = 'none';
-        }
-      }, 200); // Match transition duration
-      
-      const currentPath = window.location.pathname;
-      if (!currentPath.includes('/gallery/page/')) {
-        history.pushState({}, '', '/gallery/');
-      }
+      // Restore original URL
+      window.history.pushState({ modalOpen: false }, '', '/gallery/');
     }
 
-    // Update click handler to use event delegation properly
-    document.addEventListener('click', (e) => {
-      const galleryLink = e.target.closest('.gallery-item a');
-      if (galleryLink && modal) {
+    // Event delegation for gallery item clicks
+    galleryGrid.addEventListener('click', (e) => {
+      const galleryItem = e.target.closest('a[data-gallery-item]');
+      if (galleryItem) {
         e.preventDefault();
-        const url = galleryLink.href;
-        history.pushState({}, '', url);
-        openModal(url);
+        e.stopPropagation();
+        
+        // Prevent Astro's view transitions
+        if (e.currentTarget instanceof HTMLElement) {
+          e.currentTarget.setAttribute('data-astro-reload', '');
+        }
+        
+        const url = galleryItem.getAttribute('href');
+        const index = Array.from(galleryGrid.children).findIndex(
+          item => item.contains(galleryItem)
+        );
+        
+        openModal(url, index);
+        return false;
+      }
+    }, { capture: true });
+
+    // Close modal on click outside or close button
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal || e.target.classList.contains('modal-close')) {
+        closeModal();
       }
     });
 
-    // Close modal on button click
-    modalClose?.addEventListener('click', () => {
-      closeModal();
+    // Navigation buttons
+    const prevButton = modal?.querySelector('.nav-button.prev');
+    const nextButton = modal?.querySelector('.nav-button.next');
+
+    prevButton?.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        const prevItem = galleryGrid?.children[currentIndex - 1]?.querySelector('[data-gallery-item]');
+        if (prevItem) {
+          const url = prevItem.getAttribute('href');
+          openModal(url, currentIndex - 1);
+        }
+      }
     });
 
-    // Close modal on escape key
+    nextButton?.addEventListener('click', () => {
+      if (currentIndex < (galleryGrid?.children.length || 0) - 1) {
+        const nextItem = galleryGrid?.children[currentIndex + 1]?.querySelector('[data-gallery-item]');
+        if (nextItem) {
+          const url = nextItem.getAttribute('href');
+          openModal(url, currentIndex + 1);
+        }
+      }
+    });
+
+    // Keyboard navigation
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal?.classList.contains('open')) {
-        closeModal();
+      if (!modal?.classList.contains('open')) return;
+
+      switch (e.key) {
+        case 'Escape':
+          closeModal();
+          break;
+        case 'ArrowLeft':
+          prevButton?.click();
+          break;
+        case 'ArrowRight':
+          nextButton?.click();
+          break;
       }
     });
 
     // Handle browser back/forward
-    window.addEventListener('popstate', () => {
-      if (modal?.classList.contains('open')) {
-        closeModal();
-      } else if (location.pathname.startsWith('/gallery/')) {
-        openModal(location.pathname);
-      }
-    });
-
-    // Modal navigation functions
-    function navigateModal(direction) {
-      const currentUrl = window.location.pathname;
-      const currentItem = document.querySelector(`[href="${currentUrl}"]`)?.closest('.gallery-item');
-      
-      if (!currentItem) return;
-      
-      const visibleItems = [...document.querySelectorAll('.gallery-item[data-show="true"]')];
-      const currentIndex = visibleItems.indexOf(currentItem);
-      
-      let nextIndex;
-      if (direction === 'next') {
-        nextIndex = currentIndex + 1 >= visibleItems.length ? 0 : currentIndex + 1;
+    window.addEventListener('popstate', (e) => {
+      if (e.state?.modalOpen) {
+        const url = window.location.pathname;
+        openModal(url, currentIndex);
       } else {
-        nextIndex = currentIndex - 1 < 0 ? visibleItems.length - 1 : currentIndex - 1;
-      }
-      
-      const nextItem = visibleItems[nextIndex];
-      if (nextItem) {
-        const link = nextItem.querySelector('a');
-        if (link) {
-          history.pushState({}, '', link.href);
-          openModal(link.href);
-          // Dispatch custom event for tracking
-          document.dispatchEvent(new CustomEvent('gallery:navigation', {
-            detail: {
-              url: link.href,
-              title: nextItem.querySelector('img')?.alt || document.title
-            }
-          }));
-        }
-      }
-    }
-
-    // Update modal event listeners
-    const modalPrev = modal?.querySelector('.nav-button.prev');
-    const modalNext = modal?.querySelector('.nav-button.next');
-
-    modalPrev?.addEventListener('click', () => navigateModal('prev'));
-    modalNext?.addEventListener('click', () => navigateModal('next'));
-
-    // Update keyboard navigation
-    document.addEventListener('keydown', (e) => {
-      if (!modal?.classList.contains('open')) return;
-
-      if (['ArrowLeft', 'ArrowUp'].includes(e.key)) {
-        e.preventDefault();
-        navigateModal('prev');
-      } else if (['ArrowRight', 'ArrowDown'].includes(e.key)) {
-        e.preventDefault();
-        navigateModal('next');
+        closeModal();
       }
     });
-
-    initializeLoadMore();
   }
 
   function initializeLoadMore() {
