@@ -1,0 +1,417 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import MatomoTracking from '../../components/MatomoTracking.astro';
+import { Image } from 'astro:assets';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import galleryData from '../../data/gallery.json';
+import GalleryItem from '../../components/GalleryItem.astro';
+import { getSlugById } from '../../utils/slugs';
+import RSSIcon from '../../assets/images/rss.svg?raw';
+import FilterIcon from '../../assets/images/filter.svg?raw';
+import OgImage from '../../assets/images/og-image-gallery.png';
+
+import '../../styles/gallery-modal.scss';
+
+const ogImageToUse = OgImage?.src;
+
+// Replace the image import section with this:
+const images = import.meta.glob('../../assets/gallery/*.{png,jpg,jpeg,gif,webp}', {
+  eager: true,
+});
+
+// Create a map of filenames to their image objects
+const imageMap = new Map();
+for (const [path, image] of Object.entries(images)) {
+  const filename = path.split('/').pop();
+  if (filename) {
+    imageMap.set(filename, image.default);
+  }
+}
+
+// Helper function to check if file is a GIF
+const isGif = (filename: string) => filename.toLowerCase().endsWith('.gif');
+
+// Helper function to generate URL-friendly slug
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric chars with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+}
+
+// Generate unique slugs for all items
+const slugMap = new Map();
+galleryData.forEach(item => {
+  let baseSlug = generateSlug(item.name);
+  let slug = baseSlug;
+  
+  // If slug already exists, append part of the ID
+  while (slugMap.has(slug)) {
+    // Use first 6 characters of ID to keep URLs reasonably short
+    slug = `${baseSlug}-${item.id.substring(0, 6)}`;
+  }
+  
+  slugMap.set(slug, item);
+});
+
+// Sort and filter helpers
+const sortByDate = (a: any, b: any) => b.btime - a.btime;
+
+// Get the tag from the URL
+export async function getStaticPaths() {
+  // Get all tags from gallery data
+  const allTags = galleryData.flatMap(item => item.tags || []);
+  
+  // Filter unique tags and remove empty ones
+  const uniqueTags = [...new Set(allTags)].filter(Boolean);
+  console.log('Unique tags found:', uniqueTags);
+  
+  // Generate paths with URL-safe slugs
+  return uniqueTags.map(tag => {
+    const urlSafeTag = tag.toLowerCase().replace(/\s+/g, '-');
+    console.log(`Generating path for ${tag} -> ${urlSafeTag}`);
+    
+    return {
+      params: { tag: urlSafeTag },
+      props: { 
+        tag: tag,
+        uniqueTags: uniqueTags
+      }
+    };
+  });
+}
+
+// Get props from Astro
+const { tag, uniqueTags } = Astro.props;
+
+// Filter gallery data for the current tag
+const tagGalleryData = galleryData.filter(item => 
+  item.tags && item.tags.includes(tag)
+).sort((a, b) => b.btime - a.btime);
+
+const pageTitle = `${tag} - Gallery | ${SITE_TITLE}`;
+const pageDescription = `Browse design inspiration tagged with ${tag}. ${SITE_DESCRIPTION}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={pageTitle} description={pageDescription} image={ogImageToUse} />
+    <MatomoTracking />
+  </head>
+  <body>
+    <Header activePath="gallery" />
+    <main class="layout-gallery">
+      <section class="gallery">
+        <div class="page-title">
+          <h1>{tag}</h1>
+          <a href="/gallery.rss.xml" title="Subscribe to RSS Feed" class="rss-icon">
+            <Fragment set:html={RSSIcon} />
+          </a>
+        </div>
+        <p class="intro">
+          Design inspiration gallery carefully curated by myself. <a href="/blog/publishing-eagle-app-library-on-the-web-part-1/">Read</a> more about how all this works.
+        </p>
+        
+
+        <div class="gallery-grid" id="gallery-grid">
+          {tagGalleryData.map((item, index) => (
+            <GalleryItem item={item} imageMap={imageMap} />
+          ))}
+        </div>
+      </section>
+    </main>
+    <Footer class="layout-blog" />
+
+  </body>
+</html>
+
+
+<style lang="scss">
+  .layout-gallery{
+    margin-top: 4rem;
+
+    h1{
+      font-size: 2rem;
+      line-height: 2.5rem;
+    }
+  }
+
+  .page-title{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+
+  .intro{
+    margin-top: 1rem;
+    max-width: 38ch;
+
+    a{
+      color: var(--yellow-11);
+      text-decoration-color: var(--yellow-10);
+      transition: color 0.2s, text-decoration-color 0.2s;
+
+      &:hover{
+        color: var(--yellow-12);
+        text-decoration-color: var(--yellow-11);
+      }
+    }
+  }
+
+  .filter-controls{
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gray-4);
+  }
+
+  .filter-toggles{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .filter-toggle-wrapper{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .result-count {
+    color: var(--gray-11);
+    font-size: 0.875rem;
+  }
+
+  .filter-toolbar {
+    background: var(--gray-3);
+    border-radius: .6rem;
+    height: 0;
+    opacity: .5;
+    overflow-y: clip;
+    transition: height .3s, opacity .3s, margin-top .3s;
+    interpolate-size: allow-keywords;
+
+    &.open {
+      height: auto;
+      opacity: 1;
+      margin-top: 1rem;
+    }
+  }
+
+  .filter-button{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-family: var(--font-family-sans);
+    font-weight: 500;
+    font-size: .875rem;
+    color: var(--gray-11);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: .3rem .5rem;
+    border-radius: .3rem;
+    transition: background 0.2s ease, color 0.2s ease;
+    line-height: 18px;
+
+    &:hover{
+      background: var(--gray-4);
+    }
+
+    &.active{
+      background: var(--yellow-4);
+      color: var(--yellow-11);
+
+      &:hover{
+        background: var(--yellow-5);
+        color: var(--yellow-12);
+      }
+    }
+  }
+
+  .filter-section{
+    padding: 1rem;
+
+    h3{
+      color: var(--gray-11);
+      font-size: .875rem;
+      font-weight: 500;
+      font-stretch: 135%;
+      margin-bottom: .5rem;
+    }
+  }
+
+  .filter-buttons{
+    display: flex;
+    flex-wrap: wrap;
+    gap: .2rem;
+  }
+
+  .filter-btn {
+    padding: 0.2rem 0.4rem;
+    background: var(--gray-3);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    font-family: var(--font-family-sans);
+    font-size: .875rem;
+    color: var(--gray-11);
+
+    &:hover {
+      background: var(--gray-5);
+      color: var(--gray-12);
+    }
+
+    &.active {
+      background: var(--base);
+      color: var(--gray-12);
+      box-shadow: var(--elevation-1);
+    }
+  }
+
+  .date-filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: .875rem;
+      color: var(--gray-11);
+    }
+
+    input {
+      font-family: var(--font-family-sans);
+      color: var(--gray-12);
+      padding: 0.2rem 0.4rem;
+      font-size: .875rem;
+      border: none;
+      border-radius: 4px;
+      background: var(--gray-5);
+    }
+  }
+
+  .gallery {
+    width: 100%;
+    max-width: 100%;
+
+    .gallery-grid {
+      width: 100%;
+      display: grid;
+      gap: 1em;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-rows: masonry; 
+    }
+  }
+
+  .gallery-item {
+    position: relative;
+    margin-bottom: 1em;
+
+    a {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.2s ease;
+      border-radius: 6px;
+      padding: 3px;
+      background: var(--base);
+      border: 1px solid var(--gray-3);
+
+      &:hover{
+        background: var(--gray-4);
+        border-color: var(--gray-4);
+      }
+    }
+
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      border-radius: 4px;
+    }
+
+    .gallery-item-info {
+      padding: .4rem;
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      opacity: 0;
+      backdrop-filter: blur(4px);
+      transition: opacity 0.3s ease;
+      font-size: .625rem;
+      font-weight: 500;
+      border-radius: 4px;
+      max-width: calc(100% - 24px);
+    }
+
+    &:hover .gallery-item-info {
+      opacity: 1;
+    }
+  }
+
+  .modal-header{
+    background: transparent;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+  }
+
+  .modal-navigation{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .key{
+    font-family: var(--font-family-mono);
+    font-size: 1.3rem;
+    color: var(--base);
+    background: rgba(255,255,255,.1);
+    border-radius: 4px;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.2);
+    box-shadow: 0 -2px 0 rgba(255,255,255,.15) inset;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    line-height: 1.3rem;
+    cursor: pointer;
+    color: #FFF;
+    transition: background 0.2s ease, border-color 0.2s ease;
+
+    &:hover{
+      background: rgba(255,255,255,.22);
+      border-color: rgba(255,255,255,.2);
+    }
+
+    &:active{
+      transition: none;
+      background: rgba(0,0,0,.1);
+      border-color: rgba(255,255,255,.2);
+      box-shadow: 0 3px 0 rgba(0,0,0,.3) inset;
+    }
+  }
+
+  @media (min-width: 768px) {
+    body > main{
+      max-width: 100%;
+      padding: 0 1rem;
+    }
+  }
+</style>

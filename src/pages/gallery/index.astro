@@ -7,6 +7,7 @@ import { Image } from 'astro:assets';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import galleryData from '../../data/gallery.json';
 import { getSlugById } from '../../utils/slugs';
+import GalleryItem from '../../components/GalleryItem.astro';
 import RSSIcon from '../../assets/images/rss.svg?raw';
 import FilterIcon from '../../assets/images/filter.svg?raw';
 import OgImage from '../../assets/images/og-image-gallery.png';
@@ -101,113 +102,50 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
               </button>
               <button id="resetFilters" class="filter-button" style="display: none;">Reset</button>
             </div>
-            <span id="resultCount" class="result-count"></span>
+            <span id="resultCount" class="result-count">{sortedGalleryData.length} items</span>
           </div>
 
-          <div class="filter-toolbar">
+          <div class="filter-toolbar open">
             <div class="filter-section">
               <h3>Categories</h3>
               <div class="filter-buttons" id="folderFilter">
-                {uniqueFolders.map(folder => (
-                  <button 
-                    class="filter-btn"
-                    data-value={folder}
-                  >
-                    {folder}
-                  </button>
-                ))}
+                {uniqueFolders.map(folder => {
+                  const urlSafeCategory = folder.toLowerCase().replace(/\s+/g, '-');
+                  return (
+                    <a 
+                      class="filter-btn"
+                      href={`/gallery/${urlSafeCategory}/`}
+                    >
+                      {folder}
+                    </a>
+                  );
+                })}
               </div>
             </div>
   
             <div class="filter-section">
               <h3>Tags</h3>
               <div class="filter-buttons" id="tagFilter">
-                {uniqueTags.map(tag => (
-                  <button 
-                    class="filter-btn"
-                    data-value={tag}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </div>
-  
-            <div class="filter-section">
-              <h3>Date Range</h3>
-              <div class="date-filters">
-                <label>
-                  From:
-                  <input 
-                    type="date" 
-                    id="dateFrom" 
-                    min={minDate} 
-                    max={maxDate} 
-                    data-min-date={minDate}
-                  />
-                </label>
-                <label>
-                  To:
-                  <input 
-                    type="date" 
-                    id="dateTo" 
-                    min={minDate} 
-                    max={maxDate}
-                    data-min-date={minDate}
-                  />
-                </label>
+                {uniqueTags.map(tag => {
+                  const urlSafeTag = tag.toLowerCase().replace(/\s+/g, '-');
+                  return (
+                    <a 
+                      class="filter-btn"
+                      href={`/gallery/${urlSafeTag}/`}
+                    >
+                      {tag}
+                    </a>
+                  );
+                })}
               </div>
             </div>
           </div>
         </div>
 
         <div class="gallery-grid" id="gallery-grid">
-          {sortedGalleryData.map((item, index) => {
-            const imageSource = imageMap.get(item.filename);
-            const itemSlug = getSlugById(item.id);
-            return (
-              <div 
-                class="gallery-item" 
-                data-index={index}
-                data-folders={JSON.stringify(item.folders || [])}
-                data-tags={JSON.stringify(item.tags || [])}
-                data-last-modified={item.lastModified}
-              >
-                <a href={`/gallery/${itemSlug}`}>
-                  {imageSource ? (
-                    isGif(item.filename) ? (
-                      <img
-                        src={imageSource.src}
-                        alt={item.name}
-                        width={item.width}
-                        height={item.height}
-                        loading="lazy"
-                        style={`aspect-ratio: ${item.width}/${item.height}`}
-                      />
-                    ) : (
-                      <Image
-                        src={imageSource}
-                        alt={item.name}
-                        width={item.width}
-                        height={item.height}
-                        loading="lazy"
-                        sizes="(min-width: 1024px) 400px, (min-width: 768px) 32vw, 98vw"
-                        widths={[320, 400, 800]}
-                        style={`aspect-ratio: ${item.width}/${item.height}`}
-                      />
-                    )
-                  ) : (
-                    <div class="error-placeholder" style="aspect-ratio: 16/9; background: var(--gray-200); display: flex; align-items: center; justify-content: center; padding: 1rem; text-align: center;">
-                      Image not found: {item.filename}
-                    </div>
-                  )}
-                  <div class="gallery-item-info">
-                    {item.name}
-                  </div>
-                </a>
-              </div>
-            );
-          })}
+          {sortedGalleryData.map((item) => (
+            <GalleryItem item={item} imageMap={imageMap} />
+          ))}
         </div>
       </section>
     </main>
@@ -223,6 +161,15 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
       </header>
       <div class="modal-content"></div>
     </div>
+
+    <template id="gallery-item-template">
+      <div class="gallery-item" data-show="true">
+        <a>
+          <div class="error-placeholder">Loading...</div>
+          <div class="gallery-item-info"></div>
+        </a>
+      </div>
+    </template>
   </body>
 </html>
 
@@ -231,132 +178,11 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
     // Wait for elements to be available
     const filterToolbar = document.querySelector('.filter-toolbar');
     const toggleFiltersBtn = document.getElementById('toggleFilters');
-    const folderButtons = document.querySelectorAll('#folderFilter .filter-btn');
-    const tagButtons = document.querySelectorAll('#tagFilter .filter-btn');
-    const dateFrom = document.getElementById('dateFrom');
-    const dateTo = document.getElementById('dateTo');
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    const resultCount = document.getElementById('resultCount');
-    const resetFiltersBtn = document.getElementById('resetFilters');
+    const galleryGrid = document.getElementById('gallery-grid');
 
-    // Only initialize if elements exist
-    if (!filterToolbar || !toggleFiltersBtn) {
+    if (!filterToolbar || !toggleFiltersBtn || !galleryGrid) {
       return;
     }
-
-    function updateResultCount(visibleCount) {
-      resultCount.textContent = `${visibleCount} Images`;
-    }
-
-    function updateGalleryItemAttributes() {
-      const visibleItems = [...galleryItems].filter(item => item.style.display !== 'none');
-      visibleItems.forEach((item, index) => {
-        item.dataset.show = 'true';
-        item.dataset.visibleIndex = index.toString();
-      });
-      
-      // Clear attributes for hidden items
-      const hiddenItems = [...galleryItems].filter(item => item.style.display === 'none');
-      hiddenItems.forEach(item => {
-        delete item.dataset.show;
-        delete item.dataset.visibleIndex;
-      });
-    }
-
-    function applyFilters() {
-      const selectedFolders = [...document.querySelectorAll('#folderFilter .filter-btn.active')]
-        .map(btn => btn.dataset.value);
-      const selectedTags = [...document.querySelectorAll('#tagFilter .filter-btn.active')]
-        .map(btn => btn.dataset.value);
-      const fromDate = dateFrom.value ? new Date(dateFrom.value).getTime() : null;
-      const toDate = dateTo.value ? new Date(dateTo.value).getTime() + 86400000 : null;
-
-      let visibleCount = 0;
-      galleryItems.forEach(item => {
-        const itemData = item.dataset;
-        const itemFolders = itemData.folders ? JSON.parse(itemData.folders) : [];
-        const itemTags = itemData.tags ? JSON.parse(itemData.tags) : [];
-        const itemDate = parseInt(itemData.lastModified);
-
-        const folderMatch = selectedFolders.length === 0 || itemFolders.some(f => selectedFolders.includes(f));
-        const tagMatch = selectedTags.length === 0 || itemTags.some(t => selectedTags.includes(t));
-        const dateMatch = (fromDate === null || itemDate >= fromDate) && (toDate === null || itemDate <= toDate);
-
-        const isVisible = folderMatch && tagMatch && dateMatch;
-        item.style.display = isVisible ? 'block' : 'none';
-        if (isVisible) visibleCount++;
-      });
-
-      updateResultCount(visibleCount);
-      updateGalleryItemAttributes();
-
-      // Check if any filters are active
-      const hasActiveFilters = selectedFolders.length > 0 || selectedTags.length > 0 || fromDate !== null || toDate !== null;
-
-      // Update the active class on the filter button
-      if (hasActiveFilters) {
-        toggleFiltersBtn.classList.add('active');
-        resetFiltersBtn.style.display = 'flex';
-      } else {
-        toggleFiltersBtn.classList.remove('active');
-        resetFiltersBtn.style.display = 'none';
-      }
-    }
-
-    // Update toggle filters functionality
-    toggleFiltersBtn.addEventListener('click', (e) => {
-      e.preventDefault(); // Prevent any default behavior
-      const isOpen = filterToolbar.classList.contains('open');
-      
-      // Toggle the hidden class
-      if (isOpen) {
-        filterToolbar.classList.remove('open');
-      } else {
-        filterToolbar.classList.add('open');
-      }
-      
-      // Save the new state
-      const filterState = {
-        isOpen: !isOpen,
-        folders: [...document.querySelectorAll('#folderFilter .filter-btn.active')].map(btn => btn.dataset.value),
-        tags: [...document.querySelectorAll('#tagFilter .filter-btn.active')].map(btn => btn.dataset.value),
-        dateFrom: dateFrom.value,
-        dateTo: dateTo.value
-      };
-      localStorage.setItem('galleryFilters', JSON.stringify(filterState));
-    });
-
-    folderButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        btn.classList.toggle('active');
-        applyFilters();
-      });
-    });
-
-    tagButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        btn.classList.toggle('active');
-        applyFilters();
-      });
-    });
-
-    dateFrom.addEventListener('change', applyFilters);
-    dateTo.addEventListener('change', applyFilters);
-
-    // Reset filters functionality
-    resetFiltersBtn.addEventListener('click', () => {
-      // Clear active classes from filter buttons
-      document.querySelectorAll('#folderFilter .filter-btn.active').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('#tagFilter .filter-btn.active').forEach(btn => btn.classList.remove('active'));
-      dateFrom.value = '';
-      dateTo.value = '';
-
-      // Reapply filters to update the gallery
-      applyFilters();
-    });
-
-    // Initialize with all items visible
-    updateResultCount(galleryItems.length);
 
     // Add modal functionality
     const modal = document.getElementById('gallery-modal');
@@ -400,17 +226,18 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
         }
       }, 200); // Match transition duration
       
-      history.pushState({}, '', '/gallery');
+      history.pushState({}, '', '/gallery/');
     }
 
     // Handle gallery item clicks
-    document.querySelectorAll('.gallery-item a').forEach(link => {
-      link.addEventListener('click', async (e) => {
+    document.addEventListener('click', (e) => {
+      const galleryLink = e.target.closest('.gallery-item a');
+      if (galleryLink) {
         e.preventDefault();
-        const url = link.href;
+        const url = galleryLink.href;
         history.pushState({}, '', url);
-        await openModal(url);
-      });
+        openModal(url);
+      }
     });
 
     // Close modal on button click
@@ -442,7 +269,7 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
       if (!currentItem) return;
       
       const visibleItems = [...document.querySelectorAll('.gallery-item[data-show="true"]')];
-      const currentIndex = parseInt(currentItem.dataset.visibleIndex || '0');
+      const currentIndex = visibleItems.indexOf(currentItem);
       
       let nextIndex;
       if (direction === 'next') {
@@ -487,9 +314,19 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
         navigateModal('next');
       }
     });
+  }
 
-    // Initial attribute setup
-    updateGalleryItemAttributes();
+  // Helper function to get slug by ID (client-side version)
+  function getSlugById(id) {
+    const item = allGalleryData.sortedGalleryData.find(item => item.id === id);
+    if (!item) return id;
+    
+    let baseSlug = item.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+      
+    return `${baseSlug}-${id.substring(0, 6)}`;
   }
 
   // Handle both regular page loads and Astro view transitions
@@ -780,5 +617,12 @@ const sortedGalleryData = [...galleryData].sort(sortByDate);
       max-width: 100%;
       padding: 0 1rem;
     }
+  }
+
+  .loading-indicator {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gray-11);
+    font-size: 0.875rem;
   }
 </style>
