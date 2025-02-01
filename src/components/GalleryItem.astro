@@ -20,7 +20,7 @@ const isGif = (filename: string) => filename.toLowerCase().endsWith('.gif');
 ---
 
 <div class="gallery-item" data-show="true">
-  <a href={`/gallery/${itemSlug}/`}>
+  <a href={`/gallery/${itemSlug}/`} data-gallery-item>
     {imageSource ? (
       isGif(item.filename) ? (
         <img

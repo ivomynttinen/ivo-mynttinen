@@ -1,3 +1,712 @@
 ---
-return Astro.redirect('/gallery/page/1/');
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import MatomoTracking from '../../components/MatomoTracking.astro';
+import { Image } from 'astro:assets';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import galleryData from '../../data/gallery.json';
+import { getSlugById } from '../../utils/slugs';
+import GalleryItem from '../../components/GalleryItem.astro';
+import RSSIcon from '../../assets/images/rss.svg?raw';
+import FilterIcon from '../../assets/images/filter.svg?raw';
+import OgImage from '../../assets/images/og-image-gallery.png';
+
+import '../../styles/gallery-modal.scss';
+
+const ogImageToUse = OgImage?.src;
+
+// Sort and filter helpers
+const sortByDate = (a: any, b: any) => b.btime - a.btime;
+
+// Update the pagination variables at the top of the file
+const itemsPerPage = 100;
+const currentPage = 1;
+const totalItems = galleryData.length;
+const hasMorePages = totalItems > itemsPerPage * currentPage;
+
+// Update the currentPageItems to include the page number
+const sortedGalleryData = [...galleryData].sort(sortByDate);
+const currentPageItems = sortedGalleryData.slice(
+  (currentPage - 1) * itemsPerPage,
+  currentPage * itemsPerPage
+);
+
+// Replace the image import section with this:
+const images = import.meta.glob('../../assets/gallery/*.{png,jpg,jpeg,gif,webp}', {
+  eager: true,
+});
+
+// Create a map of filenames to their image objects
+const imageMap = new Map();
+for (const [path, image] of Object.entries(images)) {
+  const filename = path.split('/').pop();
+  if (filename) {
+    imageMap.set(filename, image.default);
+  }
+}
+
+// Helper function to check if file is a GIF
+const isGif = (filename: string) => filename.toLowerCase().endsWith('.gif');
+
+// Helper function to generate URL-friendly slug
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric chars with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+}
+
+// Generate unique slugs for all items
+const slugMap = new Map();
+galleryData.forEach(item => {
+  let baseSlug = generateSlug(item.name);
+  let slug = baseSlug;
+  
+  // If slug already exists, append part of the ID
+  while (slugMap.has(slug)) {
+    // Use first 6 characters of ID to keep URLs reasonably short
+    slug = `${baseSlug}-${item.id.substring(0, 6)}`;
+  }
+  
+  slugMap.set(slug, item);
+});
+
+// Get unique folders and tags from gallery data, excluding specific folders
+const excludedFolders = ['Personal 2024', 'Website 2024'];
+const uniqueFolders = [...new Set(galleryData.flatMap(item => item.folders || []))].filter(folder => !excludedFolders.includes(folder));
+const uniqueTags = [...new Set(galleryData.flatMap(item => item.tags || []))];
+
+// Get date range with fixed minimum date
+const dates = galleryData.map(item => item.btime);
+const maxDate = new Date(Math.max(...dates)).toISOString().split('T')[0];
+const minDate = '2010-01-01'; // Set fixed minimum date
 ---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`Ivo's Design Inspiration Gallery`} description='Designs of websites, apps and other digital products carefully curated by Ivo Mynttinen.' image={ogImageToUse} />
+    <MatomoTracking />
+  </head>
+  <body>
+    <Header activePath="gallery" />
+    <main class="layout-gallery">
+      <section class="gallery">
+        <div class="page-title">
+          <h1>Gallery</h1>
+          <a href="/gallery.rss.xml" title="Subscribe to RSS Feed" class="rss-icon">
+            <Fragment set:html={RSSIcon} />
+          </a>
+        </div>
+        <p class="intro">
+          Design inspiration gallery carefully curated by myself. <a href="/blog/publishing-eagle-app-library-on-the-web-part-1/">Read</a> more about how all this works.
+        </p>
+        
+        <div class="filter-controls">
+          <div class="filter-toggles">
+            <div class="filter-toggle-wrapper">
+              <button id="toggleFilters" class="filter-button">
+                <Fragment set:html={FilterIcon} />
+                Filters
+              </button>
+              <button id="resetFilters" class="filter-button" style="display: none;">Reset</button>
+            </div>
+            <span id="resultCount" class="result-count">{totalItems} items</span>
+          </div>
+
+          <div class="filter-toolbar open">
+            <div class="filter-section">
+              <h3>Categories</h3>
+              <div class="filter-buttons" id="folderFilter">
+                {uniqueFolders.map(folder => {
+                  const urlSafeCategory = folder.toLowerCase().replace(/\s+/g, '-');
+                  return (
+                    <a 
+                      class="filter-btn"
+                      href={`/gallery/${urlSafeCategory}/`}
+                    >
+                      {folder}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+  
+            <div class="filter-section">
+              <h3>Tags</h3>
+              <div class="filter-buttons" id="tagFilter">
+                {uniqueTags.map(tag => {
+                  const urlSafeTag = tag.toLowerCase().replace(/\s+/g, '-');
+                  return (
+                    <a 
+                      class="filter-btn"
+                      href={`/gallery/${urlSafeTag}/`}
+                    >
+                      {tag}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="gallery-grid" id="gallery-grid">
+          {currentPageItems.map((item, index) => {
+            const imageSource = imageMap.get(item.filename);
+            const itemSlug = getSlugById(item.id);
+            return (
+              <div 
+                class="gallery-item" 
+                data-show="true"
+              >
+                <a href={`/gallery/${itemSlug}`}>
+                  {imageSource ? (
+                    isGif(item.filename) ? (
+                      <img
+                        src={imageSource.src}
+                        alt={item.name}
+                        width={item.width}
+                        height={item.height}
+                        loading="lazy"
+                        style={`aspect-ratio: ${item.width}/${item.height}`}
+                      />
+                    ) : (
+                      <Image
+                        src={imageSource}
+                        alt={item.name}
+                        width={item.width}
+                        height={item.height}
+                        loading="lazy"
+                        sizes="(min-width: 1024px) 400px, (min-width: 768px) 32vw, 98vw"
+                        widths={[320, 400, 800]}
+                        style={`aspect-ratio: ${item.width}/${item.height}`}
+                      />
+                    )
+                  ) : (
+                    <div class="error-placeholder" style="aspect-ratio: 16/9; background: var(--gray-200); display: flex; align-items: center; justify-content: center; padding: 1rem; text-align: center;">
+                      Image not found: {item.filename}
+                    </div>
+                  )}
+                  <div class="gallery-item-info">
+                    {item.name}
+                  </div>
+                </a>
+              </div>
+            );
+          })}
+        </div>
+
+        <button id="loadMore" class="load-more" style={hasMorePages ? '' : 'display: none;'}>
+          Load more
+        </button>
+      </section>
+    </main>
+    <Footer class="layout-blog" />
+    
+    <div id="gallery-modal" class="gallery-modal">
+      <header class="modal-header">
+        <nav class="modal-navigation">
+          <button class="key nav-button prev" aria-label="Previous image">←</button>
+          <button class="key nav-button next" aria-label="Next image">→</button>
+        </nav>
+        <button class="key modal-close" aria-label="Close modal">×</button>
+      </header>
+      <div class="modal-content"></div>
+    </div>
+  </body>
+</html>
+
+<script>
+  function initializeGallery() {
+    // Wait for elements to be available
+    const filterToolbar = document.querySelector('.filter-toolbar');
+    const toggleFiltersBtn = document.getElementById('toggleFilters');
+    const galleryGrid = document.getElementById('gallery-grid');
+
+    if (!filterToolbar || !toggleFiltersBtn || !galleryGrid) {
+      return;
+    }
+
+    // Add modal functionality
+    const modal = document.getElementById('gallery-modal');
+    const modalContent = modal?.querySelector('.modal-content');
+    const modalClose = modal?.querySelector('.modal-close');
+
+    async function openModal(url) {
+      if (!modal || !modalContent) return;
+      
+      try {
+        // Show loading state
+        modalContent.innerHTML = '<div class="loading-indicator">Loading...</div>';
+        modal.style.display = 'block';
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        const content = doc.querySelector('main'); // Get the main content instead of specific ID
+        if (content) {
+          modalContent.innerHTML = content.innerHTML;
+        } else {
+          throw new Error('Content not found');
+        }
+      } catch (error) {
+        console.error('Error loading gallery item:', error);
+        // Fallback to direct navigation
+        window.location.href = url;
+      }
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+      
+      // Wait for transition to complete before hiding
+      setTimeout(() => {
+        if (!modal.classList.contains('open')) {
+          modal.style.display = 'none';
+        }
+      }, 200); // Match transition duration
+      
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/gallery/page/')) {
+        history.pushState({}, '', '/gallery/');
+      }
+    }
+
+    // Update click handler to use event delegation properly
+    document.addEventListener('click', (e) => {
+      const galleryLink = e.target.closest('.gallery-item a');
+      if (galleryLink && modal) {
+        e.preventDefault();
+        const url = galleryLink.href;
+        history.pushState({}, '', url);
+        openModal(url);
+      }
+    });
+
+    // Close modal on button click
+    modalClose?.addEventListener('click', () => {
+      closeModal();
+    });
+
+    // Close modal on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal?.classList.contains('open')) {
+        closeModal();
+      }
+    });
+
+    // Handle browser back/forward
+    window.addEventListener('popstate', () => {
+      if (modal?.classList.contains('open')) {
+        closeModal();
+      } else if (location.pathname.startsWith('/gallery/')) {
+        openModal(location.pathname);
+      }
+    });
+
+    // Modal navigation functions
+    function navigateModal(direction) {
+      const currentUrl = window.location.pathname;
+      const currentItem = document.querySelector(`[href="${currentUrl}"]`)?.closest('.gallery-item');
+      
+      if (!currentItem) return;
+      
+      const visibleItems = [...document.querySelectorAll('.gallery-item[data-show="true"]')];
+      const currentIndex = visibleItems.indexOf(currentItem);
+      
+      let nextIndex;
+      if (direction === 'next') {
+        nextIndex = currentIndex + 1 >= visibleItems.length ? 0 : currentIndex + 1;
+      } else {
+        nextIndex = currentIndex - 1 < 0 ? visibleItems.length - 1 : currentIndex - 1;
+      }
+      
+      const nextItem = visibleItems[nextIndex];
+      if (nextItem) {
+        const link = nextItem.querySelector('a');
+        if (link) {
+          history.pushState({}, '', link.href);
+          openModal(link.href);
+          // Dispatch custom event for tracking
+          document.dispatchEvent(new CustomEvent('gallery:navigation', {
+            detail: {
+              url: link.href,
+              title: nextItem.querySelector('img')?.alt || document.title
+            }
+          }));
+        }
+      }
+    }
+
+    // Update modal event listeners
+    const modalPrev = modal?.querySelector('.nav-button.prev');
+    const modalNext = modal?.querySelector('.nav-button.next');
+
+    modalPrev?.addEventListener('click', () => navigateModal('prev'));
+    modalNext?.addEventListener('click', () => navigateModal('next'));
+
+    // Update keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (!modal?.classList.contains('open')) return;
+
+      if (['ArrowLeft', 'ArrowUp'].includes(e.key)) {
+        e.preventDefault();
+        navigateModal('prev');
+      } else if (['ArrowRight', 'ArrowDown'].includes(e.key)) {
+        e.preventDefault();
+        navigateModal('next');
+      }
+    });
+
+    initializeLoadMore();
+  }
+
+  function initializeLoadMore() {
+    const loadMoreBtn = document.getElementById('loadMore');
+    const galleryGrid = document.getElementById('gallery-grid');
+    let currentPage = 1;
+    let isLoading = false;
+
+    async function loadNextPage() {
+      if (isLoading) return;
+      
+      try {
+        isLoading = true;
+        currentPage++;
+        
+        const response = await fetch(`/gallery/page/${currentPage}/`);
+        const text = await response.text();
+        
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+        
+        const newContent = doc.getElementById('gallery-grid');
+        
+        if (newContent && newContent.children.length > 0) {
+          const newItems = Array.from(newContent.children);
+          newItems.forEach(item => {
+            galleryGrid?.appendChild(item);
+          });
+          
+          const hasMore = doc.getElementById('loadMore')?.style.display !== 'none';
+          if (!hasMore && loadMoreBtn) {
+            loadMoreBtn.style.display = 'none';
+          }
+        } else {
+          if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error loading more items:', error);
+      } finally {
+        isLoading = false;
+      }
+    }
+
+    // Remove the click event listener for the button
+    if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+
+    // Add intersection observer for infinite scroll
+    const observerOptions = {
+      root: null,
+      rootMargin: '200px', // Start loading when within 200px of the bottom
+      threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !isLoading) {
+          loadNextPage();
+        }
+      });
+    }, observerOptions);
+
+    // Observe the last item in the gallery grid
+    function observeLastItem() {
+      const items = galleryGrid?.children;
+      if (items && items.length > 0) {
+        observer.disconnect(); // Remove previous observation
+        observer.observe(items[items.length - 1]);
+      }
+    }
+
+    // Initial observation
+    observeLastItem();
+
+    // Re-observe after new content is loaded
+    const mutationObserver = new MutationObserver(observeLastItem);
+    if (galleryGrid) {
+      mutationObserver.observe(galleryGrid, { childList: true });
+    }
+  }
+
+  // Helper function to get slug by ID (client-side version)
+  function getSlugById(id) {
+    const item = allGalleryData.sortedGalleryData.find(item => item.id === id);
+    if (!item) return id;
+    
+    let baseSlug = item.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+      
+    return `${baseSlug}-${id.substring(0, 6)}`;
+  }
+
+  // Handle both regular page loads and Astro view transitions
+  document.addEventListener('astro:page-load', initializeGallery, { once: false });
+</script>
+
+<style lang="scss">
+  .layout-gallery{
+    margin-top: 4rem;
+
+    h1{
+      font-size: 2rem;
+      line-height: 2.5rem;
+    }
+  }
+
+  .page-title{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+
+  .intro{
+    margin-top: 1rem;
+    max-width: 38ch;
+
+    a{
+      color: var(--yellow-11);
+      text-decoration-color: var(--yellow-10);
+      transition: color 0.2s, text-decoration-color 0.2s;
+
+      &:hover{
+        color: var(--yellow-12);
+        text-decoration-color: var(--yellow-11);
+      }
+    }
+  }
+
+  .filter-controls{
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gray-4);
+  }
+
+  .filter-toggles{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .filter-toggle-wrapper{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .result-count {
+    color: var(--gray-11);
+    font-size: 0.875rem;
+  }
+
+  .filter-toolbar {
+    background: var(--gray-3);
+    border-radius: .6rem;
+    height: 0;
+    opacity: .5;
+    overflow-y: clip;
+    transition: height .3s, opacity .3s, margin-top .3s;
+    interpolate-size: allow-keywords;
+
+    &.open {
+      height: auto;
+      opacity: 1;
+      margin-top: 1rem;
+    }
+  }
+
+  .filter-button{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-family: var(--font-family-sans);
+    font-weight: 500;
+    font-size: .875rem;
+    color: var(--gray-11);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: .3rem .5rem;
+    border-radius: .3rem;
+    transition: background 0.2s ease, color 0.2s ease;
+    line-height: 18px;
+
+    &:hover{
+      background: var(--gray-4);
+    }
+
+    &.active{
+      background: var(--yellow-4);
+      color: var(--yellow-11);
+
+      &:hover{
+        background: var(--yellow-5);
+        color: var(--yellow-12);
+      }
+    }
+  }
+
+  .filter-section{
+    padding: 1rem;
+
+    h3{
+      color: var(--gray-11);
+      font-size: .875rem;
+      font-weight: 500;
+      font-stretch: 135%;
+      margin-bottom: .5rem;
+    }
+  }
+
+  .filter-buttons{
+    display: flex;
+    flex-wrap: wrap;
+    gap: .2rem;
+  }
+
+  .filter-btn {
+    padding: 0.2rem 0.4rem;
+    background: var(--gray-3);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    font-family: var(--font-family-sans);
+    font-size: .875rem;
+    color: var(--gray-11);
+
+    &:hover {
+      background: var(--gray-5);
+      color: var(--gray-12);
+    }
+
+    &.active {
+      background: var(--base);
+      color: var(--gray-12);
+      box-shadow: var(--elevation-1);
+    }
+  }
+
+  .date-filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: .875rem;
+      color: var(--gray-11);
+    }
+
+    input {
+      font-family: var(--font-family-sans);
+      color: var(--gray-12);
+      padding: 0.2rem 0.4rem;
+      font-size: .875rem;
+      border: none;
+      border-radius: 4px;
+      background: var(--gray-5);
+    }
+  }
+
+  .gallery {
+    width: 100%;
+    max-width: 100%;
+
+    .gallery-grid {
+      width: 100%;
+      display: grid;
+      gap: 1em;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-rows: masonry; 
+    }
+  }
+
+  .modal-header{
+    background: transparent;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+  }
+
+  .modal-navigation{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .key{
+    font-family: var(--font-family-mono);
+    font-size: 1.3rem;
+    color: var(--base);
+    background: rgba(255,255,255,.1);
+    border-radius: 4px;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.2);
+    box-shadow: 0 -2px 0 rgba(255,255,255,.15) inset;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    line-height: 1.3rem;
+    cursor: pointer;
+    color: #FFF;
+    transition: background 0.2s ease, border-color 0.2s ease;
+
+    &:hover{
+      background: rgba(255,255,255,.22);
+      border-color: rgba(255,255,255,.2);
+    }
+
+    &:active{
+      transition: none;
+      background: rgba(0,0,0,.1);
+      border-color: rgba(255,255,255,.2);
+      box-shadow: 0 3px 0 rgba(0,0,0,.3) inset;
+    }
+  }
+
+  @media (min-width: 768px) {
+    body > main{
+      max-width: 100%;
+      padding: 0 1rem;
+    }
+  }
+
+  .loading-indicator {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gray-11);
+    font-size: 0.875rem;
+  }
+</style> 
