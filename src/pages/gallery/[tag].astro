@@ -12,6 +12,7 @@ import RSSIcon from '../../assets/images/rss.svg?raw';
 import FilterIcon from '../../assets/images/filter.svg?raw';
 import OgImage from '../../assets/images/og-image-gallery.png';
 
+import '../../styles/gallery.scss';
 import '../../styles/gallery-modal.scss';
 
 const ogImageToUse = OgImage?.src;
@@ -66,30 +67,36 @@ export async function getStaticPaths() {
   
   // Filter unique tags and remove empty ones
   const uniqueTags = [...new Set(allTags)].filter(Boolean);
-  console.log('Unique tags found:', uniqueTags);
+  
+  // Get unique folders, excluding specific ones
+  const excludedFolders = ['Personal 2024', 'Website 2024'];
+  const uniqueFolders = [...new Set(galleryData.flatMap(item => item.folders || []))].filter(folder => !excludedFolders.includes(folder));
   
   // Generate paths with URL-safe slugs
   return uniqueTags.map(tag => {
     const urlSafeTag = tag.toLowerCase().replace(/\s+/g, '-');
-    console.log(`Generating path for ${tag} -> ${urlSafeTag}`);
     
     return {
       params: { tag: urlSafeTag },
       props: { 
         tag: tag,
-        uniqueTags: uniqueTags
+        uniqueTags: uniqueTags,
+        uniqueFolders: uniqueFolders
       }
     };
   });
 }
 
 // Get props from Astro
-const { tag, uniqueTags } = Astro.props;
+const { tag, uniqueTags, uniqueFolders } = Astro.props;
 
 // Filter gallery data for the current tag
 const tagGalleryData = galleryData.filter(item => 
   item.tags && item.tags.includes(tag)
 ).sort((a, b) => b.btime - a.btime);
+
+// Calculate total items in the tag
+const totalItems = tagGalleryData.length;
 
 const pageTitle = `${tag} - Gallery | ${SITE_TITLE}`;
 const pageDescription = `Browse design inspiration tagged with ${tag}. ${SITE_DESCRIPTION}`;
@@ -106,18 +113,67 @@ const pageDescription = `Browse design inspiration tagged with ${tag}. ${SITE_DE
     <main class="layout-gallery">
       <section class="gallery">
         <div class="page-title">
-          <h1>{tag}</h1>
+          <h1>{tag.charAt(0).toUpperCase() + tag.slice(1)}</h1>
           <a href="/gallery.rss.xml" title="Subscribe to RSS Feed" class="rss-icon">
             <Fragment set:html={RSSIcon} />
           </a>
         </div>
         <p class="intro">
-          Design inspiration gallery carefully curated by myself. <a href="/blog/publishing-eagle-app-library-on-the-web-part-1/">Read</a> more about how all this works.
+          Design inspiration tagged with {tag.charAt(0).toUpperCase() + tag.slice(1)}.
         </p>
-        
+
+        <div class="filter-controls">
+          <div class="filter-toggles">
+            <div class="filter-toggle-wrapper">
+              <button id="toggleFilters" class="filter-button active">
+                <Fragment set:html={FilterIcon} />
+                Filters
+              </button>
+              <a href="/gallery/" class="filter-button">Reset</a>
+            </div>
+            <span id="resultCount" class="result-count">{totalItems} items</span>
+          </div>
+
+          <div class="filter-toolbar open">
+            <div class="filter-section">
+              <h3>Categories</h3>
+              <div class="filter-buttons" id="folderFilter">
+                {uniqueFolders.map(folder => {
+                  const urlSafeCategory = folder.toLowerCase().replace(/\s+/g, '-');
+                  return (
+                    <a 
+                      class="filter-btn"
+                      href={`/gallery/${urlSafeCategory}/`}
+                    >
+                      {folder}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+  
+            <div class="filter-section">
+              <h3>Tags</h3>
+              <div class="filter-buttons" id="tagFilter">
+                {uniqueTags.map(tagItem => {
+                  const urlSafeTag = tagItem.toLowerCase().replace(/\s+/g, '-');
+                  const isActive = tagItem === tag;
+                  return (
+                    <a 
+                      class={`filter-btn ${isActive ? 'active' : ''}`}
+                      href={`/gallery/${urlSafeTag}/`}
+                    >
+                      {tagItem}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div class="gallery-grid" id="gallery-grid">
-          {tagGalleryData.map((item, index) => (
+          {tagGalleryData.map((item) => (
             <GalleryItem item={item} imageMap={imageMap} />
           ))}
         </div>
@@ -125,293 +181,68 @@ const pageDescription = `Browse design inspiration tagged with ${tag}. ${SITE_DE
     </main>
     <Footer class="layout-blog" />
 
+    <div id="gallery-modal" class="gallery-modal">
+      <header class="modal-header">
+        <nav class="modal-navigation">
+          <button class="key nav-button prev" aria-label="Previous image">←</button>
+          <button class="key nav-button next" aria-label="Next image">→</button>
+        </nav>
+        <button class="key modal-close" aria-label="Close modal">×</button>
+      </header>
+      <div class="modal-content"></div>
+    </div>
   </body>
 </html>
 
+<script>
+  import { initializeModal } from '../../utils/gallery-modal';
 
-<style lang="scss">
-  .layout-gallery{
-    margin-top: 4rem;
+  function initializeGallery() {
+    const galleryGrid = document.getElementById('gallery-grid');
 
-    h1{
-      font-size: 2rem;
-      line-height: 2.5rem;
-    }
-  }
-
-  .page-title{
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: .5rem;
-  }
-
-  .intro{
-    margin-top: 1rem;
-    max-width: 38ch;
-
-    a{
-      color: var(--yellow-11);
-      text-decoration-color: var(--yellow-10);
-      transition: color 0.2s, text-decoration-color 0.2s;
-
-      &:hover{
-        color: var(--yellow-12);
-        text-decoration-color: var(--yellow-11);
-      }
-    }
-  }
-
-  .filter-controls{
-    margin-bottom: 1rem;
-    margin-top: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--gray-4);
-  }
-
-  .filter-toggles{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-
-  .filter-toggle-wrapper{
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-  }
-
-  .result-count {
-    color: var(--gray-11);
-    font-size: 0.875rem;
-  }
-
-  .filter-toolbar {
-    background: var(--gray-3);
-    border-radius: .6rem;
-    height: 0;
-    opacity: .5;
-    overflow-y: clip;
-    transition: height .3s, opacity .3s, margin-top .3s;
-    interpolate-size: allow-keywords;
-
-    &.open {
-      height: auto;
-      opacity: 1;
-      margin-top: 1rem;
-    }
-  }
-
-  .filter-button{
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    font-family: var(--font-family-sans);
-    font-weight: 500;
-    font-size: .875rem;
-    color: var(--gray-11);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: .3rem .5rem;
-    border-radius: .3rem;
-    transition: background 0.2s ease, color 0.2s ease;
-    line-height: 18px;
-
-    &:hover{
-      background: var(--gray-4);
+    if (!galleryGrid) {
+      return;
     }
 
-    &.active{
-      background: var(--yellow-4);
-      color: var(--yellow-11);
-
-      &:hover{
-        background: var(--yellow-5);
-        color: var(--yellow-12);
-      }
-    }
+    initializeModal(galleryGrid);
   }
 
-  .filter-section{
-    padding: 1rem;
-
-    h3{
-      color: var(--gray-11);
-      font-size: .875rem;
-      font-weight: 500;
-      font-stretch: 135%;
-      margin-bottom: .5rem;
+  function initializeFilterToggle() {
+    // Remove any existing event listeners
+    const oldButton = document.getElementById('toggleFilters');
+    if (oldButton) {
+      const newButton = oldButton.cloneNode(true);
+      oldButton.parentNode?.replaceChild(newButton, oldButton);
     }
+
+    const toggleButton = document.getElementById('toggleFilters');
+    const filterToolbar = document.getElementById('filterToolbar');
+    const isGalleryIndex = document.querySelector('[data-gallery-index]');
+
+    if (!toggleButton || !filterToolbar) return;
+
+    // Ensure filter is open by default on category/tag pages
+    if (!isGalleryIndex) {
+      filterToolbar.classList.add('open');
+      toggleButton.classList.add('active');
+    }
+
+    toggleButton.addEventListener('click', () => {
+      filterToolbar.classList.toggle('open');
+    });
   }
 
-  .filter-buttons{
-    display: flex;
-    flex-wrap: wrap;
-    gap: .2rem;
-  }
+  // Handle both regular page loads and Astro view transitions
+  document.addEventListener('astro:page-load', () => {
+    initializeGallery();
+    initializeFilterToggle();
+  }, { once: false });
 
-  .filter-btn {
-    padding: 0.2rem 0.4rem;
-    background: var(--gray-3);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-    font-family: var(--font-family-sans);
-    font-size: .875rem;
-    color: var(--gray-11);
-
-    &:hover {
-      background: var(--gray-5);
-      color: var(--gray-12);
+  // Clean up when navigating away
+  document.addEventListener('astro:before-preparation', () => {
+    const toggleButton = document.getElementById('toggleFilters');
+    if (toggleButton) {
+      toggleButton.replaceWith(toggleButton.cloneNode(true));
     }
-
-    &.active {
-      background: var(--base);
-      color: var(--gray-12);
-      box-shadow: var(--elevation-1);
-    }
-  }
-
-  .date-filters {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-
-    label {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: .875rem;
-      color: var(--gray-11);
-    }
-
-    input {
-      font-family: var(--font-family-sans);
-      color: var(--gray-12);
-      padding: 0.2rem 0.4rem;
-      font-size: .875rem;
-      border: none;
-      border-radius: 4px;
-      background: var(--gray-5);
-    }
-  }
-
-  .gallery {
-    width: 100%;
-    max-width: 100%;
-
-    .gallery-grid {
-      width: 100%;
-      display: grid;
-      gap: 1em;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      grid-template-rows: masonry; 
-    }
-  }
-
-  .gallery-item {
-    position: relative;
-    margin-bottom: 1em;
-
-    a {
-      display: block;
-      text-decoration: none;
-      color: inherit;
-      transition: background 0.2s ease;
-      border-radius: 6px;
-      padding: 3px;
-      background: var(--base);
-      border: 1px solid var(--gray-3);
-
-      &:hover{
-        background: var(--gray-4);
-        border-color: var(--gray-4);
-      }
-    }
-
-    img {
-      width: 100%;
-      height: auto;
-      object-fit: contain;
-      display: block;
-      border-radius: 4px;
-    }
-
-    .gallery-item-info {
-      padding: .4rem;
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: rgba(0, 0, 0, 0.6);
-      color: #fff;
-      opacity: 0;
-      backdrop-filter: blur(4px);
-      transition: opacity 0.3s ease;
-      font-size: .625rem;
-      font-weight: 500;
-      border-radius: 4px;
-      max-width: calc(100% - 24px);
-    }
-
-    &:hover .gallery-item-info {
-      opacity: 1;
-    }
-  }
-
-  .modal-header{
-    background: transparent;
-    height: 4rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 1rem;
-  }
-
-  .modal-navigation{
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-  }
-
-  .key{
-    font-family: var(--font-family-mono);
-    font-size: 1.3rem;
-    color: var(--base);
-    background: rgba(255,255,255,.1);
-    border-radius: 4px;
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,.2);
-    box-shadow: 0 -2px 0 rgba(255,255,255,.15) inset;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.6rem;
-    height: 1.6rem;
-    line-height: 1.3rem;
-    cursor: pointer;
-    color: #FFF;
-    transition: background 0.2s ease, border-color 0.2s ease;
-
-    &:hover{
-      background: rgba(255,255,255,.22);
-      border-color: rgba(255,255,255,.2);
-    }
-
-    &:active{
-      transition: none;
-      background: rgba(0,0,0,.1);
-      border-color: rgba(255,255,255,.2);
-      box-shadow: 0 3px 0 rgba(0,0,0,.3) inset;
-    }
-  }
-
-  @media (min-width: 768px) {
-    body > main{
-      max-width: 100%;
-      padding: 0 1rem;
-    }
-  }
-</style>
+  }, { once: false });
+</script>

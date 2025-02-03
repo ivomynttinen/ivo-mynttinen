@@ -13,7 +13,12 @@ export default defineConfig({
   },
   integrations: [
     mdx(),
-    sitemap()
+    sitemap({
+      filter: (route) => {
+        // Exclude routes that match /gallery/page-{number}/
+        return !/^\/gallery\/page-\d+\/?$/.test(route);
+      }
+    })
   ],
   devToolbar: {
     enabled: false

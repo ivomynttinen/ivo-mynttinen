@@ -12,6 +12,7 @@ import RSSIcon from '../../assets/images/rss.svg?raw';
 import FilterIcon from '../../assets/images/filter.svg?raw';
 import OgImage from '../../assets/images/og-image-gallery.png';
 
+import '../../styles/gallery.scss';
 import '../../styles/gallery-modal.scss';
 
 const ogImageToUse = OgImage?.src;
@@ -76,11 +77,6 @@ galleryData.forEach(item => {
 const excludedFolders = ['Personal 2024', 'Website 2024'];
 const uniqueFolders = [...new Set(galleryData.flatMap(item => item.folders || []))].filter(folder => !excludedFolders.includes(folder));
 const uniqueTags = [...new Set(galleryData.flatMap(item => item.tags || []))];
-
-// Get date range with fixed minimum date
-const dates = galleryData.map(item => item.btime);
-const maxDate = new Date(Math.max(...dates)).toISOString().split('T')[0];
-const minDate = '2010-01-01'; // Set fixed minimum date
 ---
 
 <!doctype html>
@@ -91,7 +87,7 @@ const minDate = '2010-01-01'; // Set fixed minimum date
   </head>
   <body>
     <Header activePath="gallery" />
-    <main class="layout-gallery">
+    <main class="layout-gallery" data-gallery-index>
       <section class="gallery">
         <div class="page-title">
           <h1>Gallery</h1>
@@ -110,12 +106,11 @@ const minDate = '2010-01-01'; // Set fixed minimum date
                 <Fragment set:html={FilterIcon} />
                 Filters
               </button>
-              <button id="resetFilters" class="filter-button" style="display: none;">Reset</button>
             </div>
             <span id="resultCount" class="result-count">{totalItems} items</span>
           </div>
 
-          <div class="filter-toolbar open">
+          <div class="filter-toolbar" id="filterToolbar">
             <div class="filter-section">
               <h3>Categories</h3>
               <div class="filter-buttons" id="folderFilter">
@@ -157,12 +152,9 @@ const minDate = '2010-01-01'; // Set fixed minimum date
             <GalleryItem item={item} imageMap={imageMap} />
           ))}
         </div>
-
-        <button id="loadMore" class="load-more" style={hasMorePages ? '' : 'display: none;'}>
-          Load more
-        </button>
       </section>
     </main>
+
     <Footer class="layout-blog" />
     
     <div id="gallery-modal" class="gallery-modal">
@@ -179,141 +171,22 @@ const minDate = '2010-01-01'; // Set fixed minimum date
 </html>
 
 <script>
+  import { initializeModal } from '../../utils/gallery-modal';
+
   function initializeGallery() {
     const galleryGrid = document.getElementById('gallery-grid');
+    const isGalleryIndex = document.querySelector('[data-gallery-index]');
 
     if (!galleryGrid) {
       return;
     }
 
     initializeModal(galleryGrid);
-    initializeLoadMore();
-  }
-
-  function initializeModal(galleryGrid) {
-    const modal = document.getElementById('gallery-modal');
-    const modalContent = modal?.querySelector('.modal-content');
-    let currentIndex = -1;
-
-    async function loadGalleryItem(url) {
-      try {
-        const response = await fetch(url);
-        const text = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, 'text/html');
-        const galleryItem = doc.getElementById('gallery-item');
-        
-        if (galleryItem && modalContent) {
-          modalContent.innerHTML = '';
-          modalContent.appendChild(galleryItem);
-        }
-      } catch (error) {
-        console.error('Error loading gallery item:', error);
-      }
+    
+    // Only initialize infinite scroll on the main gallery page
+    if (isGalleryIndex) {
+      initializeLoadMore();
     }
-
-    function openModal(url, index) {
-      if (!modal) return;
-      
-      currentIndex = index;
-      modal.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      loadGalleryItem(url);
-      
-      // Update URL without navigation
-      window.history.pushState({ modalOpen: true }, '', url);
-    }
-
-    function closeModal() {
-      if (!modal) return;
-      
-      modal.classList.remove('open');
-      document.body.style.overflow = '';
-      currentIndex = -1;
-      
-      // Restore original URL
-      window.history.pushState({ modalOpen: false }, '', '/gallery/');
-    }
-
-    // Event delegation for gallery item clicks
-    galleryGrid.addEventListener('click', (e) => {
-      const galleryItem = e.target.closest('a[data-gallery-item]');
-      if (galleryItem) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        // Prevent Astro's view transitions
-        if (e.currentTarget instanceof HTMLElement) {
-          e.currentTarget.setAttribute('data-astro-reload', '');
-        }
-        
-        const url = galleryItem.getAttribute('href');
-        const index = Array.from(galleryGrid.children).findIndex(
-          item => item.contains(galleryItem)
-        );
-        
-        openModal(url, index);
-        return false;
-      }
-    }, { capture: true });
-
-    // Close modal on click outside or close button
-    modal?.addEventListener('click', (e) => {
-      if (e.target === modal || e.target.classList.contains('modal-close')) {
-        closeModal();
-      }
-    });
-
-    // Navigation buttons
-    const prevButton = modal?.querySelector('.nav-button.prev');
-    const nextButton = modal?.querySelector('.nav-button.next');
-
-    prevButton?.addEventListener('click', () => {
-      if (currentIndex > 0) {
-        const prevItem = galleryGrid?.children[currentIndex - 1]?.querySelector('[data-gallery-item]');
-        if (prevItem) {
-          const url = prevItem.getAttribute('href');
-          openModal(url, currentIndex - 1);
-        }
-      }
-    });
-
-    nextButton?.addEventListener('click', () => {
-      if (currentIndex < (galleryGrid?.children.length || 0) - 1) {
-        const nextItem = galleryGrid?.children[currentIndex + 1]?.querySelector('[data-gallery-item]');
-        if (nextItem) {
-          const url = nextItem.getAttribute('href');
-          openModal(url, currentIndex + 1);
-        }
-      }
-    });
-
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-      if (!modal?.classList.contains('open')) return;
-
-      switch (e.key) {
-        case 'Escape':
-          closeModal();
-          break;
-        case 'ArrowLeft':
-          prevButton?.click();
-          break;
-        case 'ArrowRight':
-          nextButton?.click();
-          break;
-      }
-    });
-
-    // Handle browser back/forward
-    window.addEventListener('popstate', (e) => {
-      if (e.state?.modalOpen) {
-        const url = window.location.pathname;
-        openModal(url, currentIndex);
-      } else {
-        closeModal();
-      }
-    });
   }
 
   function initializeLoadMore() {
@@ -342,13 +215,6 @@ const minDate = '2010-01-01'; // Set fixed minimum date
           newItems.forEach(item => {
             galleryGrid?.appendChild(item);
           });
-          
-          const hasMore = doc.getElementById('loadMore')?.style.display !== 'none';
-          if (!hasMore && loadMoreBtn) {
-            loadMoreBtn.style.display = 'none';
-          }
-        } else {
-          if (loadMoreBtn) loadMoreBtn.style.display = 'none';
         }
       } catch (error) {
         console.error('Error loading more items:', error);
@@ -356,10 +222,6 @@ const minDate = '2010-01-01'; // Set fixed minimum date
         isLoading = false;
       }
     }
-
-    // Remove the click event listener for the button
-    if (loadMoreBtn) loadMoreBtn.style.display = 'none';
-
     // Add intersection observer for infinite scroll
     const observerOptions = {
       root: null,
@@ -407,251 +269,46 @@ const minDate = '2010-01-01'; // Set fixed minimum date
     return `${baseSlug}-${id.substring(0, 6)}`;
   }
 
+  function initializeFilterToggle() {
+    // Remove any existing event listeners
+    const oldButton = document.getElementById('toggleFilters');
+    if (oldButton) {
+      const newButton = oldButton.cloneNode(true);
+      oldButton.parentNode?.replaceChild(newButton, oldButton);
+    }
+
+    const toggleButton = document.getElementById('toggleFilters');
+    const filterToolbar = document.getElementById('filterToolbar');
+    const isGalleryIndex = document.querySelector('[data-gallery-index]');
+
+    if (!toggleButton || !filterToolbar) return;
+
+    // Only reset state on the index page
+    if (isGalleryIndex) {
+      filterToolbar.classList.remove('open');
+      toggleButton.classList.remove('active');
+    }
+
+    toggleButton.addEventListener('click', () => {
+      filterToolbar.classList.toggle('open');
+      // Only toggle active class if not on index page
+      if (!isGalleryIndex) {
+        toggleButton.classList.toggle('active');
+      }
+    });
+  }
+
   // Handle both regular page loads and Astro view transitions
-  document.addEventListener('astro:page-load', initializeGallery, { once: false });
+  document.addEventListener('astro:page-load', () => {
+    initializeGallery();
+    initializeFilterToggle();
+  }, { once: false });
+
+  // Clean up when navigating away
+  document.addEventListener('astro:before-preparation', () => {
+    const toggleButton = document.getElementById('toggleFilters');
+    if (toggleButton) {
+      toggleButton.replaceWith(toggleButton.cloneNode(true));
+    }
+  }, { once: false });
 </script>
-
-<style lang="scss">
-  .layout-gallery{
-    margin-top: 4rem;
-
-    h1{
-      font-size: 2rem;
-      line-height: 2.5rem;
-    }
-  }
-
-  .page-title{
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: .5rem;
-  }
-
-  .intro{
-    margin-top: 1rem;
-    max-width: 38ch;
-
-    a{
-      color: var(--yellow-11);
-      text-decoration-color: var(--yellow-10);
-      transition: color 0.2s, text-decoration-color 0.2s;
-
-      &:hover{
-        color: var(--yellow-12);
-        text-decoration-color: var(--yellow-11);
-      }
-    }
-  }
-
-  .filter-controls{
-    margin-bottom: 1rem;
-    margin-top: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--gray-4);
-  }
-
-  .filter-toggles{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-
-  .filter-toggle-wrapper{
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-  }
-
-  .result-count {
-    color: var(--gray-11);
-    font-size: 0.875rem;
-  }
-
-  .filter-toolbar {
-    background: var(--gray-3);
-    border-radius: .6rem;
-    height: 0;
-    opacity: .5;
-    overflow-y: clip;
-    transition: height .3s, opacity .3s, margin-top .3s;
-    interpolate-size: allow-keywords;
-
-    &.open {
-      height: auto;
-      opacity: 1;
-      margin-top: 1rem;
-    }
-  }
-
-  .filter-button{
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    font-family: var(--font-family-sans);
-    font-weight: 500;
-    font-size: .875rem;
-    color: var(--gray-11);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: .3rem .5rem;
-    border-radius: .3rem;
-    transition: background 0.2s ease, color 0.2s ease;
-    line-height: 18px;
-
-    &:hover{
-      background: var(--gray-4);
-    }
-
-    &.active{
-      background: var(--yellow-4);
-      color: var(--yellow-11);
-
-      &:hover{
-        background: var(--yellow-5);
-        color: var(--yellow-12);
-      }
-    }
-  }
-
-  .filter-section{
-    padding: 1rem;
-
-    h3{
-      color: var(--gray-11);
-      font-size: .875rem;
-      font-weight: 500;
-      font-stretch: 135%;
-      margin-bottom: .5rem;
-    }
-  }
-
-  .filter-buttons{
-    display: flex;
-    flex-wrap: wrap;
-    gap: .2rem;
-  }
-
-  .filter-btn {
-    padding: 0.2rem 0.4rem;
-    background: var(--gray-3);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-    font-family: var(--font-family-sans);
-    font-size: .875rem;
-    color: var(--gray-11);
-
-    &:hover {
-      background: var(--gray-5);
-      color: var(--gray-12);
-    }
-
-    &.active {
-      background: var(--base);
-      color: var(--gray-12);
-      box-shadow: var(--elevation-1);
-    }
-  }
-
-  .date-filters {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-
-    label {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: .875rem;
-      color: var(--gray-11);
-    }
-
-    input {
-      font-family: var(--font-family-sans);
-      color: var(--gray-12);
-      padding: 0.2rem 0.4rem;
-      font-size: .875rem;
-      border: none;
-      border-radius: 4px;
-      background: var(--gray-5);
-    }
-  }
-
-  .gallery {
-    width: 100%;
-    max-width: 100%;
-
-    .gallery-grid {
-      width: 100%;
-      display: grid;
-      gap: 1em;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      grid-template-rows: masonry; 
-    }
-  }
-
-  .modal-header{
-    background: transparent;
-    height: 4rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 1rem;
-  }
-
-  .modal-navigation{
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-  }
-
-  .key{
-    font-family: var(--font-family-mono);
-    font-size: 1.3rem;
-    color: var(--base);
-    background: rgba(255,255,255,.1);
-    border-radius: 4px;
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,.2);
-    box-shadow: 0 -2px 0 rgba(255,255,255,.15) inset;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.6rem;
-    height: 1.6rem;
-    line-height: 1.3rem;
-    cursor: pointer;
-    color: #FFF;
-    transition: background 0.2s ease, border-color 0.2s ease;
-
-    &:hover{
-      background: rgba(255,255,255,.22);
-      border-color: rgba(255,255,255,.2);
-    }
-
-    &:active{
-      transition: none;
-      background: rgba(0,0,0,.1);
-      border-color: rgba(255,255,255,.2);
-      box-shadow: 0 3px 0 rgba(0,0,0,.3) inset;
-    }
-  }
-
-  @media (min-width: 768px) {
-    body > main{
-      max-width: 100%;
-      padding: 0 1rem;
-    }
-  }
-
-  .loading-indicator {
-    text-align: center;
-    padding: 2rem;
-    color: var(--gray-11);
-    font-size: 0.875rem;
-  }
-</style> 

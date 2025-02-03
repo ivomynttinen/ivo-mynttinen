@@ -144,9 +144,14 @@ const imageSource = imageMap.get(item.filename);
             <section>
               <h2>Tags</h2>
               <ul class="tags-list">
-                {item.tags.map((tag) => (
-                  <li class="tag">{tag}</li>
-                ))}
+                {item.tags.map((tag) => {
+                  const urlSafeTag = tag.toLowerCase().replace(/\s+/g, '-');
+                  return (
+                    <li class="tag">
+                      <a href={`/gallery/${urlSafeTag}/`}>{tag}</a>
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           )}
