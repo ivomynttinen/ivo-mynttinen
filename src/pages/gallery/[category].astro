@@ -174,7 +174,7 @@ const pageDescription = `Browse design inspiration in the ${category} category.`
           </div>
         </div>
 
-        <div class="gallery-grid" id="gallery-grid">
+        <div class="gallery-grid" id="gallery-grid" data-category={category.toLowerCase().replace(/\s+/g, '-')}>
           {categoryGalleryData.map((item) => (
             <GalleryItem item={item} imageMap={imageMap} />
           ))}

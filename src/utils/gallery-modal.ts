@@ -48,8 +48,12 @@ export function initializeModal(galleryGrid: HTMLElement) {
     document.body.style.overflow = '';
     currentIndex = -1;
     
-    // Restore original URL
-    window.history.pushState({ modalOpen: false }, '', window.location.pathname);
+    // Check if #gallery-grid has a data-tag or data-category attribute and update URL accordingly
+    const galleryGrid = document.getElementById('gallery-grid');
+    const urlPath = galleryGrid.getAttribute('data-tag') || galleryGrid.getAttribute('data-category') ? `/gallery/${galleryGrid.getAttribute('data-tag') || galleryGrid.getAttribute('data-category')}/` : '/gallery/';
+    
+    // Update URL and history
+    window.history.pushState({ modalOpen: false }, '', urlPath);
   }
 
   // Event delegation for gallery item clicks

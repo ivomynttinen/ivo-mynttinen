@@ -172,7 +172,7 @@ const pageDescription = `Browse design inspiration tagged with ${tag}.`;
           </div>
         </div>
 
-        <div class="gallery-grid" id="gallery-grid">
+        <div class="gallery-grid" id="gallery-grid" data-tag={tag.toLowerCase().replace(/\s+/g, '-')}>
           {tagGalleryData.map((item) => (
             <GalleryItem item={item} imageMap={imageMap} />
           ))}
