@@ -32,7 +32,7 @@ const currentPage = parseInt(page);
 
 // Redirect if page is not a valid number or less than 1
 if (isNaN(currentPage) || currentPage < 1) {
-  return Astro.redirect('/gallery/page/1');
+  return Astro.redirect('/gallery/page/1/');
 }
 
 // Pagination settings
@@ -42,7 +42,7 @@ const totalPages = Math.ceil(totalItems / itemsPerPage);
 
 // Redirect if page number is too high
 if (currentPage > totalPages) {
-  return Astro.redirect('/gallery/page/1');
+  return Astro.redirect('/gallery/page/1/');
 }
 
 // Replace the image import section with this:

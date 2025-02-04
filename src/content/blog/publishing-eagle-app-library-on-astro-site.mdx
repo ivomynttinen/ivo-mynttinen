@@ -1,0 +1,333 @@
+---
+title: 'Publishing Your Eagle Library on an Astro Site (Part II)'
+description: 'How to build a gallery page from your Eagle library data and publish it as an Astro site.'
+pubDate: '2025-02-04'
+highlight: false
+category: 'site'
+---
+
+import { Image } from 'astro:assets';
+import DesignGallery from '../../assets/blog/publishing-eagle-app-library-on-astro-site/design-inspiration-gallery.png';
+
+In the [first part](/blog/publishing-eagle-app-library-on-the-web-part-1/) of this article series, I walked you through exporting and transforming an Eagle App library into structured JSON data. Now, we’ll take that data and build a fully functional design inspiration gallery using Astro, complete optimized images, pagination, and tag-based filtering.
+
+<figure>
+  <Image src={DesignGallery} alt="Design inspiration gallery page" />
+  <figcaption>My design inspiration gallery page, which you can see live [here](/gallery/).</figcaption>
+</figure>
+
+## Importing the Eagle Data Set
+
+First, we need to bring our exported assets into our Astro project. All exported image files should be placed inside `src/assets/gallery/`, while the exported gallery.json file goes into `src/data/gallery.json`. To display this data, we create a new Astro page at `src/pages/gallery/index.astro`.
+
+### Creating slugs for the gallery items
+
+To create clean and unique URLs for each gallery item, we need some helper functions. The `src/utils/slugs.ts` utility helps to convert item names into URL-friendly slugs by replacing spaces and special characters with hyphens. It also generates a mapping between slugs and gallery items, ensuring uniqueness by appending part of the ID if needed.
+
+Slugs need to be unique to avoid conflicts when two items have the same name (which is a common occurrence when adding multiple images from the same source to Eagle). If a duplicate is detected, we append the first six characters of the item’s ID to ensure uniqueness.
+
+```ts
+import galleryData from '../data/gallery.json';
+
+// Helper function that generates URL-friendly slugs by replacing spaces and special characters with hyphens and removing leading/trailing hyphens.
+export function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Generate unique slugs for all items
+export function createSlugMap() {
+  const slugMap = new Map();
+  galleryData.forEach(item => {
+    let baseSlug = generateSlug(item.name);
+    let slug = baseSlug;
+    
+    // If slug already exists, append part of the ID
+    while (slugMap.has(slug)) {
+      slug = `${baseSlug}-${item.id.substring(0, 6)}`;
+    }
+    
+    slugMap.set(slug, item);
+  });
+  return slugMap;
+}
+
+// Create and export a singleton instance of the slug map
+export const slugMap = createSlugMap();
+
+// Helper function to get slug by item ID
+export function getSlugById(id: string): string | undefined {
+  return Array.from(slugMap.entries()).find(([_, item]) => item.id === id)?.[0];
+}
+
+// Helper function to get item by slug
+export function getItemBySlug(slug: string) {
+  return slugMap.get(slug);
+} 
+```
+
+## GalleryItem Component
+
+Since gallery items appear on multiple pages (index, paginated pages, category and tags sub pages), we should build a reusable component. The `src/components/GalleryItem.astro` component expects an item (gallery object) and imageMap (mapping of filenames to image paths). The slug generation ensures a clean URL structure, and if an image is missing, a placeholder with an error message is displayed.
+
+```astro
+---
+import { Image } from 'astro:assets';
+import { getSlugById } from '../utils/slugs';
+
+interface Props {
+  item: {
+    id: string;
+    name: string;
+    filename: string;
+    width: number;
+    height: number;
+  };
+  imageMap: Map<string, any>;
+}
+
+const { item, imageMap } = Astro.props;
+const imageSource = imageMap.get(item.filename);
+const itemSlug = getSlugById(item.id);
+const isGif = (filename: string) => filename.toLowerCase().endsWith('.gif');
+---
+
+<div class="gallery-item">
+  <a href={`/gallery/${itemSlug}/`}>
+    {imageSource ? (
+      isGif(item.filename) ? (
+        <img
+          src={imageSource.src}
+          alt={item.name}
+          width={item.width}
+          height={item.height}
+          loading="lazy"
+          style={`aspect-ratio: ${item.width}/${item.height}`}
+        />
+      ) : (
+        <Image
+          src={imageSource}
+          alt={item.name}
+          width={item.width}
+          height={item.height}
+          loading="lazy"
+          sizes="(min-width: 1024px) 400px, (min-width: 768px) 32vw, 98vw"
+          widths={[320, 400, 800]}
+          style={`aspect-ratio: ${item.width}/${item.height}`}
+        />
+      )
+    ) : (
+      <div class="error-placeholder" style="aspect-ratio: 16/9; background: var(--gray-200); display: flex; align-items: center; justify-content: center; padding: 1rem; text-align: center;">
+        Image not found: {item.filename}
+      </div>
+    )}
+    <div class="gallery-item-info">
+      {item.name}
+    </div>
+  </a>
+</div>
+```
+
+### Image Optimization
+
+We use Astro’s [Image component](https://docs.astro.build/en/guides/images/#display-optimized-images-with-the-image--component) to optimize the images for various sizes and densities. It automatically handles different image formats and sizes, ensuring fast loading and optimal performance. For GIF files, we just render a regular img tag - this is because GIFs from Eagle might be too large and the build process might fail due to that (consider excluding GIF files in general).
+
+## Gallery Index Page
+
+The `src/pages/gallery/index.astro` file is going to be our main index page that shows all the items of the gallery. In the frontmatter section, we import dependencies, load the gallery data, and set up helper functions to sort gallery items by creation time. We also implement pagination, initially loading the first 100 items while setting a flag to check if more pages exist. Vite’s `import.meta.glob()` dynamically loads images from `src/assets/gallery/`, and we generate unique categories (called folders in Eagle) as well as tags to build some basic filtering options.
+
+In the markup, we set up a basic filter toolbar that allows users to filter by category or tag. Each folder and tag is basically just a link that points to a page with the filtered data set. Below that, the gallery items are displayed using the GalleryItem component, which takes care of rendering each individual image along with its title.
+
+### Pagination
+
+Since we don't want to load hundreds or thousands of items on the main gallery page, we need to implement pagination. We can use a MutationObserver to detect when the user scrolls to the bottom of the page and load more items if necessary. There are certainly more sophisticated ways to implement this, but I've handled the infinite scroll pagination by simply requesting the next page and inserting the new items into the DOM.
+
+<aside class="right">
+  #### Code on Github
+
+  If you need a more complete example, the code for this article is available on [GitHub](https://github.com/ivomynttinen/ivo-mynttinen).
+</aside>
+
+#### Create paginated pages
+
+In order to to create paginated pages, we can create the page folder in `src/pages/gallery/page/[page].astro`. The content is pretty much identical to the index page, with some slight adjustments and removed unnecessary markup, since we only request the items for the page. The important part is the `getStaticPaths` function, which generates the list of pages.
+
+```astro
+---
+export async function getStaticPaths() {
+  const itemsPerPage = 100;
+  const totalItems = galleryData.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  return Array.from({ length: totalPages }, (_, i) => ({
+    params: { page: (i + 1).toString() },
+  }));
+}
+
+const { page } = Astro.params;
+const currentPage = parseInt(page);
+
+// Redirect if page is not a valid number or less than 1
+if (isNaN(currentPage) || currentPage < 1) {
+  return Astro.redirect('/gallery/page/1');
+}
+// Redirect if page number is too high
+if (currentPage > totalPages) {
+  return Astro.redirect('/gallery/page/1');
+}
+
+// ... identical to the index page ...///
+
+// Sort items by date descending and get current page items
+const sortedGalleryData = [...galleryData].sort(sortByDate);
+const startIndex = (currentPage - 1) * itemsPerPage;
+const endIndex = startIndex + itemsPerPage;
+const currentPageItems = sortedGalleryData.slice(startIndex, endIndex);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`Ivo's Design Inspiration Gallery - Page ${currentPage}`} description='Designs of websites, apps and other digital products carefully curated by Ivo Mynttinen.' image={ogImageToUse} />
+  </head>
+  <body>
+    <div class="gallery-grid" id="gallery-grid">
+      {currentPageItems.map((item) => (
+        <GalleryItem item={item} imageMap={imageMap} />
+      ))}
+    </div>
+  </body>
+</html>
+```
+
+While our static pagination creates separate pages (/gallery/page/2/), we can enhance the user experience by implementing infinite scrolling. This way, users don’t have to manually navigate through pages—they simply scroll, and more items load dynamically.
+
+On the index page, we need to implement a load more items function on the client side. We can use the IntersectionObserver API to detect when the user scrolls to the bottom of the page and load more items if necessary (and available).
+
+```js
+function initializeLoadMore() {
+  const galleryGrid = document.getElementById('gallery-grid');
+  let currentPage = 1;
+  let isLoading = false;
+
+  async function loadNextPage() {
+    if (isLoading) return;
+    
+    try {
+      isLoading = true;
+      currentPage++;
+      
+      const response = await fetch(`/gallery/page/${currentPage}/`);
+      const text = await response.text();
+      
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'text/html');
+      
+      const newContent = doc.getElementById('gallery-grid');
+      
+      if (newContent && newContent.children.length > 0) {
+        const newItems = Array.from(newContent.children);
+        newItems.forEach(item => {
+          galleryGrid?.appendChild(item);
+        });
+      }
+    } catch (error) {
+      console.error('Error loading more items:', error);
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  // Add intersection observer for infinite scroll
+  const observerOptions = {
+    root: null,
+    rootMargin: '200px', // Start loading when within 200px of the bottom
+    threshold: 0
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !isLoading) {
+        loadNextPage();
+      }
+    });
+  }, observerOptions);
+
+  // Observe the last item in the gallery grid
+  function observeLastItem() {
+    const items = galleryGrid?.children;
+    if (items && items.length > 0) {
+      observer.disconnect(); // Remove previous observation
+      observer.observe(items[items.length - 1]);
+    }
+  }
+
+  // Initial observation
+  observeLastItem();
+
+  // Re-observe after new content is loaded
+  const mutationObserver = new MutationObserver(observeLastItem);
+  if (galleryGrid) {
+    mutationObserver.observe(galleryGrid, { childList: true });
+  }
+}
+```
+
+## Category and Tag Pages
+
+Since Eagle offers folders (we will call them categories) and tags to organize image galleries, we can create pages for each category and tag. These pages are similar to the index page but filter items accordingly.
+
+Example of a the frontmatter section of a tag page:
+
+```astro
+---
+import galleryData from '../../data/gallery.json';
+
+// Get the tag from the URL
+export async function getStaticPaths() {
+  // Get all tags from gallery data
+  const allTags = galleryData.flatMap(item => item.tags || []);
+  
+  // Filter unique tags and remove empty ones
+  const uniqueTags = [...new Set(allTags)].filter(Boolean);
+  
+  // Generate paths with URL-safe slugs
+  return uniqueTags.map(tag => {
+    const urlSafeTag = tag.toLowerCase().replace(/\s+/g, '-');
+    
+    return {
+      params: { tag: urlSafeTag },
+      props: { 
+        tag: tag,
+        uniqueTags: uniqueTags,
+        uniqueFolders: uniqueFolders
+      }
+    };
+  });
+}
+
+// Get props from Astro
+const { tag, uniqueTags, uniqueFolders } = Astro.props;
+
+// Filter gallery data for the current tag
+const tagGalleryData = galleryData.filter(item => 
+  item.tags && item.tags.includes(tag)
+).sort((a, b) => b.btime - a.btime);
+
+// Calculate total items in the tag
+const totalItems = tagGalleryData.length;
+
+const pageTitle = `${tag} - Ivo’s Design Inspiration Gallery`;
+const pageDescription = `Browse design inspiration tagged with ${tag}.`;
+---
+```
+
+## Further Improvements
+
+At this stage, we have a working gallery, but there are plenty of ways to enhance it further. Advanced filters could allow multi-tag selection or sorting by different attributes. We could also add a real search, additional filter types (our dataset is prepared for date ranges, colors, formats, filetypes, etc.), or ways to render notes and annotations. Additionally, clicking an image could open it in a modal while preserving the URL structure for better user experience.
+
+I've implemented some of these features on my gallery page, and if you're interested, you can check out the full code on my [GitHub repository](https://github.com/ivomynttinen/ivo-mynttinen). Feel free to adapt it for your own needs!
+
+This wraps up our two-part series on publishing an Eagle App library to the web using Astro. I hope this guide helps you showcase your design inspiration collection in a structured and dynamic way.

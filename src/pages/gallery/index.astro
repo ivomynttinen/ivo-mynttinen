@@ -6,7 +6,7 @@ import MatomoTracking from '../../components/MatomoTracking.astro';
 import { Image } from 'astro:assets';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import galleryData from '../../data/gallery.json';
-import { getSlugById } from '../../utils/slugs';
+import { getSlugById, generateSlug, createSlugMap, slugMap as existingSlugMap } from '../../utils/slugs';
 import GalleryItem from '../../components/GalleryItem.astro';
 import RSSIcon from '../../assets/images/rss.svg?raw';
 import FilterIcon from '../../assets/images/filter.svg?raw';
@@ -46,32 +46,6 @@ for (const [path, image] of Object.entries(images)) {
     imageMap.set(filename, image.default);
   }
 }
-
-// Helper function to check if file is a GIF
-const isGif = (filename: string) => filename.toLowerCase().endsWith('.gif');
-
-// Helper function to generate URL-friendly slug
-function generateSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric chars with hyphens
-    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
-}
-
-// Generate unique slugs for all items
-const slugMap = new Map();
-galleryData.forEach(item => {
-  let baseSlug = generateSlug(item.name);
-  let slug = baseSlug;
-  
-  // If slug already exists, append part of the ID
-  while (slugMap.has(slug)) {
-    // Use first 6 characters of ID to keep URLs reasonably short
-    slug = `${baseSlug}-${item.id.substring(0, 6)}`;
-  }
-  
-  slugMap.set(slug, item);
-});
 
 // Get unique folders and tags from gallery data, excluding specific folders
 const excludedFolders = ['Personal 2024', 'Website 2024'];
@@ -256,16 +230,11 @@ const uniqueTags = [...new Set(galleryData.flatMap(item => item.tags || []))];
     }
   }
 
-  // Helper function to get slug by ID (client-side version)
   function getSlugById(id) {
     const item = allGalleryData.sortedGalleryData.find(item => item.id === id);
     if (!item) return id;
     
-    let baseSlug = item.name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
-      
+    let baseSlug = generateSlug(item.name);
     return `${baseSlug}-${id.substring(0, 6)}`;
   }
 

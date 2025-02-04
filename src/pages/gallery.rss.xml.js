@@ -1,5 +1,5 @@
 import rss from '@astrojs/rss';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { SITE_TITLE } from '../consts';
 import galleryData from '../data/gallery.json';
 import { getSlugById } from '../utils/slugs';
 
@@ -27,6 +27,7 @@ export async function GET(context) {
           alt="${item.name}"
           width="${item.width}"
           height="${item.height}"
+          style="display: block; max-width: 100%; height: auto;"
         />
       `;
       return {
@@ -39,8 +40,8 @@ export async function GET(context) {
     });
 
   return rss({
-    title: `Gallery - ${SITE_TITLE}`,
-    description: SITE_DESCRIPTION,
+    title: `Ivo’s Design Inspiration Gallery`,
+    description: `Designs of websites, apps and other digital products carefully curated by Ivo Mynttinen.`,
     site: context.site,
     items,
   });
