@@ -1,0 +1,46 @@
+---
+title: 'The overlooked art of building a great interface'
+description: 'Thoughts on why design engineering isn’t as easy as it looks, and why backend devs shouldn’t be left alone throwing together an interface.'
+pubDate: '2025-02-21'
+highlight: false
+category: 'design'
+---
+
+I’ve built my fair share of front-ends from the stage of drawing with pen and paper, designign high-fidelity mockups, to building with Vue.js/React (plain HTML/CSS and some jQuery sprinkled on top back in the day). Countless hours spent in the abyss of design systems and component libraries. But at my core? I’m a product designer. And yet, I still find myself sometimes wondering: why the hell am I getting paid so much for what feels like basic work to me?
+
+Then I join a new project where they proudly announce, “Yeah, the full-stack/backend guys built the frontend,” and surprise: it’s an absolute disaster. A fragile, duct-taped mess held together by sheer willpower and hotfixes. And suddenly, it all makes sense again. It’s in these moments I remember just how much I undervalue what good designers and frontend engineers (or shall we just call them design engineers today?) do. Even more so, how often the role of a UI/UX designer is treated like an afterthought—when in reality, it’s the difference between a delightful product and an unusable mess.
+
+## The hidden complexity of frontend work
+
+Frontend development is deceptive. On paper, none of its individual parts are all that hard. But combine them all? Make them scale? Do it in a way that doesn’t lead to an existential crisis when a new feature gets added a year later? That’s where the fun begins.
+
+With the explosion of frontend tooling, many of the historic pain points have been abstracted away. The challenge now is more about assembling the right tools in the right way. One moment you’re fine-tuning a layout to pixel-perfection, the next you’re wrangling state management, debugging a bizarre test failure, and trying to explain why accessibility isn’t optional.
+
+## Why backend engineers shouldn’t be writing frontend
+
+There’s this persistent belief that all engineering is the same. That a backend developer can “just do frontend” because, hey, it’s all code, right?
+
+**Wrong.**
+
+Backend developers specialize in APIs, databases, and infrastructure — critical, but entirely different from crafting user interfaces. The skills don’t automatically transfer. It’s not about effort; it’s about experience in a completely different discipline.
+
+## The often missing piece: UI/UX Design
+
+A huge part of frontend work isn’t just making things functional — it’s making them intuitive, scalable, accessible, pleasant to use, and beautiful. But too often, companies treat UI/UX design as a nice-to-have, slapping together some weird bootstrap-shadcn-tailwind-bastard-child interface, designed on the fly, at the last minute. The result? A product that technically works but makes users want to quit your product.
+
+As someone who straddles the line between product design and frontend development, I see this all the time. It’s not just about getting things on the screen. 
+
+It’s about ensuring:
+
+- The interface is clean, intuitive, and perhaps still has a touch of personality.
+- The frontend is flexible enough to adapt without a complete rewrite every six months.
+- Accessibility isn’t an afterthought that gets shoved in at the last minute.
+- A documented design system that can be used to build consistent interfaces.
+- Performance matters, and we’re not shipping a 4MB JavaScript bundle just to avoid building our own tab bar component.
+- Developer experience is important, no one wants to wait 10 seconds for webpack to serve a single line code change.
+
+---
+
+With frontent (including the design discipline) and backend becoming more distinct disciplines, at what point does mixing the two become a problem?
+
+I said it before, and I’ll say it again—most “full-stack” devs I know fall into one of two camps: frontend developers who know how to slap together a contact form, or backend devs who don’t understand how flexbox works. 
