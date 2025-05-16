@@ -1,5 +1,85 @@
 [
   {
+    "id": "M8HEOHMMTO6G5",
+    "name": "Vapi - Voice AI agents for developers",
+    "size": 145376,
+    "btime": 1742478451012,
+    "mtime": 1742478451012,
+    "ext": "png",
+    "tags": [
+      "content",
+      "footer"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://vapi.ai/?ref=land-book.com",
+    "annotation": "",
+    "modificationTime": 1742478451006,
+    "height": 2138,
+    "width": 3292,
+    "palettes": [
+      {
+        "color": [
+          15,
+          15,
+          21
+        ],
+        "ratio": 93,
+        "$$hashKey": "object:6218"
+      },
+      {
+        "color": [
+          193,
+          193,
+          190
+        ],
+        "ratio": 2.36,
+        "$$hashKey": "object:6223"
+      },
+      {
+        "color": [
+          96,
+          95,
+          100
+        ],
+        "ratio": 1.48,
+        "$$hashKey": "object:6222"
+      },
+      {
+        "color": [
+          50,
+          49,
+          55
+        ],
+        "ratio": 0.88,
+        "$$hashKey": "object:6221"
+      },
+      {
+        "color": [
+          36,
+          36,
+          37
+        ],
+        "ratio": 0.66,
+        "$$hashKey": "object:6220"
+      },
+      {
+        "color": [
+          58,
+          52,
+          83
+        ],
+        "ratio": 0.38,
+        "$$hashKey": "object:6219"
+      }
+    ],
+    "lastModified": 1742478489659,
+    "filename": "vapi---voice-ai-agents-for-developers-M8HEOHMMTO6G5.png",
+    "file_type": "image"
+  },
+  {
     "id": "LTOJ41SIUEYND",
     "name": "Creators Guild of America  Home",
     "size": 322165,
@@ -1900,6 +1980,83 @@
     ],
     "lastModified": 1741266224086,
     "filename": "airloom-M7SUE8Q3EB1TO.png",
+    "file_type": "image"
+  },
+  {
+    "id": "MAP5NXKWCY04Y",
+    "name": "Augmento  Brand Identity  Art Branding by Dmitry Zmiy  Branding  Web",
+    "size": 249521,
+    "btime": 1747300602570,
+    "mtime": 1747300603025,
+    "ext": "jpg",
+    "tags": [],
+    "folders": [
+      "Logos"
+    ],
+    "isDeleted": false,
+    "url": "https://dribbble.com/shots/25887242-Augmento-Brand-Identity-Art-Branding",
+    "annotation": "",
+    "modificationTime": 1747300602561,
+    "height": 2160,
+    "width": 3840,
+    "palettes": [
+      {
+        "color": [
+          227,
+          227,
+          227
+        ],
+        "ratio": 94,
+        "$$hashKey": "object:7547"
+      },
+      {
+        "color": [
+          237,
+          84,
+          14
+        ],
+        "ratio": 2.52,
+        "$$hashKey": "object:7551"
+      },
+      {
+        "color": [
+          34,
+          15,
+          9
+        ],
+        "ratio": 1.32,
+        "$$hashKey": "object:7550"
+      },
+      {
+        "color": [
+          200,
+          200,
+          200
+        ],
+        "ratio": 0.61,
+        "$$hashKey": "object:7548"
+      },
+      {
+        "color": [
+          183,
+          184,
+          183
+        ],
+        "ratio": 0.29,
+        "$$hashKey": "object:7552"
+      },
+      {
+        "color": [
+          172,
+          172,
+          172
+        ],
+        "ratio": 0.25,
+        "$$hashKey": "object:7549"
+      }
+    ],
+    "lastModified": 1747388316236,
+    "filename": "augmento--brand-identity--art-branding-by-dmitry-zmiy--branding--web-MAP5NXKWCY04Y.jpg",
     "file_type": "image"
   },
   {
@@ -6495,6 +6652,87 @@
     "file_type": "image"
   },
   {
+    "id": "M8PY33WBJ8GIE",
+    "name": "Gnosis",
+    "size": 3314880,
+    "btime": 1742994775187,
+    "mtime": 1742994775188,
+    "ext": "png",
+    "tags": [
+      "navigation",
+      "hero",
+      "header"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://www.gnosis.io/",
+    "annotation": "",
+    "modificationTime": 1742994775163,
+    "height": 2086,
+    "width": 3254,
+    "lastModified": 1747210275908,
+    "palettes": [
+      {
+        "color": [
+          247,
+          248,
+          250
+        ],
+        "ratio": 50,
+        "$$hashKey": "object:3271"
+      },
+      {
+        "color": [
+          47,
+          86,
+          236
+        ],
+        "ratio": 31,
+        "$$hashKey": "object:3276"
+      },
+      {
+        "color": [
+          123,
+          150,
+          230
+        ],
+        "ratio": 14,
+        "$$hashKey": "object:3275"
+      },
+      {
+        "color": [
+          97,
+          112,
+          184
+        ],
+        "ratio": 1.15,
+        "$$hashKey": "object:3273"
+      },
+      {
+        "color": [
+          175,
+          176,
+          188
+        ],
+        "ratio": 0.71,
+        "$$hashKey": "object:3272"
+      },
+      {
+        "color": [
+          48,
+          49,
+          51
+        ],
+        "ratio": 0.5,
+        "$$hashKey": "object:3274"
+      }
+    ],
+    "filename": "gnosis-M8PY33WBJ8GIE.png",
+    "file_type": "image"
+  },
+  {
     "id": "LSVNT3BUU7VDN",
     "name": "Feed and location screens app flat icon icons interface ios iphone location travel ui user ux",
     "size": 320078,
@@ -11007,6 +11245,158 @@
     "file_type": "image"
   },
   {
+    "id": "M8HEP002GXXHJ",
+    "name": "Vapi - Voice AI agents for developers",
+    "size": 253199,
+    "btime": 1742478474821,
+    "mtime": 1742478474821,
+    "ext": "png",
+    "tags": [
+      "content",
+      "hero"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://vapi.ai/?ref=land-book.com",
+    "annotation": "",
+    "modificationTime": 1742478474818,
+    "height": 2138,
+    "width": 3292,
+    "palettes": [
+      {
+        "color": [
+          13,
+          13,
+          20
+        ],
+        "ratio": 95,
+        "$$hashKey": "object:7894"
+      },
+      {
+        "color": [
+          199,
+          197,
+          196
+        ],
+        "ratio": 1.39,
+        "$$hashKey": "object:7898"
+      },
+      {
+        "color": [
+          94,
+          213,
+          178
+        ],
+        "ratio": 1,
+        "$$hashKey": "object:7897"
+      },
+      {
+        "color": [
+          45,
+          45,
+          60
+        ],
+        "ratio": 0.88,
+        "$$hashKey": "object:7895"
+      },
+      {
+        "color": [
+          104,
+          102,
+          104
+        ],
+        "ratio": 0.78,
+        "$$hashKey": "object:7896"
+      }
+    ],
+    "lastModified": 1742478489659,
+    "filename": "vapi---voice-ai-agents-for-developers-M8HEP002GXXHJ.png",
+    "file_type": "image"
+  },
+  {
+    "id": "MA6QLI4NKOLBH",
+    "name": "OpenMind",
+    "size": 227843,
+    "btime": 1746186903832,
+    "mtime": 1746186903832,
+    "ext": "png",
+    "tags": [
+      "header",
+      "hero",
+      "navigation"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://openmind.org/",
+    "annotation": "",
+    "modificationTime": 1746186903815,
+    "height": 2182,
+    "width": 3562,
+    "lastModified": 1747210260200,
+    "palettes": [
+      {
+        "color": [
+          251,
+          251,
+          251
+        ],
+        "ratio": 90,
+        "$$hashKey": "object:1132"
+      },
+      {
+        "color": [
+          76,
+          181,
+          199
+        ],
+        "ratio": 3.83,
+        "$$hashKey": "object:1135"
+      },
+      {
+        "color": [
+          237,
+          7,
+          89
+        ],
+        "ratio": 3.02,
+        "$$hashKey": "object:1137"
+      },
+      {
+        "color": [
+          36,
+          43,
+          65
+        ],
+        "ratio": 1.07,
+        "$$hashKey": "object:1136"
+      },
+      {
+        "color": [
+          153,
+          155,
+          155
+        ],
+        "ratio": 0.76,
+        "$$hashKey": "object:1134"
+      },
+      {
+        "color": [
+          203,
+          211,
+          210
+        ],
+        "ratio": 0.64,
+        "$$hashKey": "object:1133"
+      }
+    ],
+    "filename": "openmind-MA6QLI4NKOLBH.png",
+    "file_type": "image"
+  },
+  {
     "id": "LV6L39RP0SVA2",
     "name": "Product - Height",
     "size": 312509,
@@ -12665,6 +13055,153 @@
     "file_type": "image"
   },
   {
+    "id": "MAQS3X2CAGTPA",
+    "name": "Poll \u2014 Mobile app",
+    "size": 30640,
+    "btime": 1747398766128,
+    "mtime": 1747398772226,
+    "ext": "webp",
+    "tags": [],
+    "folders": [
+      "iOS"
+    ],
+    "isDeleted": false,
+    "url": "https://layers.to/layers/cmagswhuf0008l50d95ryzv8u",
+    "annotation": "",
+    "modificationTime": 1747398766116,
+    "width": 2560,
+    "height": 1375,
+    "palettes": [
+      {
+        "color": [
+          228,
+          228,
+          228
+        ],
+        "ratio": 84,
+        "$$hashKey": "object:9764"
+      },
+      {
+        "color": [
+          21,
+          22,
+          21
+        ],
+        "ratio": 12,
+        "$$hashKey": "object:9766"
+      },
+      {
+        "color": [
+          40,
+          192,
+          94
+        ],
+        "ratio": 2.42,
+        "$$hashKey": "object:9767"
+      },
+      {
+        "color": [
+          153,
+          153,
+          153
+        ],
+        "ratio": 0.36,
+        "$$hashKey": "object:9765"
+      }
+    ],
+    "lastModified": 1747399781076,
+    "filename": "poll--mobile-app-MAQS3X2CAGTPA.webp",
+    "file_type": "image"
+  },
+  {
+    "id": "M8HDQE2IK2YYE",
+    "name": "Pios Breakthrough Automated Warehouse System",
+    "size": 1119236,
+    "btime": 1742476860109,
+    "mtime": 1742476860111,
+    "ext": "png",
+    "tags": [
+      "footer"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://pio.com/?ref=land-book.com",
+    "annotation": "",
+    "modificationTime": 1742476860090,
+    "height": 2138,
+    "width": 3292,
+    "palettes": [
+      {
+        "color": [
+          241,
+          250,
+          188
+        ],
+        "ratio": 60,
+        "$$hashKey": "object:1073"
+      },
+      {
+        "color": [
+          41,
+          41,
+          42
+        ],
+        "ratio": 21,
+        "$$hashKey": "object:1079"
+      },
+      {
+        "color": [
+          137,
+          147,
+          148
+        ],
+        "ratio": 7,
+        "$$hashKey": "object:1075"
+      },
+      {
+        "color": [
+          101,
+          111,
+          111
+        ],
+        "ratio": 5,
+        "$$hashKey": "object:1077"
+      },
+      {
+        "color": [
+          79,
+          90,
+          93
+        ],
+        "ratio": 2.16,
+        "$$hashKey": "object:1078"
+      },
+      {
+        "color": [
+          115,
+          131,
+          141
+        ],
+        "ratio": 1.37,
+        "$$hashKey": "object:1076"
+      },
+      {
+        "color": [
+          129,
+          102,
+          89
+        ],
+        "ratio": 0.64,
+        "$$hashKey": "object:1074"
+      }
+    ],
+    "lastModified": 1742476933132,
+    "filename": "pios-breakthrough-automated-warehouse-system-M8HDQE2IK2YYE.png",
+    "file_type": "image"
+  },
+  {
     "id": "LSVNSZ4PJTUA5",
     "name": "Opkey no-code test automation platform automation automation builder automation map b2b data tool enterprise tool enterprise ux",
     "size": 1911746,
@@ -13798,6 +14335,77 @@
       }
     ],
     "filename": "jin-su-park-LXLSY2CV2G9AX.png",
+    "file_type": "image"
+  },
+  {
+    "id": "M8INU5JE8KNNX",
+    "name": "Use Cases",
+    "size": 1418261,
+    "btime": 1742554298005,
+    "mtime": 1742554298005,
+    "ext": "png",
+    "tags": [
+      "hero",
+      "header"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://endex.ai/use-cases",
+    "annotation": "",
+    "modificationTime": 1742554297994,
+    "height": 2006,
+    "width": 3210,
+    "palettes": [
+      {
+        "color": [
+          241,
+          245,
+          248
+        ],
+        "ratio": 68,
+        "$$hashKey": "object:1819"
+      },
+      {
+        "color": [
+          71,
+          142,
+          163
+        ],
+        "ratio": 13,
+        "$$hashKey": "object:1822"
+      },
+      {
+        "color": [
+          144,
+          182,
+          196
+        ],
+        "ratio": 10,
+        "$$hashKey": "object:1821"
+      },
+      {
+        "color": [
+          192,
+          214,
+          222
+        ],
+        "ratio": 5,
+        "$$hashKey": "object:1820"
+      },
+      {
+        "color": [
+          26,
+          34,
+          38
+        ],
+        "ratio": 1.1,
+        "$$hashKey": "object:1823"
+      }
+    ],
+    "lastModified": 1742554496071,
+    "filename": "use-cases-M8INU5JE8KNNX.png",
     "file_type": "image"
   },
   {
@@ -16551,6 +17159,131 @@
     "file_type": "image"
   },
   {
+    "id": "MAQRLJK60OA89",
+    "name": "Garmin GTM 750xi redesign by Nicolas Solerieu on Dribbble",
+    "size": 1134125,
+    "btime": 1747397908818,
+    "mtime": 1747397909003,
+    "ext": "png",
+    "tags": [
+      "map",
+      "dashboard"
+    ],
+    "folders": [
+      "Android",
+      "iOS"
+    ],
+    "isDeleted": false,
+    "url": "https://dribbble.com/shots/26015406-Garmin-GTM-750xi-redesign",
+    "annotation": "",
+    "modificationTime": 1747397908806,
+    "height": 3376,
+    "width": 4500,
+    "palettes": [
+      {
+        "color": [
+          242,
+          242,
+          242
+        ],
+        "ratio": 51,
+        "$$hashKey": "object:9466"
+      },
+      {
+        "color": [
+          16,
+          18,
+          16
+        ],
+        "ratio": 27,
+        "$$hashKey": "object:9471"
+      },
+      {
+        "color": [
+          175,
+          169,
+          163
+        ],
+        "ratio": 4.75,
+        "$$hashKey": "object:9467"
+      },
+      {
+        "color": [
+          129,
+          154,
+          70
+        ],
+        "ratio": 4.57,
+        "$$hashKey": "object:9469"
+      },
+      {
+        "color": [
+          70,
+          151,
+          143
+        ],
+        "ratio": 4.54,
+        "$$hashKey": "object:9474"
+      },
+      {
+        "color": [
+          66,
+          107,
+          89
+        ],
+        "ratio": 3.43,
+        "$$hashKey": "object:9472"
+      },
+      {
+        "color": [
+          145,
+          162,
+          153
+        ],
+        "ratio": 1.86,
+        "$$hashKey": "object:9470"
+      },
+      {
+        "color": [
+          68,
+          75,
+          76
+        ],
+        "ratio": 0.72,
+        "$$hashKey": "object:9473"
+      },
+      {
+        "color": [
+          182,
+          185,
+          163
+        ],
+        "ratio": 0.53,
+        "$$hashKey": "object:9468"
+      },
+      {
+        "color": [
+          117,
+          109,
+          111
+        ],
+        "ratio": 0.5,
+        "$$hashKey": "object:9475"
+      },
+      {
+        "color": [
+          76,
+          139,
+          142
+        ],
+        "ratio": 0.46
+      }
+    ],
+    "lastModified": 1747399767177,
+    "filename": "garmin-gtm-750xi-redesign-by-nicolas-solerieu-on-dribbble-MAQRLJK60OA89.png",
+    "file_type": "image"
+  },
+  {
     "id": "LTYLJM7QW67I3",
     "name": "Stacks - The Leading Bitcoin L2 for Smart Contracts, Apps, DeFi",
     "size": 464889,
@@ -16618,6 +17351,86 @@
     ],
     "lastModified": 1710866881438,
     "filename": "stacks---the-leading-bitcoin-l2-for-smart-contracts-apps-defi-LTYLJM7QW67I3.png",
+    "file_type": "image"
+  },
+  {
+    "id": "M8INTRAGBJPF7",
+    "name": "Endex  The autonomous financial analyst",
+    "size": 457313,
+    "btime": 1742554279534,
+    "mtime": 1742554279535,
+    "ext": "png",
+    "tags": [
+      "content",
+      "boxes"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://endex.ai/?ref=land-book.com",
+    "annotation": "",
+    "modificationTime": 1742554279528,
+    "height": 2006,
+    "width": 3210,
+    "palettes": [
+      {
+        "color": [
+          250,
+          250,
+          251
+        ],
+        "ratio": 88,
+        "$$hashKey": "object:1583"
+      },
+      {
+        "color": [
+          201,
+          218,
+          225
+        ],
+        "ratio": 7,
+        "$$hashKey": "object:1585"
+      },
+      {
+        "color": [
+          169,
+          185,
+          191
+        ],
+        "ratio": 2.46,
+        "$$hashKey": "object:1584"
+      },
+      {
+        "color": [
+          220,
+          220,
+          220
+        ],
+        "ratio": 0.67,
+        "$$hashKey": "object:1588"
+      },
+      {
+        "color": [
+          86,
+          88,
+          89
+        ],
+        "ratio": 0.47,
+        "$$hashKey": "object:1587"
+      },
+      {
+        "color": [
+          195,
+          196,
+          196
+        ],
+        "ratio": 0.38,
+        "$$hashKey": "object:1586"
+      }
+    ],
+    "lastModified": 1742554510337,
+    "filename": "endex--the-autonomous-financial-analyst-M8INTRAGBJPF7.png",
     "file_type": "image"
   },
   {
@@ -19311,6 +20124,86 @@
     "file_type": "image"
   },
   {
+    "id": "M8INTM8GNJ4YY",
+    "name": "Endex  The autonomous financial analyst",
+    "size": 471866,
+    "btime": 1742554272981,
+    "mtime": 1742554272981,
+    "ext": "png",
+    "tags": [
+      "content",
+      "boxes"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://endex.ai/?ref=land-book.com",
+    "annotation": "",
+    "modificationTime": 1742554272976,
+    "height": 2006,
+    "width": 3210,
+    "palettes": [
+      {
+        "color": [
+          251,
+          251,
+          251
+        ],
+        "ratio": 81,
+        "$$hashKey": "object:1398"
+      },
+      {
+        "color": [
+          17,
+          26,
+          34
+        ],
+        "ratio": 12,
+        "$$hashKey": "object:1403"
+      },
+      {
+        "color": [
+          202,
+          214,
+          219
+        ],
+        "ratio": 2.06,
+        "$$hashKey": "object:1400"
+      },
+      {
+        "color": [
+          159,
+          181,
+          189
+        ],
+        "ratio": 1.91,
+        "$$hashKey": "object:1401"
+      },
+      {
+        "color": [
+          97,
+          163,
+          172
+        ],
+        "ratio": 0.58,
+        "$$hashKey": "object:1402"
+      },
+      {
+        "color": [
+          99,
+          112,
+          116
+        ],
+        "ratio": 0.49,
+        "$$hashKey": "object:1399"
+      }
+    ],
+    "lastModified": 1742554510337,
+    "filename": "endex--the-autonomous-financial-analyst-M8INTM8GNJ4YY.png",
+    "file_type": "image"
+  },
+  {
     "id": "LSVNSYA1O7GGI",
     "name": "Settings page attributes billing concept dashboard design edit events insights irakli lolashvili monthy page plans profile setti",
     "size": 760992,
@@ -21839,6 +22732,85 @@
     ],
     "lastModified": 1738241678610,
     "filename": "around--video-calls-loved-by-extraordinary-teams-LTYLOYJCKQRCJ.png",
+    "file_type": "image"
+  },
+  {
+    "id": "M8HDR1ZIC8R7F",
+    "name": "Letters - Patients, not Paperwork",
+    "size": 1105727,
+    "btime": 1742476891093,
+    "mtime": 1742476891093,
+    "ext": "png",
+    "tags": [
+      "pricing"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://letters.app/?ref=land-book.com#doctors-1",
+    "annotation": "",
+    "modificationTime": 1742476891086,
+    "height": 2138,
+    "width": 3292,
+    "palettes": [
+      {
+        "color": [
+          236,
+          241,
+          245
+        ],
+        "ratio": 54,
+        "$$hashKey": "object:1543"
+      },
+      {
+        "color": [
+          130,
+          163,
+          197
+        ],
+        "ratio": 22,
+        "$$hashKey": "object:1546"
+      },
+      {
+        "color": [
+          158,
+          185,
+          211
+        ],
+        "ratio": 19,
+        "$$hashKey": "object:1545"
+      },
+      {
+        "color": [
+          29,
+          66,
+          84
+        ],
+        "ratio": 1.8,
+        "$$hashKey": "object:1547"
+      },
+      {
+        "color": [
+          190,
+          201,
+          217
+        ],
+        "ratio": 1.7,
+        "$$hashKey": "object:1544"
+      },
+      {
+        "color": [
+          155,
+          156,
+          156
+        ],
+        "ratio": 0.27,
+        "$$hashKey": "object:1548"
+      }
+    ],
+    "lastModified": 1742476933131,
+    "filename": "letters---patients-not-paperwork-M8HDR1ZIC8R7F.png",
     "file_type": "image"
   },
   {
@@ -25902,6 +26874,85 @@
     "file_type": "image"
   },
   {
+    "id": "M8HDR7PE9UM4K",
+    "name": "Letters - Patients, not Paperwork",
+    "size": 664263,
+    "btime": 1742476898505,
+    "mtime": 1742476898505,
+    "ext": "png",
+    "tags": [
+      "footer"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://letters.app/?ref=land-book.com#doctors-1",
+    "annotation": "",
+    "modificationTime": 1742476898498,
+    "height": 2138,
+    "width": 3292,
+    "palettes": [
+      {
+        "color": [
+          248,
+          249,
+          250
+        ],
+        "ratio": 81,
+        "$$hashKey": "object:1778"
+      },
+      {
+        "color": [
+          199,
+          217,
+          230
+        ],
+        "ratio": 12,
+        "$$hashKey": "object:1779"
+      },
+      {
+        "color": [
+          174,
+          195,
+          212
+        ],
+        "ratio": 3.34,
+        "$$hashKey": "object:1780"
+      },
+      {
+        "color": [
+          17,
+          18,
+          19
+        ],
+        "ratio": 1.14,
+        "$$hashKey": "object:1781"
+      },
+      {
+        "color": [
+          61,
+          157,
+          206
+        ],
+        "ratio": 0.76,
+        "$$hashKey": "object:1782"
+      },
+      {
+        "color": [
+          220,
+          220,
+          220
+        ],
+        "ratio": 0.28,
+        "$$hashKey": "object:1783"
+      }
+    ],
+    "lastModified": 1742476933131,
+    "filename": "letters---patients-not-paperwork-M8HDR7PE9UM4K.png",
+    "file_type": "image"
+  },
+  {
     "id": "LSVNT19AP65KF",
     "name": "Sidebar revised account dark dynamic menu navigation profile search sidebar switcher user",
     "size": 329036,
@@ -27112,6 +28163,106 @@
     "file_type": "image"
   },
   {
+    "id": "MAP4U175ZRV66",
+    "name": "Healthcare Dashboard UIUX Design by Afterglow on Dribbble",
+    "size": 978628,
+    "btime": 1747299207585,
+    "mtime": 1747299207749,
+    "ext": "jpg",
+    "tags": [
+      "navigation",
+      "charts",
+      "dashboard",
+      "log"
+    ],
+    "folders": [
+      "Web Apps"
+    ],
+    "isDeleted": false,
+    "url": "https://dribbble.com/shots/26026655-Healthcare-Dashboard-UI-UX-Design",
+    "annotation": "",
+    "modificationTime": 1747299207569,
+    "height": 2400,
+    "width": 3200,
+    "palettes": [
+      {
+        "color": [
+          236,
+          236,
+          236
+        ],
+        "ratio": 66,
+        "$$hashKey": "object:7256"
+      },
+      {
+        "color": [
+          19,
+          20,
+          17
+        ],
+        "ratio": 24,
+        "$$hashKey": "object:7258"
+      },
+      {
+        "color": [
+          147,
+          157,
+          146
+        ],
+        "ratio": 2.36,
+        "$$hashKey": "object:7261"
+      },
+      {
+        "color": [
+          181,
+          168,
+          92
+        ],
+        "ratio": 2.18,
+        "$$hashKey": "object:7259"
+      },
+      {
+        "color": [
+          79,
+          93,
+          68
+        ],
+        "ratio": 1.63,
+        "$$hashKey": "object:7262"
+      },
+      {
+        "color": [
+          220,
+          200,
+          149
+        ],
+        "ratio": 0.8,
+        "$$hashKey": "object:7260"
+      },
+      {
+        "color": [
+          188,
+          191,
+          189
+        ],
+        "ratio": 0.78,
+        "$$hashKey": "object:7263"
+      },
+      {
+        "color": [
+          113,
+          108,
+          92
+        ],
+        "ratio": 0.73,
+        "$$hashKey": "object:7257"
+      }
+    ],
+    "lastModified": 1747388302463,
+    "filename": "healthcare-dashboard-uiux-design-by-afterglow-on-dribbble-MAP4U175ZRV66.jpg",
+    "file_type": "image"
+  },
+  {
     "id": "LTYLN16YPTTVG",
     "name": "Unlock New Insights from Your Ocean Data - Scoot Science",
     "size": 599402,
@@ -27507,6 +28658,85 @@
       }
     ],
     "filename": "mood-stats-app-calendar-calendar-ui-clean-interface-minimal-ui-web-web-app-web-design-webapp-webdesign-website-LSVNT1DWXMX1U.png",
+    "file_type": "image"
+  },
+  {
+    "id": "M9700KPMXQCCK",
+    "name": "Clarinet",
+    "size": 262382,
+    "btime": 1744025941231,
+    "mtime": 1744025941232,
+    "ext": "png",
+    "tags": [
+      "footer"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://www.hiro.so/clarinet",
+    "annotation": "",
+    "modificationTime": 1744025941210,
+    "height": 2200,
+    "width": 3466,
+    "lastModified": 1747210267982,
+    "palettes": [
+      {
+        "color": [
+          241,
+          241,
+          233
+        ],
+        "ratio": 95,
+        "$$hashKey": "object:3258"
+      },
+      {
+        "color": [
+          196,
+          193,
+          189
+        ],
+        "ratio": 1.46,
+        "$$hashKey": "object:3261"
+      },
+      {
+        "color": [
+          219,
+          218,
+          213
+        ],
+        "ratio": 1.01,
+        "$$hashKey": "object:3259"
+      },
+      {
+        "color": [
+          152,
+          148,
+          144
+        ],
+        "ratio": 0.74,
+        "$$hashKey": "object:3262"
+      },
+      {
+        "color": [
+          213,
+          212,
+          204
+        ],
+        "ratio": 0.57,
+        "$$hashKey": "object:3260"
+      },
+      {
+        "color": [
+          68,
+          67,
+          64
+        ],
+        "ratio": 0.35,
+        "$$hashKey": "object:3263"
+      }
+    ],
+    "filename": "clarinet-M9700KPMXQCCK.png",
     "file_type": "image"
   },
   {
@@ -29444,6 +30674,95 @@
     "file_type": "image"
   },
   {
+    "id": "M8INT1BF5II6S",
+    "name": "Endex  The autonomous financial analyst",
+    "size": 489015,
+    "btime": 1742554245888,
+    "mtime": 1742554245889,
+    "ext": "png",
+    "tags": [
+      "hero",
+      "header"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://endex.ai/?ref=land-book.com",
+    "annotation": "",
+    "modificationTime": 1742554245867,
+    "height": 2006,
+    "width": 3210,
+    "palettes": [
+      {
+        "color": [
+          4,
+          14,
+          22
+        ],
+        "ratio": 88,
+        "$$hashKey": "object:1110"
+      },
+      {
+        "color": [
+          20,
+          47,
+          62
+        ],
+        "ratio": 2.96,
+        "$$hashKey": "object:1112"
+      },
+      {
+        "color": [
+          49,
+          90,
+          109
+        ],
+        "ratio": 2.56,
+        "$$hashKey": "object:1115"
+      },
+      {
+        "color": [
+          204,
+          210,
+          212
+        ],
+        "ratio": 1.86,
+        "$$hashKey": "object:1116"
+      },
+      {
+        "color": [
+          82,
+          161,
+          196
+        ],
+        "ratio": 1.43,
+        "$$hashKey": "object:1114"
+      },
+      {
+        "color": [
+          51,
+          119,
+          153
+        ],
+        "ratio": 1.35,
+        "$$hashKey": "object:1113"
+      },
+      {
+        "color": [
+          20,
+          65,
+          89
+        ],
+        "ratio": 1.07,
+        "$$hashKey": "object:1111"
+      }
+    ],
+    "lastModified": 1742554502198,
+    "filename": "endex--the-autonomous-financial-analyst-M8INT1BF5II6S.png",
+    "file_type": "image"
+  },
+  {
     "id": "LSVNSZ97536BF",
     "name": "LMS Admin Panel Dashboard admin admin ui charts course dashboard edu teach elearning platform learning management system learnin",
     "size": 1687916,
@@ -30279,6 +31598,104 @@
       }
     ],
     "filename": "universal-search-covertree-3drops-auto-complete-coverage-health-input-insurance-insurtech-interactive-navigation-policy-quick-LSVNT08ANYJ8A.png",
+    "file_type": "image"
+  },
+  {
+    "id": "MALEK5DNRKXRF",
+    "name": "Block rewards dashboard - Mobile by Alex Gilev on Dribbble",
+    "size": 287630,
+    "btime": 1747073677889,
+    "mtime": 1747073678162,
+    "ext": "jpg",
+    "tags": [
+      "charts"
+    ],
+    "folders": [
+      "Android",
+      "iOS"
+    ],
+    "isDeleted": false,
+    "url": "https://dribbble.com/shots/26013969-Block-rewards-dashboard-Mobile",
+    "annotation": "",
+    "modificationTime": 1747073677883,
+    "height": 1350,
+    "width": 1620,
+    "palettes": [
+      {
+        "color": [
+          13,
+          13,
+          13
+        ],
+        "ratio": 46,
+        "$$hashKey": "object:1059"
+      },
+      {
+        "color": [
+          76,
+          75,
+          75
+        ],
+        "ratio": 20,
+        "$$hashKey": "object:1060"
+      },
+      {
+        "color": [
+          48,
+          47,
+          48
+        ],
+        "ratio": 14,
+        "$$hashKey": "object:1064"
+      },
+      {
+        "color": [
+          59,
+          59,
+          60
+        ],
+        "ratio": 8,
+        "$$hashKey": "object:1063"
+      },
+      {
+        "color": [
+          104,
+          75,
+          93
+        ],
+        "ratio": 4.06,
+        "$$hashKey": "object:1066"
+      },
+      {
+        "color": [
+          75,
+          100,
+          64
+        ],
+        "ratio": 2.07,
+        "$$hashKey": "object:1062"
+      },
+      {
+        "color": [
+          92,
+          91,
+          92
+        ],
+        "ratio": 1.97,
+        "$$hashKey": "object:1065"
+      },
+      {
+        "color": [
+          215,
+          160,
+          149
+        ],
+        "ratio": 0.63,
+        "$$hashKey": "object:1061"
+      }
+    ],
+    "lastModified": 1747073731129,
+    "filename": "block-rewards-dashboard---mobile-by-alex-gilev-on-dribbble-MALEK5DNRKXRF.jpg",
     "file_type": "image"
   },
   {
@@ -31660,6 +33077,86 @@
     "file_type": "image"
   },
   {
+    "id": "M8IUV0HVS6DFX",
+    "name": "KPRKR  Ventures",
+    "size": 633109,
+    "btime": 1742566095438,
+    "mtime": 1742566095438,
+    "ext": "png",
+    "tags": [
+      "content",
+      "navigation"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://www.kprkr.co/ventures",
+    "annotation": "",
+    "modificationTime": 1742566095427,
+    "height": 2006,
+    "width": 3210,
+    "lastModified": 1747210293723,
+    "palettes": [
+      {
+        "color": [
+          4,
+          4,
+          4
+        ],
+        "ratio": 88,
+        "$$hashKey": "object:3284"
+      },
+      {
+        "color": [
+          222,
+          221,
+          217
+        ],
+        "ratio": 5,
+        "$$hashKey": "object:3289"
+      },
+      {
+        "color": [
+          87,
+          87,
+          86
+        ],
+        "ratio": 2.94,
+        "$$hashKey": "object:3288"
+      },
+      {
+        "color": [
+          43,
+          41,
+          40
+        ],
+        "ratio": 1.9,
+        "$$hashKey": "object:3285"
+      },
+      {
+        "color": [
+          60,
+          60,
+          60
+        ],
+        "ratio": 0.93,
+        "$$hashKey": "object:3286"
+      },
+      {
+        "color": [
+          148,
+          144,
+          141
+        ],
+        "ratio": 0.57,
+        "$$hashKey": "object:3287"
+      }
+    ],
+    "filename": "kprkr--ventures-M8IUV0HVS6DFX.png",
+    "file_type": "image"
+  },
+  {
     "id": "LX4U9ZZDAUDL3",
     "name": "Daytona CLI launcher by Nicolas Solerieu on Dribbble",
     "size": 130815,
@@ -32376,6 +33873,86 @@
       }
     ],
     "filename": "dynamic-data-flow-build-builder-canvas-complex-connect-connection-dashboard-data-deploy-drag-and-drop-flow-interface-path-pipeli-LSVNSY7DPP56X.png",
+    "file_type": "image"
+  },
+  {
+    "id": "M88R8UKEN9Q4W",
+    "name": "Information \u2014 Lorenz Woehr",
+    "size": 583018,
+    "btime": 1741955360720,
+    "mtime": 1741955360720,
+    "ext": "png",
+    "tags": [
+      "content",
+      "about page"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://www.lorenzwoehr.com/information",
+    "annotation": "",
+    "modificationTime": 1741955360702,
+    "height": 2138,
+    "width": 2774,
+    "palettes": [
+      {
+        "color": [
+          251,
+          251,
+          251
+        ],
+        "ratio": 91,
+        "$$hashKey": "object:9505"
+      },
+      {
+        "color": [
+          164,
+          163,
+          162
+        ],
+        "ratio": 2.73,
+        "$$hashKey": "object:9508"
+      },
+      {
+        "color": [
+          205,
+          205,
+          205
+        ],
+        "ratio": 2.18,
+        "$$hashKey": "object:9507"
+      },
+      {
+        "color": [
+          60,
+          51,
+          50
+        ],
+        "ratio": 2.04,
+        "$$hashKey": "object:9509"
+      },
+      {
+        "color": [
+          220,
+          220,
+          220
+        ],
+        "ratio": 0.96,
+        "$$hashKey": "object:9506"
+      },
+      {
+        "color": [
+          187,
+          188,
+          188
+        ],
+        "ratio": 0.57,
+        "$$hashKey": "object:9510"
+      }
+    ],
+    "lastModified": 1741955391546,
+    "filename": "information--lorenz-woehr-M88R8UKEN9Q4W.png",
     "file_type": "image"
   },
   {
@@ -37053,6 +38630,77 @@
       }
     ],
     "filename": "page-funnel-report-for-content-marketing-platform-app-content-marketing-content-marketing-tools-design-interface-startup-ui-user-LSVNT18EF3QDC.png",
+    "file_type": "image"
+  },
+  {
+    "id": "M8HDQJSU0X9P4",
+    "name": "Letters - Patients, not Paperwork",
+    "size": 433335,
+    "btime": 1742476867523,
+    "mtime": 1742476867523,
+    "ext": "png",
+    "tags": [
+      "hero",
+      "header"
+    ],
+    "folders": [
+      "Websites"
+    ],
+    "isDeleted": false,
+    "url": "https://letters.app/?ref=land-book.com#doctors-1",
+    "annotation": "",
+    "modificationTime": 1742476867518,
+    "height": 2138,
+    "width": 3292,
+    "palettes": [
+      {
+        "color": [
+          152,
+          181,
+          209
+        ],
+        "ratio": 71,
+        "$$hashKey": "object:1310"
+      },
+      {
+        "color": [
+          246,
+          248,
+          249
+        ],
+        "ratio": 15,
+        "$$hashKey": "object:1313"
+      },
+      {
+        "color": [
+          192,
+          212,
+          227
+        ],
+        "ratio": 12,
+        "$$hashKey": "object:1312"
+      },
+      {
+        "color": [
+          116,
+          156,
+          195
+        ],
+        "ratio": 0.39,
+        "$$hashKey": "object:1311"
+      },
+      {
+        "color": [
+          19,
+          18,
+          22
+        ],
+        "ratio": 0.31,
+        "$$hashKey": "object:1314"
+      }
+    ],
+    "lastModified": 1742476933132,
+    "filename": "letters---patients-not-paperwork-M8HDQJSU0X9P4.png",
     "file_type": "image"
   },
   {
